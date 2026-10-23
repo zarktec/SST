@@ -63,6 +63,7 @@ test("capacitación: sesión con QR, firma desde el celular sin sesión y certif
   await phone.getByLabel("Número de documento").fill("1032456789");
   await phone.getByLabel("Elemento de protección personal").check();
   const canvas = phone.getByLabel("Área para firmar");
+  await canvas.scrollIntoViewIfNeeded();
   const box = (await canvas.boundingBox())!;
   await phone.mouse.move(box.x + 20, box.y + 40);
   await phone.mouse.down();

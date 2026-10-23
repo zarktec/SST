@@ -12,3 +12,4 @@ export * from "./legal";
 export * from "./hazards";
 export * from "./annual-plan";
 export * from "./training";
+export * from "./ppe";

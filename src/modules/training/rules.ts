@@ -1,5 +1,9 @@
 import { createHash, randomBytes } from "node:crypto";
 import { z } from "zod";
+import { isValidSignature } from "@/core/signature";
+import { addMonths } from "@/lib/dates";
+
+export { isValidSignature };
 
 export const KINDS = [
   { value: "induction", label: "Inducción" },
@@ -62,19 +66,6 @@ export type QuestionInput = z.input<typeof questionSchema>;
 /** Token del QR: aleatorio (192 bits) y de un solo uso por sesión abierta. */
 export const newAttendanceToken = () => randomBytes(24).toString("hex");
 
-const MAX_SIGNATURE_BYTES = 200_000;
-/** Firma táctil: PNG en data URL, tamaño acotado y con la cabecera PNG real (no se acepta cualquier cadena). */
-export function isValidSignature(dataUrl: string): boolean {
-  const m = dataUrl.match(/^data:image\/png;base64,([A-Za-z0-9+/=]+)$/);
-  if (!m) return false;
-  const bytes = Buffer.from(m[1], "base64");
-  return (
-    bytes.length >= 100 &&
-    bytes.length <= MAX_SIGNATURE_BYTES &&
-    bytes.subarray(0, 8).equals(Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]))
-  );
-}
-
 /** Puntaje (0-100) de la evaluación: respuestas correctas sobre el total; una pregunta sin responder cuenta como incorrecta. */
 export function scoreQuiz(correct: number[], answers: (number | null | undefined)[]): number {
   if (!correct.length) return 100;
@@ -105,13 +96,6 @@ export type Competence = {
   state: CompetenceState;
   lastDate: string | null;
   dueDate: string | null;
-};
-
-const addMonths = (d: string, n: number) => {
-  const [y, m, day] = d.split("-").map(Number);
-  const out = new Date(Date.UTC(y, m - 1 + n, day));
-  if (out.getUTCDate() !== day) out.setUTCDate(0); // 31 ene + 1 mes → 28/29 feb
-  return out.toISOString().slice(0, 10);
 };
 
 /**
