@@ -190,6 +190,13 @@ export const SEEDS: Seed[] = [
         "Parametrizable",
       ),
       p(
+        "inspecciones.plazo_accion_dias",
+        15,
+        "días",
+        "Plazo por defecto de la acción correctiva que genera un hallazgo de inspección",
+        "Parametrizable (Decreto 1072 de 2015, art. 2.2.4.6.24)",
+      ),
+      p(
         "psicosocial.periodicidad_riesgo_alto_meses",
         12,
         "meses",

@@ -1,9 +1,12 @@
-/* Service worker base (Fase 0). La cola offline de reportes/inspecciones llega en la Fase 4.
-   Estrategia: navegaciones network-first con respaldo /offline; estáticos de Next cache-first.
-   Nunca se cachean /api ni respuestas autenticadas de datos. */
-const VERSION = "v1";
+/* Service worker. Estrategia: navegaciones network-first con respaldo /offline; estáticos de Next cache-first.
+   Excepción (Fase 4.4): las pantallas de ejecución de inspecciones (/inspecciones/ejecutar/*) se guardan tras visitarlas
+   en línea (o precargarlas con el encabezado x-sst-prefetch) para poder hacer inspecciones sin conexión; el envío usa la
+   cola de IndexedDB de la página. Nunca se cachean /api ni otras respuestas autenticadas de datos. */
+const VERSION = "v2";
 const SHELL = `sst-shell-${VERSION}`;
 const STATIC = `sst-static-${VERSION}`;
+const PAGES = `sst-pages-${VERSION}`;
+const OFFLINE_PAGE = /^\/inspecciones\/ejecutar\/[0-9a-f-]{36}$/i;
 
 self.addEventListener("install", (e) => {
   e.waitUntil(
@@ -19,7 +22,9 @@ self.addEventListener("activate", (e) => {
     caches
       .keys()
       .then((keys) =>
-        Promise.all(keys.filter((k) => ![SHELL, STATIC].includes(k)).map((k) => caches.delete(k))),
+        Promise.all(
+          keys.filter((k) => ![SHELL, STATIC, PAGES].includes(k)).map((k) => caches.delete(k)),
+        ),
       )
       .then(() => self.clients.claim()),
   );
@@ -31,6 +36,27 @@ self.addEventListener("fetch", (e) => {
   if (req.method !== "GET" || url.origin !== location.origin || url.pathname.startsWith("/api/"))
     return;
 
+  if (
+    OFFLINE_PAGE.test(url.pathname) &&
+    (req.mode === "navigate" || req.headers.has("x-sst-prefetch"))
+  ) {
+    e.respondWith(
+      fetch(req)
+        .then((res) => {
+          // Solo respuestas finales (sin redirección a login) quedan guardadas.
+          if (res.ok && !res.redirected) {
+            const copy = res.clone();
+            caches.open(PAGES).then((c) => c.put(url.pathname, copy));
+          }
+          return res;
+        })
+        .catch(
+          async () =>
+            (await caches.match(url.pathname, { cacheName: PAGES })) ?? caches.match("/offline"),
+        ),
+    );
+    return;
+  }
   if (req.mode === "navigate") {
     e.respondWith(fetch(req).catch(() => caches.match("/offline")));
     return;
@@ -46,4 +72,9 @@ self.addEventListener("fetch", (e) => {
       }),
     );
   }
+});
+
+// La página pide vaciar las pantallas guardadas (p. ej. al cerrar sesión en un dispositivo compartido).
+self.addEventListener("message", (e) => {
+  if (e.data === "clear-pages") e.waitUntil(caches.delete(PAGES));
 });

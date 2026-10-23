@@ -19,3 +19,4 @@ export * from "./medical";
 export * from "./actions";
 export * from "./incidents";
 export * from "./unsafe-reports";
+export * from "./inspections";

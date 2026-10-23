@@ -85,6 +85,9 @@ Registro vivo: se agrega al detectarlo y se tacha (o mueve a "Resuelto") al cerr
 
 - [ ] Reportes de actos/condiciones (`/reportes`): sin fotos (pendiente de `BLOB_READ_WRITE_TOKEN`); el reporte anónimo no guarda autor, así que no hay retroalimentación al reportante. Falta mostrar la ubicación en un mapa.
 
+- [ ] Inspecciones (`/inspecciones`): el catálogo `checklist_templates` está vacío (sin textos oficiales); cada empresa crea sus plantillas o importa las de plataforma cuando existan. Frecuencia/programación de inspecciones y recordatorios por sede, y firma del inspector: pendientes. Fotos de hallazgos: `BLOB_READ_WRITE_TOKEN`.
+- [ ] Modo offline: la cola vive en IndexedDB y las pantallas de ejecución se guardan en el service worker (`sst-pages-v2`). Falta (a) borrar esa caché y la cola al cerrar sesión (el mensaje `clear-pages` ya existe en `public/sw.js`, no hay botón de cerrar sesión aún), (b) Background Sync para enviar con la app cerrada (hoy se envía al abrir la pantalla o al volver la red), (c) reportes de condiciones inseguras sin conexión (hoy solo inspecciones).
+
 ## Resuelto
 
 - [x] Enlace repo–Vercel, Neon, SUPER_ADMIN, DNS en Cloudflare.

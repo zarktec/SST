@@ -295,6 +295,20 @@
       "when": 1792764492945,
       "tag": "0041_unsafe_reports_rls",
       "breakpoints": true
+    },
+    {
+      "idx": 42,
+      "version": "7",
+      "when": 1792764789881,
+      "tag": "0042_inspections",
+      "breakpoints": true
+    },
+    {
+      "idx": 43,
+      "version": "7",
+      "when": 1792764790881,
+      "tag": "0043_inspections_rls",
+      "breakpoints": true
     }
   ]
 }
