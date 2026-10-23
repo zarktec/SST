@@ -18,3 +18,4 @@ export * from "./convivencia";
 export * from "./medical";
 export * from "./actions";
 export * from "./incidents";
+export * from "./unsafe-reports";

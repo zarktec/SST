@@ -83,6 +83,8 @@ Registro vivo: se agrega al detectarlo y se tacha (o mueve a "Resuelto") al cerr
 - [ ] Accidentes: remisión a la ARL solo registra la fecha; falta adjuntar el informe y notificar a la ARL por correo. Investigación sin árbol de causas gráfico (texto por línea).
 - [ ] Enfermedad laboral: registro y calificación manual; falta seguimiento periódico y vínculo con medicina (vigilancia epidemiológica).
 
+- [ ] Reportes de actos/condiciones (`/reportes`): sin fotos (pendiente de `BLOB_READ_WRITE_TOKEN`); el reporte anónimo no guarda autor, así que no hay retroalimentación al reportante. Falta mostrar la ubicación en un mapa.
+
 ## Resuelto
 
 - [x] Enlace repo–Vercel, Neon, SUPER_ADMIN, DNS en Cloudflare.

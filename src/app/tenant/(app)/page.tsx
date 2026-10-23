@@ -96,6 +96,7 @@ export default async function TenantHome() {
             ["/medicina", "Medicina del trabajo", "medical"],
             ["/acciones", "Acciones (CAPA)", "actions"],
             ["/accidentes", "Accidentes e incidentes", "incidents"],
+            ["/reportes", "Condiciones y actos inseguros", "unsafe_reports"],
             ["/convivencia", "Convivencia laboral", "ccl"],
             ["/acoso-sexual", "Acoso sexual", "harassment"],
           ]
