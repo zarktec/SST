@@ -10,6 +10,12 @@ export const ADMIN = "http://admin.localhost:3000";
 export const ADMIN_EMAIL = "admin@zark.pro";
 export const ADMIN_PASSWORD = "SuperClave-2026!";
 
+export async function clearRateLimit() {
+  const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+  await pool.query("DELETE FROM rate_limit");
+  await pool.end();
+}
+
 /** Estado limpio entre pruebas: sin límites de tasa y SUPER ADMIN sin 2FA ni integraciones configuradas. */
 export async function resetState() {
   const pool = new Pool({ connectionString: process.env.DATABASE_URL });
@@ -21,6 +27,11 @@ export async function resetState() {
     [ADMIN_EMAIL],
   );
   await pool.query("DELETE FROM integration");
+  await pool.query(
+    "DELETE FROM plan_price WHERE plan_id IN (SELECT id FROM plan WHERE key LIKE 'e2e-%')",
+  );
+  await pool.query("DELETE FROM plan WHERE key LIKE 'e2e-%'");
+  await pool.query("DELETE FROM coupon WHERE code LIKE 'E2E%'");
   await pool.end();
 }
 
@@ -32,6 +43,7 @@ export async function loginAdminWith2fa(page: Page) {
   await page.getByRole("button", { name: "Ingresar" }).click();
   await expect(page).toHaveURL(/\/security\/2fa/);
   await page.getByLabel("Confirma tu contraseña").fill(ADMIN_PASSWORD);
+  await clearRateLimit(); // /two-factor/* admite 3 llamadas por 10 s: evita falsos 429 entre pruebas seguidas
   const enable = page.waitForResponse((r) => r.url().includes("/two-factor/enable"));
   await page.getByRole("button", { name: "Generar código QR" }).click();
   const { totpURI } = (await (await enable).json()) as { totpURI: string };

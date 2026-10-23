@@ -21,3 +21,6 @@ export const permissionAction = pgEnum("permission_action", [
   "export",
 ]);
 export const permissionScope = pgEnum("permission_scope", ["all", "own", "team", "center"]);
+
+export const billingPeriod = pgEnum("billing_period", ["monthly", "annual"]);
+export const couponKind = pgEnum("coupon_kind", ["percent", "amount"]);

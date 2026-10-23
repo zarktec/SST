@@ -6,12 +6,14 @@ import { and, eq } from "drizzle-orm";
 import { closeDb, schema, systemDb, withTenant } from "../src/core/db";
 import { seedTenantRoles } from "../src/core/rbac/seed-roles";
 import { ensureIntegrations } from "../src/integrations/registry/service";
+import { seedPlans } from "../src/modules/platform/plans/service";
 import { uuidv7 } from "../src/lib/uuid";
 
 /** Seed idempotente: SUPER ADMIN inicial (variables de entorno), integraciones y empresa demo. */
 export async function seed() {
   const db = systemDb();
   await ensureIntegrations();
+  await seedPlans();
 
   const email = process.env.SUPER_ADMIN_EMAIL?.toLowerCase();
   const password = process.env.SUPER_ADMIN_PASSWORD;
