@@ -1,0 +1,52 @@
+import "server-only";
+import { and, eq } from "drizzle-orm";
+import { schema, systemDb } from "@/core/db";
+import { sendMail } from "@/core/mail";
+import { originFor, rootDomain } from "@/core/tenancy/hosts";
+import { primaryHostForTenant } from "@/core/tenancy/primary-host";
+import type { SweepHandlers } from "./subscriptions";
+
+const WHEN: Record<number, string> = { 7: "en 7 días", 3: "en 3 días", 1: "mañana", 0: "hoy" };
+
+/** Correos de los administradores activos de la empresa (rol ADMIN_EMPRESA). */
+export async function adminEmails(tenantId: string): Promise<string[]> {
+  const rows = await systemDb()
+    .select({ email: schema.user.email })
+    .from(schema.membership)
+    .innerJoin(schema.user, eq(schema.user.id, schema.membership.userId))
+    .innerJoin(schema.role, eq(schema.role.id, schema.membership.roleId))
+    .where(
+      and(
+        eq(schema.membership.tenantId, tenantId),
+        eq(schema.membership.status, "active"),
+        eq(schema.role.systemKey, "ADMIN_EMPRESA"),
+      ),
+    );
+  return [...new Set(rows.map((r) => r.email))];
+}
+
+/** Handlers del barrido diario. El cobro real lo implementa el procesador de pagos (paso Wompi). */
+export function billingHandlers(overrides: Partial<SweepHandlers> = {}): SweepHandlers {
+  return {
+    async requestCharge() {
+      // TODO(1.4): encolar el cobro con el PaymentProvider (Wompi).
+    },
+    async sendTrialReminder(sub, day) {
+      const host = (await primaryHostForTenant(sub.tenantId)) ?? rootDomain();
+      const to = await adminEmails(sub.tenantId);
+      await Promise.all(
+        to.map((email) =>
+          sendMail({
+            to: email,
+            subject:
+              day === 0
+                ? "Tu prueba gratuita termina hoy"
+                : `Tu prueba gratuita termina ${WHEN[day]}`,
+            html: `<p>Tu prueba gratuita termina ${WHEN[day]}. Agrega un método de pago en <a href="${originFor(host)}/facturacion">Facturación</a> para continuar sin interrupciones; si no, tu cuenta pasará a solo lectura.</p>`,
+          }),
+        ),
+      );
+    },
+    ...overrides,
+  };
+}

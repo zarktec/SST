@@ -2,7 +2,7 @@ import { hashPassword } from "better-auth/crypto";
 import { eq } from "drizzle-orm";
 import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
 import { closeDb, schema, systemDb, withTenant } from "@/core/db";
-import { createTenant, hasTestDb, pointToTestDb } from "@/core/db/test-utils";
+import { createTenantWithSubscription, hasTestDb, pointToTestDb } from "@/core/db/test-utils";
 import { seedTenantRoles } from "@/core/rbac/seed-roles";
 import { devOutbox } from "@/core/mail";
 import { getAuth } from "./config";
@@ -25,7 +25,7 @@ describe.skipIf(!hasTestDb)("flujo de login y traspaso entre dominios (Better Au
   beforeAll(async () => {
     process.env.NEXT_PUBLIC_ROOT_DOMAIN = ROOT;
     process.env.AUTH_SECRET = "test-secret-test-secret-test-secret-123";
-    const t = await createTenant("acme");
+    const t = await createTenantWithSubscription("acme");
     tenantId = t.id;
     await withTenant({ tenantId }, (tx) => seedTenantRoles(tx, tenantId));
     await systemDb()

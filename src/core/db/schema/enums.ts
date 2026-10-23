@@ -24,3 +24,11 @@ export const permissionScope = pgEnum("permission_scope", ["all", "own", "team",
 
 export const billingPeriod = pgEnum("billing_period", ["monthly", "annual"]);
 export const couponKind = pgEnum("coupon_kind", ["percent", "amount"]);
+
+export const subscriptionStatus = pgEnum("subscription_status", [
+  "trialing",
+  "active",
+  "past_due",
+  "suspended",
+  "cancelled",
+]);

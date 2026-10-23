@@ -20,6 +20,7 @@ test("login de empresa: marca, sin scroll horizontal y objetivos táctiles de 44
   page,
 }) => {
   await page.goto(`${TENANT}/login`);
+  await page.waitForLoadState("networkidle");
   await expect(page.getByText("Accede a Empresa Demo")).toBeVisible();
   await noHorizontalScroll(page);
   for (const el of await page.locator("button, input, a").all()) {
@@ -33,6 +34,7 @@ test("usuario de la empresa entra al panel y ve la navegación adecuada al viewp
   page,
 }, info) => {
   await page.goto(`${TENANT}/login`);
+  await page.waitForLoadState("networkidle");
   await page.getByLabel("Correo electrónico").fill("demo@demo.test");
   await page.getByLabel("Contraseña").fill("DemoClave-2026!");
   await page.getByRole("button", { name: "Ingresar" }).click();
@@ -51,6 +53,7 @@ test("usuario de la empresa entra al panel y ve la navegación adecuada al viewp
 
 test("un usuario de empresa no entra al panel de plataforma", async ({ page }) => {
   await page.goto(`${TENANT}/login`);
+  await page.waitForLoadState("networkidle");
   await page.getByLabel("Correo electrónico").fill("demo@demo.test");
   await page.getByLabel("Contraseña").fill("DemoClave-2026!");
   await page.getByRole("button", { name: "Ingresar" }).click();
@@ -58,6 +61,7 @@ test("un usuario de empresa no entra al panel de plataforma", async ({ page }) =
   // La sesión es host-only: en admin. no existe; y aunque inicie sesión no es personal de plataforma.
   await page.goto(`${ADMIN}/`);
   await expect(page).toHaveURL(/\/login/);
+  await page.waitForLoadState("networkidle");
   await page.getByLabel("Correo electrónico").fill("demo@demo.test");
   await page.getByLabel("Contraseña").fill("DemoClave-2026!");
   await page.getByRole("button", { name: "Ingresar" }).click();
@@ -67,6 +71,7 @@ test("un usuario de empresa no entra al panel de plataforma", async ({ page }) =
 test("SUPER ADMIN sin 2FA es enviado a activarlo", async ({ page }, info) => {
   await page.goto(`${ADMIN}/`);
   await expect(page).toHaveURL(/\/login/);
+  await page.waitForLoadState("networkidle");
   await page.getByLabel("Correo electrónico").fill("admin@zark.pro");
   await page.getByLabel("Contraseña").fill("SuperClave-2026!");
   await page.getByRole("button", { name: "Ingresar" }).click();

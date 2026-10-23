@@ -1,7 +1,7 @@
 import { eq } from "drizzle-orm";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { closeDb, schema, systemDb, withTenant } from "@/core/db";
-import { createTenant, hasTestDb, pointToTestDb } from "@/core/db/test-utils";
+import { createTenantWithSubscription, hasTestDb, pointToTestDb } from "@/core/db/test-utils";
 import { seedTenantRoles } from "@/core/rbac/seed-roles";
 import { listUserTenants, resolveTenantAccess } from "./access";
 
@@ -12,7 +12,7 @@ async function makeUser(id: string, email: string, verified = true) {
 }
 
 describe.skipIf(!hasTestDb)("acceso de usuarios a una empresa", () => {
-  let t: Awaited<ReturnType<typeof createTenant>>;
+  let t: Awaited<ReturnType<typeof createTenantWithSubscription>>;
   let adminRoleId: string;
   const login = (
     userId: string,
@@ -29,7 +29,7 @@ describe.skipIf(!hasTestDb)("acceso de usuarios a una empresa", () => {
     });
 
   beforeAll(async () => {
-    t = await createTenant("acceso-co");
+    t = await createTenantWithSubscription("acceso-co");
     await withTenant({ tenantId: t.id }, (tx) => seedTenantRoles(tx, t.id));
     const roles = await withTenant({ tenantId: t.id }, (tx) => tx.select().from(schema.role));
     expect(roles).toHaveLength(11);

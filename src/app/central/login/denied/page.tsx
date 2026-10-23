@@ -10,6 +10,8 @@ const REASONS: Record<string, string> = {
   tenant_cancelled: "La suscripción de esa empresa está cancelada.",
   membership_disabled: "Tu acceso a esa empresa fue deshabilitado.",
   membership_expired: "Tu acceso temporal a esa empresa venció.",
+  plan_limit:
+    "La empresa alcanzó el límite de usuarios de su plan. Pide a su administrador que actualice el plan.",
   tenant_not_found: "Esa empresa no existe.",
 };
 

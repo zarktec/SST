@@ -38,6 +38,8 @@ export type PlatformContext = {
   tenantId?: string;
   /** Motivo (obligatorio al impersonar). */
   reason?: string;
+  /** false para lecturas masivas de un job (el resto de usos deja siempre un registro en audit_log). */
+  audit?: boolean;
 };
 
 /**
@@ -56,13 +58,15 @@ export async function withPlatform<T>(
       sql`SELECT set_config('app.is_platform', 'true', true),
                  set_config('app.user_id', ${ctx.actorId}, true)`,
     );
-    await tx.insert(auditLog).values({
-      tenantId: ctx.tenantId,
-      actorId: ctx.actorId,
-      action: ctx.action,
-      entity: "platform_access",
-      after: ctx.reason ? { reason: ctx.reason } : null,
-    });
+    if (ctx.audit !== false) {
+      await tx.insert(auditLog).values({
+        tenantId: ctx.tenantId,
+        actorId: ctx.actorId,
+        action: ctx.action,
+        entity: "platform_access",
+        after: ctx.reason ? { reason: ctx.reason } : null,
+      });
+    }
     return fn(tx);
   });
 }

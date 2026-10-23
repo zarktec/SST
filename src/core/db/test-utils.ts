@@ -33,3 +33,48 @@ export async function dbErrorMessage(p: Promise<unknown>): Promise<string> {
   }
   return "";
 }
+
+/** Empresa con suscripción de prueba (toda empresa real nace con una; los límites de plan la requieren). */
+export async function createTenantWithSubscription(
+  slug: string,
+  limits?: { users?: number | null },
+) {
+  const { createPlan, getPlanByKey } = await import("@/modules/platform/plans/service");
+  const { createTrialSubscription } = await import("@/modules/billing/subscriptions");
+  const { withPlatform } = await import("./context");
+  const key = `test-${limits?.users ?? "unl"}`;
+  const planId =
+    (await getPlanByKey(key))?.id ??
+    (await createPlan({
+      key,
+      name: key,
+      description: "",
+      isTrial: false,
+      trialDays: null,
+      vatEnabled: false,
+      vatIncluded: false,
+      vatRatePercent: 0,
+      limits: { workers: null, users: limits?.users ?? null, centers: null, storageMb: null },
+      modules: [],
+      visible: false,
+      sortOrder: 0,
+      active: true,
+      monthlyPesos: 1000,
+      annualPesos: null,
+      monthlySiigoCode: null,
+      annualSiigoCode: null,
+    }));
+  const t = await createTenant(slug);
+  await withPlatform(
+    { actorId: "test", action: "test.subscription", tenantId: t.id, audit: false },
+    (tx) =>
+      createTrialSubscription(tx, t.id, {
+        planId,
+        period: "monthly",
+        amountCents: 100_000n,
+        vat: { enabled: false, included: false, rateBp: 0 },
+        trialDays: 30,
+      }),
+  );
+  return t;
+}

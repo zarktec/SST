@@ -27,6 +27,29 @@ export async function resetState() {
     [ADMIN_EMAIL],
   );
   await pool.query("DELETE FROM integration");
+  // Empresas creadas por las pruebas E2E (los logs de solo-inserción exigen desactivar triggers: BD local de pruebas).
+  const client = await pool.connect();
+  try {
+    await client.query("SET session_replication_role = replica");
+    const sub = "(SELECT id FROM tenant WHERE slug LIKE 'e2e-%')";
+    for (const t of [
+      "subscription_event",
+      "subscription",
+      "audit_log",
+      "tenant_domain",
+      "tenant_branding",
+      "invitation",
+      "membership",
+      "role_permission",
+      "role",
+      "work_center",
+    ]) {
+      await client.query(`DELETE FROM ${t} WHERE tenant_id IN ${sub}`);
+    }
+    await client.query("DELETE FROM tenant WHERE slug LIKE 'e2e-%'");
+  } finally {
+    client.release();
+  }
   await pool.query(
     "DELETE FROM plan_price WHERE plan_id IN (SELECT id FROM plan WHERE key LIKE 'e2e-%')",
   );
@@ -38,15 +61,20 @@ export async function resetState() {
 /** Inicia sesión como SUPER ADMIN y activa 2FA por la UI (genera el código TOTP con el secreto del QR). */
 export async function loginAdminWith2fa(page: Page) {
   await page.goto(`${ADMIN}/login`);
+  await page.waitForLoadState("networkidle"); // los formularios son controlados: rellenar antes de hidratar pierde el valor
   await page.getByLabel("Correo electrónico").fill(ADMIN_EMAIL);
   await page.getByLabel("Contraseña").fill(ADMIN_PASSWORD);
   await page.getByRole("button", { name: "Ingresar" }).click();
   await expect(page).toHaveURL(/\/security\/2fa/);
+  await page.waitForLoadState("networkidle");
   await page.getByLabel("Confirma tu contraseña").fill(ADMIN_PASSWORD);
   await clearRateLimit(); // /two-factor/* admite 3 llamadas por 10 s: evita falsos 429 entre pruebas seguidas
   const enable = page.waitForResponse((r) => r.url().includes("/two-factor/enable"));
   await page.getByRole("button", { name: "Generar código QR" }).click();
-  const { totpURI } = (await (await enable).json()) as { totpURI: string };
+  const resp = await enable;
+  const body = (await resp.json()) as { totpURI?: string };
+  if (!body.totpURI) throw new Error(`2FA enable falló: ${resp.status()} ${JSON.stringify(body)}`);
+  const { totpURI } = body;
   const secret = new URL(totpURI).searchParams.get("secret")!;
   await page.getByLabel("Código de 6 dígitos").fill(generateSync({ secret }));
   await page.getByRole("button", { name: "Activar" }).click();

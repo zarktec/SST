@@ -1,9 +1,11 @@
 import { and, eq, isNull } from "drizzle-orm";
 import { schema, systemDb } from "@/core/db";
+import { assertCanAdd, PlanLimitError } from "@/core/plans/limits";
 
 const { tenant, membership, invitation, role } = schema;
 
 export type AccessDenied =
+  | "plan_limit"
   | "tenant_not_found"
   | "tenant_cancelled"
   | "sso_required"
@@ -54,6 +56,16 @@ export async function resolveTenantAccess(
     if (m.status === "active")
       return { ok: true, tenantId: t.id, membershipId: m.id, created: null };
   }
+
+  // Nuevos usuarios (invitación o dominio permitido) cuentan contra el límite de usuarios del plan.
+  const limitReached = await assertCanAdd(t.id, "users").then(
+    () => false,
+    (e) => {
+      if (e instanceof PlanLimitError) return true;
+      throw e;
+    },
+  );
+  if (limitReached) return { ok: false, reason: "plan_limit" };
 
   const email = input.email.toLowerCase();
   const [inv] = await db
