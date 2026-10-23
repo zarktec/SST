@@ -92,6 +92,7 @@ export default async function TenantHome() {
             ["/personas", "Personas", "workers"],
             ["/capacitacion", "Capacitación", "training"],
             ["/epp", "EPP", "ppe"],
+            ["/comites", "Comités", "committees"],
           ]
             .filter(([, , m]) => can(perms, m as never, "view"))
             .map(([href, label]) => (

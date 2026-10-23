@@ -99,6 +99,27 @@ export const SEEDS: Seed[] = [
         "Decreto 1072 de 2015, art. 2.2.4.6.15",
       ),
       p(
+        "comite.umbral_copasst",
+        10,
+        "trabajadores",
+        "Número de trabajadores desde el cual se conforma COPASST (por debajo, Vigía SST)",
+        "Resolución 2013 de 1986, art. 1; Decreto 1072 de 2015, art. 2.2.4.6.8",
+      ),
+      p(
+        "comite.periodo_anios",
+        2,
+        "años",
+        "Periodo de los miembros del COPASST/Vigía/CCL",
+        "Decreto 1295 de 1994, art. 63; Resolución 2013 de 1986",
+      ),
+      p(
+        "comite.alerta_renovacion_dias",
+        60,
+        "días",
+        "Anticipación para alertar la renovación del comité",
+        "Parametrizable (no hay norma que lo fije)",
+      ),
+      p(
         "psicosocial.periodicidad_riesgo_alto_meses",
         12,
         "meses",

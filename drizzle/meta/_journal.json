@@ -211,6 +211,20 @@
       "when": 1792756497613,
       "tag": "0029_ppe_rls",
       "breakpoints": true
+    },
+    {
+      "idx": 30,
+      "version": "7",
+      "when": 1792757108826,
+      "tag": "0030_committees",
+      "breakpoints": true
+    },
+    {
+      "idx": 31,
+      "version": "7",
+      "when": 1792757109826,
+      "tag": "0031_committees_rls",
+      "breakpoints": true
     }
   ]
 }

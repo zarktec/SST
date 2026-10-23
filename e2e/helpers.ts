@@ -30,6 +30,14 @@ export async function resetState() {
   // Onboarding de la empresa demo: vuelve a empezar en cada prueba.
   const demo = "(SELECT id FROM tenant WHERE slug = 'demo')";
   for (const t of [
+    "election_ballot",
+    "election_voter",
+    "election_candidate",
+    "election",
+    "committee_commitment",
+    "committee_minutes",
+    "committee_member",
+    "committee",
     "ppe_delivery",
     "ppe_stock_entry",
     "ppe_requirement",
@@ -75,7 +83,18 @@ export async function resetState() {
   const client = await pool.connect();
   try {
     await client.query("SET session_replication_role = replica");
-    for (const t of ["hazard_row", "hazard_matrix"])
+    for (const t of [
+      "election_ballot",
+      "election_voter",
+      "election_candidate",
+      "election",
+      "committee_commitment",
+      "committee_minutes",
+      "committee_member",
+      "committee",
+      "hazard_row",
+      "hazard_matrix",
+    ])
       await client.query(
         `DELETE FROM ${t} WHERE tenant_id IN (SELECT id FROM tenant WHERE slug = 'demo')`,
       );
