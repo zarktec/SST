@@ -1,6 +1,11 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  turbopack: {
+    rules: {
+      "*.css": { loaders: ["@tailwindcss/turbopack"], as: "*.css" },
+    },
+  },
   // Cuerpos grandes: fotos de evidencias se comprimen en el cliente antes de subir.
   experimental: { serverActions: { bodySizeLimit: "8mb" } },
   async headers() {

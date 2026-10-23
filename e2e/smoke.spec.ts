@@ -1,0 +1,110 @@
+import { expect, test, type Page } from "@playwright/test";
+import { config } from "dotenv";
+import { Pool } from "pg";
+
+config({ path: ".env.local" });
+
+// El límite de 5 inicios de sesión por minuto aplica también a los tests: se limpia entre pruebas.
+test.beforeEach(async () => {
+  const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+  await pool.query("DELETE FROM rate_limit");
+  await pool.end();
+});
+
+/** El cliente HTTP de Node no resuelve *.localhost (el navegador sí): se envía el Host a mano. */
+const viaHost = (host: string, path: string) => ({
+  url: `http://127.0.0.1:3000${path}`,
+  headers: { host },
+});
+
+const TENANT = "http://demo.localhost:3000";
+const ADMIN = "http://admin.localhost:3000";
+
+async function noHorizontalScroll(page: Page) {
+  const overflow = await page.evaluate(
+    () => document.documentElement.scrollWidth - window.innerWidth,
+  );
+  expect(overflow).toBeLessThanOrEqual(0);
+}
+
+test("login de empresa: marca, sin scroll horizontal y objetivos táctiles de 44px", async ({
+  page,
+}) => {
+  await page.goto(`${TENANT}/login`);
+  await expect(page.getByText("Accede a Empresa Demo")).toBeVisible();
+  await noHorizontalScroll(page);
+  for (const el of await page.locator("button, input, a").all()) {
+    if (!(await el.isVisible())) continue;
+    const box = await el.boundingBox();
+    expect(box!.height, await el.innerText().catch(() => "")).toBeGreaterThanOrEqual(43.5);
+  }
+});
+
+test("usuario de la empresa entra al panel y ve la navegación adecuada al viewport", async ({
+  page,
+}, info) => {
+  await page.goto(`${TENANT}/login`);
+  await page.getByLabel("Correo electrónico").fill("demo@demo.test");
+  await page.getByLabel("Contraseña").fill("DemoClave-2026!");
+  await page.getByRole("button", { name: "Ingresar" }).click();
+  await expect(page.getByRole("heading", { name: "Hola, Ana" })).toBeVisible();
+  await noHorizontalScroll(page);
+  const navs = page.getByRole("navigation", { name: "Principal" });
+  const visible = [];
+  for (const n of await navs.all()) if (await n.isVisible()) visible.push(n);
+  expect(visible).toHaveLength(1);
+  const box = await visible[0].boundingBox();
+  if (info.project.name === "mobile-375")
+    expect(box!.y).toBeGreaterThan(600); // barra inferior
+  else expect(box!.x).toBeLessThan(5); // barra lateral
+  await page.screenshot({ path: `test-results/home-${info.project.name}.png` });
+});
+
+test("un usuario de empresa no entra al panel de plataforma", async ({ page }) => {
+  await page.goto(`${TENANT}/login`);
+  await page.getByLabel("Correo electrónico").fill("demo@demo.test");
+  await page.getByLabel("Contraseña").fill("DemoClave-2026!");
+  await page.getByRole("button", { name: "Ingresar" }).click();
+  await expect(page.getByRole("heading", { name: "Hola, Ana" })).toBeVisible();
+  // La sesión es host-only: en admin. no existe; y aunque inicie sesión no es personal de plataforma.
+  await page.goto(`${ADMIN}/`);
+  await expect(page).toHaveURL(/\/login/);
+  await page.getByLabel("Correo electrónico").fill("demo@demo.test");
+  await page.getByLabel("Contraseña").fill("DemoClave-2026!");
+  await page.getByRole("button", { name: "Ingresar" }).click();
+  await expect(page).toHaveURL(/\/login\?error=forbidden/);
+});
+
+test("SUPER ADMIN sin 2FA es enviado a activarlo", async ({ page }, info) => {
+  await page.goto(`${ADMIN}/`);
+  await expect(page).toHaveURL(/\/login/);
+  await page.getByLabel("Correo electrónico").fill("admin@zark.pro");
+  await page.getByLabel("Contraseña").fill("SuperClave-2026!");
+  await page.getByRole("button", { name: "Ingresar" }).click();
+  await expect(page).toHaveURL(/\/security\/2fa/);
+  await expect(page.getByText("El 2FA es obligatorio")).toBeVisible();
+  await page.screenshot({ path: `test-results/2fa-${info.project.name}.png` });
+});
+
+test("hosts y rutas internas", async ({ page, request }) => {
+  const get = (host: string, path: string) => {
+    const r = viaHost(host, path);
+    return request.get(r.url, { headers: r.headers });
+  };
+  expect((await get("noexiste.localhost:3000", "/")).status()).toBe(404);
+  // Las carpetas internas no se exponen directamente
+  expect((await get("demo.localhost:3000", "/tenant/login")).status()).toBe(404);
+  expect((await get("demo.localhost:3000", "/platform")).status()).toBe(404);
+  // Cada host sirve su propia área
+  await page.goto("http://localhost:3000/");
+  await expect(page.getByRole("heading", { name: /SG-SST listo/ })).toBeVisible();
+});
+
+test("manifest PWA por empresa", async ({ request }) => {
+  const r = viaHost("demo.localhost:3000", "/api/manifest");
+  const m = await (await request.get(r.url, { headers: r.headers })).json();
+  expect(m.name).toBe("Empresa Demo");
+  expect(m.display).toBe("standalone");
+  const icon = await request.get(`http://127.0.0.1:3000${m.icons[0].src}`);
+  expect(icon.status()).toBe(200);
+});

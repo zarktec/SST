@@ -1,6 +1,8 @@
-import "dotenv/config";
+import { config } from "dotenv";
+config({ path: ".env.local" });
+config();
 import { hashPassword } from "better-auth/crypto";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { closeDb, schema, systemDb, withTenant } from "../src/core/db";
 import { seedTenantRoles } from "../src/core/rbac/seed-roles";
 import { ensureIntegrations } from "../src/integrations/registry/service";
@@ -59,6 +61,27 @@ export async function seed() {
       .insert(schema.tenantDomain)
       .values({ tenantId: demo.id, host: `demo.${root}`, kind: "subdomain", status: "verified" })
       .onConflictDoNothing();
+    // Usuario demo (solo fuera de producción): administrador de la empresa demo.
+    if (process.env.NODE_ENV !== "production") {
+      const id = uuidv7();
+      await db
+        .insert(schema.user)
+        .values({ id, name: "Ana Demo", email: "demo@demo.test", emailVerified: true });
+      await db.insert(schema.account).values({
+        id: uuidv7(),
+        accountId: id,
+        providerId: "credential",
+        userId: id,
+        password: await hashPassword("DemoClave-2026!"),
+      });
+      const [admin] = await db
+        .select()
+        .from(schema.role)
+        .where(and(eq(schema.role.tenantId, demo.id), eq(schema.role.systemKey, "ADMIN_EMPRESA")));
+      await db
+        .insert(schema.membership)
+        .values({ tenantId: demo.id, userId: id, roleId: admin.id });
+    }
     console.log("Empresa demo creada");
   }
 }

@@ -33,6 +33,7 @@ describe("classifyHost", () => {
 describe("helpers", () => {
   it("usa http solo en local", () => {
     expect(originFor("acme.lvh.me:3000")).toBe("http://acme.lvh.me:3000");
+    expect(originFor("acme.localhost:3000")).toBe("http://acme.localhost:3000");
     expect(originFor("acme.sst.zark.pro")).toBe("https://acme.sst.zark.pro");
   });
   it("valida slugs", () => {

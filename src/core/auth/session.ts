@@ -1,10 +1,11 @@
 import "server-only";
-import { and, eq, isNull } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { schema, systemDb } from "@/core/db";
 import { classifyHost } from "@/core/tenancy/hosts";
 import { resolveTenantByHost, type ResolvedTenant } from "@/core/tenancy/resolve";
+import { resolveTenantAccess } from "./access";
 import { getAuth } from "./config";
 
 export async function currentHost(): Promise<string> {
@@ -47,37 +48,35 @@ export type TenantSessionContext = {
   readOnly: boolean;
 };
 
-/** Contexto de la empresa del host actual + membresía activa del usuario. Redirige a /login si falta. */
+/**
+ * Contexto de la empresa del host actual + acceso del usuario. Aplica las mismas reglas que el
+ * traspaso de sesión (invitación, dominio permitido, solo-SSO, expiración) en CADA request.
+ */
 export async function requireTenantMember(): Promise<TenantSessionContext> {
   const host = await currentHost();
   const tenant = await resolveTenantByHost(host);
   if (!tenant) redirect("/");
   const s = await getSession();
   if (!s) redirect("/login");
+  const loginMethod = (s.session as { loginMethod?: string | null }).loginMethod ?? null;
+  const access = await resolveTenantAccess({
+    userId: s.user.id,
+    email: s.user.email,
+    emailVerified: s.user.emailVerified,
+    tenantId: tenant.tenantId,
+    loginMethod,
+  });
+  if (!access.ok)
+    redirect(`/login?error=${access.reason === "sso_required" ? "sso_required" : "forbidden"}`);
   const [m] = await systemDb()
-    .select({
-      id: schema.membership.id,
-      roleId: schema.membership.roleId,
-      status: schema.membership.status,
-      expiresAt: schema.membership.expiresAt,
-      systemKey: schema.role.systemKey,
-    })
+    .select({ roleId: schema.membership.roleId, systemKey: schema.role.systemKey })
     .from(schema.membership)
     .innerJoin(schema.role, eq(schema.role.id, schema.membership.roleId))
-    .where(
-      and(eq(schema.membership.tenantId, tenant.tenantId), eq(schema.membership.userId, s.user.id)),
-    );
-  if (!m || m.status !== "active" || (m.expiresAt && m.expiresAt <= new Date()))
-    redirect("/login?error=forbidden");
-  const [t] = await systemDb()
-    .select({ deletedAt: schema.tenant.deletedAt })
-    .from(schema.tenant)
-    .where(and(eq(schema.tenant.id, tenant.tenantId), isNull(schema.tenant.deletedAt)));
-  if (!t) redirect("/");
+    .where(eq(schema.membership.id, access.membershipId));
   return {
     tenant,
     user: { id: s.user.id, email: s.user.email, name: s.user.name },
-    membershipId: m.id,
+    membershipId: access.membershipId,
     roleId: m.roleId,
     roleKey: m.systemKey,
     readOnly: tenant.status === "suspended",

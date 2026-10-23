@@ -55,7 +55,7 @@ export function classifyHost(rawHost: string, root = rootDomain()): HostKind {
 
 /** http en desarrollo local, https en cualquier otro caso. */
 export function protocolFor(host: string): "http" | "https" {
-  return /^(localhost|127\.0\.0\.1|.*\.lvh\.me|lvh\.me)(:\d+)?$/.test(normalizeHost(host))
+  return /^((.*\.)?localhost|127\.0\.0\.1|(.*\.)?lvh\.me)(:\d+)?$/.test(normalizeHost(host))
     ? "http"
     : "https";
 }
