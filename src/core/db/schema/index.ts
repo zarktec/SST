@@ -11,3 +11,4 @@ export * from "./assessment";
 export * from "./legal";
 export * from "./hazards";
 export * from "./annual-plan";
+export * from "./training";

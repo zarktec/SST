@@ -331,3 +331,22 @@ export async function workerSsChecks(tenantId: string, workerId: string) {
       .orderBy(sql`period desc`),
   );
 }
+
+/** Persona activa por número de documento (blind index): para flujos públicos como la asistencia por QR. */
+export async function findActiveWorkerByDocument(tenantId: string, idNumber: string) {
+  const blind = bidx(tenantId, idNumber.trim());
+  return withTenant(ctxOf(tenantId), async (tx) => {
+    const [w] = await tx
+      .select({
+        id: worker.id,
+        fullName: worker.fullName,
+        endDate: worker.endDate,
+        startDate: worker.startDate,
+      })
+      .from(worker)
+      .where(
+        and(eq(worker.tenantId, tenantId), eq(worker.idBlind, blind), isNull(worker.deletedAt)),
+      );
+    return w && isActive(w, today()) ? w : null;
+  });
+}

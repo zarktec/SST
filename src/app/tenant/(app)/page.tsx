@@ -82,7 +82,7 @@ export default async function TenantHome() {
         </CardDescription>
       </Card>
       <Card>
-        <CardTitle>Planear</CardTitle>
+        <CardTitle>Módulos</CardTitle>
         <ul className="mt-2 grid gap-1 text-sm sm:grid-cols-2">
           {[
             ["/estandares", "Estándares mínimos", "standards"],
@@ -90,6 +90,7 @@ export default async function TenantHome() {
             ["/peligros", "Matriz de peligros", "hazard_matrix"],
             ["/plan-anual", "Plan anual de trabajo", "annual_plan"],
             ["/personas", "Personas", "workers"],
+            ["/capacitacion", "Capacitación", "training"],
           ]
             .filter(([, , m]) => can(perms, m as never, "view"))
             .map(([href, label]) => (
