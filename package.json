@@ -15,7 +15,8 @@
     "db:generate": "drizzle-kit generate",
     "db:migrate": "tsx scripts/migrate.ts",
     "db:seed": "tsx --conditions=react-server scripts/seed.ts",
-    "prepare": "husky"
+    "prepare": "husky",
+    "vercel-build": "tsx scripts/vercel-build.ts"
   },
   "dependencies": {
     "@neondatabase/serverless": "^1.2.0",

@@ -54,4 +54,5 @@ Ver sección "Estado de fases" al final; actualizar al cerrar cada fase.
 
 - Proyecto Vercel `sst` (equipo ZarK, `prj_kpoOB6LCtrFYpXrk1s6oXhU1aQfm`), Next.js, Node 22, región iad1. Dominios agregados: `sst.zark.pro`, `admin.`, `auth.` y `*.sst.zark.pro`.
 - Variables de infraestructura ya cargadas (production/preview): `NEXT_PUBLIC_ROOT_DOMAIN`, `ENCRYPTION_MASTER_KEY`, `BLIND_INDEX_KEY`, `AUTH_SECRET`, `CRON_SECRET`, `MAIL_FROM`.
-- Pendiente: conectar GitHub (zarktec/sst) al proyecto, base de datos Neon (`DATABASE_URL`), `RESEND_API_KEY`, `BLOB_READ_WRITE_TOKEN`, `SUPER_ADMIN_EMAIL/PASSWORD` y DNS en Cloudflare (wildcard requiere delegar `sst.zark.pro` a los nameservers de Vercel).
+- Neon ya instalado (DATABASE_URL y DATABASE_URL_UNPOOLED, sensibles: no se pueden leer fuera de Vercel). Build de Vercel = `pnpm vercel-build`: en producción migra + seed idempotente (SUPER ADMIN, integraciones; sin empresa demo) antes de `next build`; preview no toca la BD.
+- Pendiente: enlazar el repo zarktec/sst al proyecto (Settings → Git; la API no permite enlazar un proyecto existente), `RESEND_API_KEY`, `BLOB_READ_WRITE_TOKEN`, `SUPER_ADMIN_EMAIL/PASSWORD` y DNS en Cloudflare (wildcard requiere delegar `sst.zark.pro` a los nameservers de Vercel).

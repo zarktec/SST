@@ -40,6 +40,8 @@ export async function seed() {
     console.warn("SUPER_ADMIN_EMAIL/SUPER_ADMIN_PASSWORD no definidos: se omite el SUPER ADMIN");
   }
 
+  // La empresa demo (y su usuario) solo existen fuera de producción.
+  if (process.env.NODE_ENV === "production" || process.env.VERCEL_ENV === "production") return;
   const [demo] = await db
     .insert(schema.tenant)
     .values({
@@ -62,7 +64,7 @@ export async function seed() {
       .values({ tenantId: demo.id, host: `demo.${root}`, kind: "subdomain", status: "verified" })
       .onConflictDoNothing();
     // Usuario demo (solo fuera de producción): administrador de la empresa demo.
-    if (process.env.NODE_ENV !== "production") {
+    {
       const id = uuidv7();
       await db
         .insert(schema.user)
