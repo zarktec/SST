@@ -169,6 +169,27 @@ export const SEEDS: Seed[] = [
         "Parametrizable (no hay norma que lo fije)",
       ),
       p(
+        "capa.escalar_nivel1_dias",
+        1,
+        "días de mora",
+        "Mora desde la cual una acción vencida se escala al responsable del SG-SST",
+        "Parametrizable (Decreto 1072 de 2015, art. 2.2.4.6.33)",
+      ),
+      p(
+        "capa.escalar_nivel2_dias",
+        15,
+        "días de mora",
+        "Mora desde la cual se escala además a la administración de la empresa",
+        "Parametrizable",
+      ),
+      p(
+        "capa.escalar_nivel3_dias",
+        30,
+        "días de mora",
+        "Mora desde la cual se escala además a la alta dirección",
+        "Parametrizable",
+      ),
+      p(
         "psicosocial.periodicidad_riesgo_alto_meses",
         12,
         "meses",

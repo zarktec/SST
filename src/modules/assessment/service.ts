@@ -143,7 +143,7 @@ export async function closeAssessment(tenantId: string, userId: string, assessme
   await assertWritable(tenantId);
   const ranges = await ratingRanges();
   const noApply = await getParameter("autoevaluacion.no_aplica_cuenta_completo", true);
-  return withTenant(ctxOf(tenantId, userId), async (tx) => {
+  const result = await withTenant(ctxOf(tenantId, userId), async (tx) => {
     const a = await loadDraft(tx, tenantId, assessmentId);
     if (a.status === "closed") throw new AssessmentError("La autoevaluación ya está cerrada");
     const items = await tx
@@ -186,6 +186,25 @@ export async function closeAssessment(tenantId: string, userId: string, assessme
       improvements: failing.length,
     };
   });
+  // El plan de mejoramiento también alimenta el módulo central de acciones (CAPA), sin duplicar por ítem.
+  if (result.improvements) {
+    const { createAction } = await import("@/modules/capa/service");
+    const items = await listImprovements(tenantId, assessmentId);
+    const fallbackDue = new Date(Date.now() + 30 * 86_400_000).toISOString().slice(0, 10);
+    for (const i of items)
+      await createAction(
+        tenantId,
+        userId,
+        {
+          type: "corrective",
+          title: i.description.slice(0, 200),
+          responsibleName: i.responsibleName ?? "Por asignar",
+          dueDate: i.dueDate ?? fallbackDue,
+        },
+        { source: "assessment", sourceId: i.id },
+      ).catch(() => undefined);
+  }
+  return result;
 }
 
 export async function registerWithMinistry(
