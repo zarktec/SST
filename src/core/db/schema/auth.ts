@@ -1,4 +1,4 @@
-import { boolean, pgTable, text, timestamp, index } from "drizzle-orm/pg-core";
+import { bigint, boolean, index, integer, pgTable, text, timestamp } from "drizzle-orm/pg-core";
 import { platformRole } from "./enums";
 
 /**
@@ -32,6 +32,8 @@ export const session = pgTable(
     activeTenantId: text(),
     impersonatedBy: text(),
     impersonationReason: text(),
+    /** password | magic_link | google | microsoft: permite exigir SSO por empresa. */
+    loginMethod: text(),
     createdAt: timestamp({ withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp({ withTimezone: true }).notNull().defaultNow(),
   },
@@ -76,6 +78,9 @@ export const twoFactor = pgTable("two_factor", {
   userId: text()
     .notNull()
     .references(() => user.id, { onDelete: "cascade" }),
+  verified: boolean().default(true),
+  failedVerificationCount: integer().default(0),
+  lockedUntil: timestamp({ withTimezone: true }),
 });
 
 /** Personal de la plataforma (no pertenece a ninguna empresa cliente). 2FA obligatorio. */
@@ -85,4 +90,12 @@ export const platformStaff = pgTable("platform_staff", {
     .references(() => user.id, { onDelete: "cascade" }),
   role: platformRole().notNull(),
   createdAt: timestamp({ withTimezone: true }).notNull().defaultNow(),
+});
+
+/** Límite de peticiones de Better Auth (almacenamiento en BD: funciona entre instancias serverless). */
+export const rateLimit = pgTable("rate_limit", {
+  id: text().primaryKey(),
+  key: text().notNull().unique(),
+  count: integer().notNull(),
+  lastRequest: bigint({ mode: "number" }).notNull(),
 });

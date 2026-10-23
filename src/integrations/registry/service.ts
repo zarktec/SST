@@ -30,8 +30,8 @@ type Runtime = {
 const cache = new Map<string, { at: number; value: Runtime }>();
 
 export function invalidateIntegrationCache(key?: string) {
-  if (key) for (const k of cache.keys()) k.startsWith(`${key}:`) && cache.delete(k);
-  else cache.clear();
+  if (!key) return cache.clear();
+  for (const k of [...cache.keys()]) if (k.startsWith(`${key}:`)) cache.delete(k);
 }
 
 const aad = (key: string, env: Env, name: string) => `integration:${key}:${env}:${name}`;
