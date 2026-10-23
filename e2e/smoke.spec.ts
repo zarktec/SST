@@ -1,24 +1,13 @@
 import { expect, test, type Page } from "@playwright/test";
-import { config } from "dotenv";
-import { Pool } from "pg";
+import { ADMIN, TENANT, resetState } from "./helpers";
 
-config({ path: ".env.local" });
-
-// El límite de 5 inicios de sesión por minuto aplica también a los tests: se limpia entre pruebas.
-test.beforeEach(async () => {
-  const pool = new Pool({ connectionString: process.env.DATABASE_URL });
-  await pool.query("DELETE FROM rate_limit");
-  await pool.end();
-});
+test.beforeEach(resetState);
 
 /** El cliente HTTP de Node no resuelve *.localhost (el navegador sí): se envía el Host a mano. */
 const viaHost = (host: string, path: string) => ({
   url: `http://127.0.0.1:3000${path}`,
   headers: { host },
 });
-
-const TENANT = "http://demo.localhost:3000";
-const ADMIN = "http://admin.localhost:3000";
 
 async function noHorizontalScroll(page: Page) {
   const overflow = await page.evaluate(

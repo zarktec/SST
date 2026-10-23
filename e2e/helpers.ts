@@ -1,0 +1,45 @@
+import { expect, type Page } from "@playwright/test";
+import { generateSync } from "otplib";
+import { config } from "dotenv";
+import { Pool } from "pg";
+
+config({ path: ".env.local" });
+
+export const TENANT = "http://demo.localhost:3000";
+export const ADMIN = "http://admin.localhost:3000";
+export const ADMIN_EMAIL = "admin@zark.pro";
+export const ADMIN_PASSWORD = "SuperClave-2026!";
+
+/** Estado limpio entre pruebas: sin límites de tasa y SUPER ADMIN sin 2FA ni integraciones configuradas. */
+export async function resetState() {
+  const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+  await pool.query("DELETE FROM rate_limit");
+  await pool.query("DELETE FROM two_factor");
+  await pool.query('UPDATE "user" SET two_factor_enabled = false WHERE email = $1', [ADMIN_EMAIL]);
+  await pool.query(
+    'DELETE FROM session WHERE user_id IN (SELECT id FROM "user" WHERE email = $1)',
+    [ADMIN_EMAIL],
+  );
+  await pool.query("DELETE FROM integration");
+  await pool.end();
+}
+
+/** Inicia sesión como SUPER ADMIN y activa 2FA por la UI (genera el código TOTP con el secreto del QR). */
+export async function loginAdminWith2fa(page: Page) {
+  await page.goto(`${ADMIN}/login`);
+  await page.getByLabel("Correo electrónico").fill(ADMIN_EMAIL);
+  await page.getByLabel("Contraseña").fill(ADMIN_PASSWORD);
+  await page.getByRole("button", { name: "Ingresar" }).click();
+  await expect(page).toHaveURL(/\/security\/2fa/);
+  await page.getByLabel("Confirma tu contraseña").fill(ADMIN_PASSWORD);
+  const enable = page.waitForResponse((r) => r.url().includes("/two-factor/enable"));
+  await page.getByRole("button", { name: "Generar código QR" }).click();
+  const { totpURI } = (await (await enable).json()) as { totpURI: string };
+  const secret = new URL(totpURI).searchParams.get("secret")!;
+  await page.getByLabel("Código de 6 dígitos").fill(generateSync({ secret }));
+  await page.getByRole("button", { name: "Activar" }).click();
+  await expect(page.getByText("2FA activado")).toBeVisible();
+  await page.getByRole("button", { name: "Continuar" }).click();
+  await expect(page.getByRole("heading", { name: "Panel de plataforma" })).toBeVisible();
+  return secret;
+}

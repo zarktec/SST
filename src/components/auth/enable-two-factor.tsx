@@ -1,5 +1,6 @@
 "use client";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import QRCode from "qrcode";
 import { useState } from "react";
 import { Alert } from "@/components/ui/alert";
@@ -9,6 +10,7 @@ import { authClient } from "@/lib/auth-client";
 
 /** Activación de TOTP (obligatoria para SUPER ADMIN): contraseña → QR → verificación → códigos de respaldo. */
 export function EnableTwoFactor() {
+  const router = useRouter();
   const [step, setStep] = useState<"password" | "verify" | "done">("password");
   const [password, setPassword] = useState("");
   const [code, setCode] = useState("");
@@ -46,7 +48,7 @@ export function EnableTwoFactor() {
             <li key={c}>{c}</li>
           ))}
         </ul>
-        <Button className="w-full" onClick={() => (window.location.href = "/")}>
+        <Button className="w-full" onClick={() => router.replace("/")}>
           Continuar
         </Button>
       </div>

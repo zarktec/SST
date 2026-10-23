@@ -46,4 +46,6 @@ Ver sección "Estado de fases" al final; actualizar al cerrar cada fase.
 
 ### Estado de fases
 
-- Fase 0: en curso.
+- Fase 0: **completa** (pendiente de tu revisión). Hecho: scaffold + CI, esquema + RLS + cifrado de sobre, centro de integraciones (Wompi, Siigo, AUCO, Google, Microsoft) con UI, auth (correo, magic link, 2FA, handoff por dominio central, Google cableado), proxy por host, marca blanca (contraste AA), layout móvil, PWA base.
+  - Pendiente de Fase 0: probar Google/Microsoft con credenciales reales (Microsoft Entra: al final, por decisión del dueño); CSP con nonce y E2E en CI (Fase 7); Edge Config para caché de hosts (Fase 1, con API de dominios de Vercel); implementación de la prueba de conexión de AUCO (falta su documentación).
+  - E2E local: `pnpm build && pnpm db:migrate && pnpm db:seed && pnpm exec playwright test` (usa `.env.local`, hosts `*.localhost:3000`).
