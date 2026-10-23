@@ -42,7 +42,7 @@ Lee también `AGENTS.md`: esta versión de Next.js (16) difiere de lo habitual; 
 
 ## Estado
 
-Ver sección "Estado de fases" al final; actualizar al cerrar cada fase.
+Ver sección "Estado de fases" al final; actualizar al cerrar cada fase. Pendientes y decisiones abiertas: `docs/PENDIENTES.md` (actualizar al detectar o cerrar uno).
 
 ### Estado de fases
 
