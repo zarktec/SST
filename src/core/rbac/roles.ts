@@ -7,7 +7,8 @@ export const ACTIONS = ["view", "create", "edit", "delete", "approve", "export"]
 export type Action = (typeof ACTIONS)[number];
 export type Scope = "all" | "own" | "team" | "center";
 
-export const ADMIN_MODULES = ["users", "billing", "branding", "domain"] as const;
+/** `company`: datos de la empresa, sedes, responsable del SG-SST y onboarding. */
+export const ADMIN_MODULES = ["users", "billing", "branding", "domain", "company"] as const;
 
 export const SST_MODULES = [
   "policy",
@@ -83,7 +84,7 @@ export function defaultPermissions(role: SystemRoleKey): PermissionGrant[] {
         ...grant(["harassment"], ["view", "create", "edit"]),
       ];
     case "RESPONSABLE_SST":
-      return grant(SST_MODULES, ACTIONS);
+      return [...grant(SST_MODULES, ACTIONS), ...grant(["company"], ["view", "edit"])];
     case "APOYO_SST":
       return grant(SST_MODULES, ["view", "create", "edit"]);
     case "MIEMBRO_COPASST":

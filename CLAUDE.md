@@ -54,6 +54,8 @@ Ver sección "Estado de fases" al final; actualizar al cerrar cada fase. Pendien
   - Decisiones provisionales: los cambios de plan aplican en la próxima renovación (sin prorrateo; pendiente del dueño); motivo de nota crédito y responsabilidades fiscales/códigos DIAN `TODO-NORMA` (validar con contador); correo de factura sin PDF adjunto (se descarga del portal).
   - Pendiente: pruebas sandbox reales de Wompi/Siigo/AUCO; `RESEND_API_KEY`, `BLOB_READ_WRITE_TOKEN`, token de API de Vercel para dominios por empresa; impersonación de soporte; catálogo completo de municipios DANE.
 
+- Fase 2 (en curso): **2.1 onboarding hecho** (datos de empresa, clasificación 7/21/60 con aviso al cambiar, sedes, responsable con alerta de actualización de 20 h, colores de marca, módulo de permisos `company`, `requirePermission(modulo, acción)` en `src/core/auth/session.ts`). Pendiente: 2.2 trabajadores/contratistas, 2.3 autoevaluación 0312, 2.4 matriz legal, 2.5 matriz GTC 45, 2.6 plan anual.
+
 ## Despliegue (Vercel)
 
 - Proyecto Vercel `sst` (equipo ZarK, `prj_kpoOB6LCtrFYpXrk1s6oXhU1aQfm`), Next.js, Node 22, región iad1. Dominios agregados: `sst.zark.pro`, `admin.`, `auth.` y `*.sst.zark.pro`.

@@ -33,6 +33,11 @@ export const tenant = pgTable("tenant", {
   riskClass: integer(),
   arl: text(),
   legalRepresentative: text(),
+  /** Trabajadores declarados en el onboarding (luego se contrastan con el módulo de trabajadores). */
+  workersCount: integer(),
+  /** Grupo de estándares mínimos que aplica (7, 21 o 60), calculado por la clasificación automática. */
+  standardsGroup: integer(),
+  onboardingCompletedAt: timestamp({ withTimezone: true }),
   /** Solo SSO (Google/Microsoft) para los usuarios de la empresa. */
   ssoOnly: boolean().notNull().default(false),
   /** Dominios de correo autorizados a ingresar sin invitación (spec 5.9). */

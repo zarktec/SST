@@ -27,6 +27,13 @@ export async function resetState() {
     [ADMIN_EMAIL],
   );
   await pool.query("DELETE FROM integration");
+  // Onboarding de la empresa demo: vuelve a empezar en cada prueba.
+  const demo = "(SELECT id FROM tenant WHERE slug = 'demo')";
+  for (const t of ["work_center", "sst_responsible", "tenant_alert"])
+    await pool.query(`DELETE FROM ${t} WHERE tenant_id IN ${demo}`);
+  await pool.query(
+    "UPDATE tenant SET workers_count = NULL, standards_group = NULL, onboarding_completed_at = NULL, risk_class = NULL WHERE slug = 'demo'",
+  );
   // Empresas creadas por las pruebas E2E (los logs de solo-inserción exigen desactivar triggers: BD local de pruebas).
   const client = await pool.connect();
   try {

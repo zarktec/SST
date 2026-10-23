@@ -2,7 +2,9 @@ import "server-only";
 import { eq } from "drizzle-orm";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
-import { schema, systemDb } from "@/core/db";
+import { schema, systemDb, withTenant } from "@/core/db";
+import { loadPermissions, scopeOf } from "@/core/rbac/can";
+import type { Action, PermissionModule } from "@/core/rbac/roles";
 import { classifyHost } from "@/core/tenancy/hosts";
 import { resolveTenantByHost, type ResolvedTenant } from "@/core/tenancy/resolve";
 import { resolveTenantAccess } from "./access";
@@ -81,4 +83,25 @@ export async function requireTenantMember(): Promise<TenantSessionContext> {
     roleKey: m.systemKey,
     readOnly: tenant.status === "suspended",
   };
+}
+
+export class ForbiddenError extends Error {
+  constructor() {
+    super("No tienes permiso para esta acción");
+  }
+}
+
+/**
+ * Guard por permiso (módulo + acción) para páginas y acciones de la empresa. Devuelve el contexto con el alcance
+ * concedido. En acciones que escriben, además exige que la cuenta no esté suspendida (solo lectura).
+ */
+export async function requirePermission(module: PermissionModule, action: Action) {
+  const ctx = await requireTenantMember();
+  const perms = await withTenant({ tenantId: ctx.tenant.tenantId }, (tx) =>
+    loadPermissions(tx, ctx.roleId),
+  );
+  const scope = scopeOf(perms, module, action);
+  if (!scope) redirect("/");
+  if (action !== "view" && action !== "export" && ctx.readOnly) throw new ForbiddenError();
+  return { ...ctx, scope, permissions: perms };
 }

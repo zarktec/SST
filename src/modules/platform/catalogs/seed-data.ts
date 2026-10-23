@@ -50,6 +50,20 @@ export const SEEDS: Seed[] = [
         "Resolución 1843 de 2025",
       ),
       p(
+        "responsable.actualizacion_anios",
+        3,
+        "años",
+        "Periodicidad de la actualización de 20 horas del curso de 50 horas del responsable del SG-SST",
+        "Resolución 4927 de 2016; Circular 047 de 2025",
+      ),
+      p(
+        "responsable.alerta_dias",
+        90,
+        "días",
+        "Anticipación para alertar el vencimiento de la actualización del curso del responsable",
+        "Parametrizable (no hay norma que lo fije)",
+      ),
+      p(
         "psicosocial.periodicidad_riesgo_alto_meses",
         12,
         "meses",

@@ -1,19 +1,60 @@
 import Link from "next/link";
+import { Alert } from "@/components/ui/alert";
 import { Card, CardDescription, CardTitle } from "@/components/ui/card";
 import { requireTenantMember } from "@/core/auth/session";
+import { withTenant } from "@/core/db";
+import { can, loadPermissions } from "@/core/rbac/can";
+import { getOnboardingState, openAlerts } from "@/modules/company/service";
+import { ResolveAlertButton } from "./onboarding/forms";
 
 export const metadata = { title: "Inicio" };
 
 export default async function TenantHome() {
   const ctx = await requireTenantMember();
+  const perms = await withTenant({ tenantId: ctx.tenant.tenantId }, (tx) =>
+    loadPermissions(tx, ctx.roleId),
+  );
+  const canSetup = can(perms, "company", "edit");
+  const [state, alerts] = await Promise.all([
+    getOnboardingState(ctx.tenant.tenantId),
+    openAlerts(ctx.tenant.tenantId),
+  ]);
+  const pending = canSetup && !state.tenant.onboardingCompletedAt;
   return (
     <div className="space-y-4">
       <h1 className="text-2xl font-bold">Hola, {ctx.user.name.split(" ")[0]}</h1>
+      {(canSetup ? alerts : []).map((a) => (
+        <Alert
+          key={a.id}
+          variant="warning"
+          className="flex flex-wrap items-center justify-between gap-2"
+        >
+          <span>{a.message}</span>
+          <ResolveAlertButton id={a.id} />
+        </Alert>
+      ))}
+      {pending && (
+        <Card>
+          <CardTitle>Configura tu SG-SST</CardTitle>
+          <CardDescription className="mt-1">
+            Completa los datos de la empresa, sedes y responsable para clasificar tus estándares
+            mínimos.
+          </CardDescription>
+          <Link
+            href="/onboarding"
+            className="text-primary mt-2 inline-block min-h-11 py-2 underline"
+          >
+            Continuar con el onboarding
+          </Link>
+        </Card>
+      )}
       <Card>
         <CardTitle>Bienvenido a {ctx.tenant.tradeName}</CardTitle>
         <CardDescription className="mt-1">
-          Rol: {ctx.roleKey ?? "personalizado"}. Los módulos del SG-SST se activan por fases a
-          partir de la Fase 2.
+          Rol: {ctx.roleKey ?? "personalizado"}.
+          {state.tenant.standardsGroup
+            ? ` Te aplican ${state.tenant.standardsGroup} estándares mínimos.`
+            : ""}
         </CardDescription>
       </Card>
       {ctx.roleKey === "ADMIN_EMPRESA" && (

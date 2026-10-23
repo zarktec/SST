@@ -34,6 +34,14 @@ Registro vivo: se agrega al detectarlo y se tacha (o mueve a "Resuelto") al cerr
 - [ ] Fijar `engines` de Node a 22.x en `package.json`.
 - [ ] CSP con nonce y E2E en CI (Fase 7).
 
+## Fase 2 (se agrega a medida que avanza)
+
+- [ ] Carga del logotipo (onboarding paso 4): requiere `BLOB_READ_WRITE_TOKEN`; hoy solo colores con contraste AA.
+- [ ] Los parámetros nuevos del seed (`responsable.actualizacion_anios`, `responsable.alerta_dias`) no se agregan a catálogos ya sembrados (producción): el código usa el valor por defecto 3 años / 90 días hasta que el SUPER ADMIN publique una versión con ellos.
+- [ ] Perfil mínimo exigido del responsable del SG-SST según tamaño y riesgo (`TODO-NORMA`): hoy solo se valida licencia vigente, curso de 50 h y actualización de 20 h.
+- [ ] Revisar por qué `redirect("/")` desde una server action en el host de la empresa llega al sitio de marketing (se evitó navegando desde el cliente).
+- [ ] Evaluación inicial / plan de trabajo sugerido del onboarding (paso 5): depende de la autoevaluación (2.3) y el plan anual (2.6).
+
 ## Resuelto
 
 - [x] Enlace repo–Vercel, Neon, SUPER_ADMIN, DNS en Cloudflare.
