@@ -127,6 +127,20 @@
       "when": 1792751106008,
       "tag": "0017_workers_rls",
       "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "7",
+      "when": 1792751954323,
+      "tag": "0018_assessment",
+      "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "7",
+      "when": 1792751955323,
+      "tag": "0019_assessment_rls",
+      "breakpoints": true
     }
   ]
 }

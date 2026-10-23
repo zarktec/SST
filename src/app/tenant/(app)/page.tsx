@@ -4,6 +4,7 @@ import { Card, CardDescription, CardTitle } from "@/components/ui/card";
 import { requireTenantMember } from "@/core/auth/session";
 import { withTenant } from "@/core/db";
 import { can, loadPermissions } from "@/core/rbac/can";
+import { assessmentReminderFor } from "@/modules/assessment/service";
 import { getOnboardingState, openAlerts } from "@/modules/company/service";
 import { ResolveAlertButton } from "./onboarding/forms";
 
@@ -15,6 +16,7 @@ export default async function TenantHome() {
     loadPermissions(tx, ctx.roleId),
   );
   const canSetup = can(perms, "company", "edit");
+  const reminder = await assessmentReminderFor(ctx.tenant.tenantId);
   const [state, alerts] = await Promise.all([
     getOnboardingState(ctx.tenant.tenantId),
     openAlerts(ctx.tenant.tenantId),
@@ -33,6 +35,16 @@ export default async function TenantHome() {
           <ResolveAlertButton id={a.id} />
         </Alert>
       ))}
+      {reminder && can(perms, "standards", "view") && (
+        <Alert variant="warning">
+          {reminder === "aplicar"
+            ? "Es momento de aplicar la autoevaluación de estándares mínimos. "
+            : "Recuerda registrar la autoevaluación ante el Ministerio del Trabajo. "}
+          <Link href="/estandares" className="underline">
+            Ir a Estándares
+          </Link>
+        </Alert>
+      )}
       {pending && (
         <Card>
           <CardTitle>Configura tu SG-SST</CardTitle>

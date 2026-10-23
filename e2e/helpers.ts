@@ -30,6 +30,9 @@ export async function resetState() {
   // Onboarding de la empresa demo: vuelve a empezar en cada prueba.
   const demo = "(SELECT id FROM tenant WHERE slug = 'demo')";
   for (const t of [
+    "improvement_item",
+    "self_assessment_item",
+    "self_assessment",
     "contractor_ss_check",
     "worker",
     "work_center",
@@ -42,6 +45,13 @@ export async function resetState() {
     `INSERT INTO role_permission (id, tenant_id, role_id, module, action, scope)
      SELECT gen_random_uuid(), r.tenant_id, r.id, 'workers', a.action::permission_action, 'all'
      FROM role r CROSS JOIN (VALUES ('create'),('edit')) AS a(action)
+     WHERE r.system_key = 'ADMIN_EMPRESA' AND r.tenant_id IN ${demo}
+     ON CONFLICT DO NOTHING`,
+  );
+  await pool.query(
+    `INSERT INTO role_permission (id, tenant_id, role_id, module, action, scope)
+     SELECT gen_random_uuid(), r.tenant_id, r.id, 'standards', a.action::permission_action, 'all'
+     FROM role r CROSS JOIN (VALUES ('create'),('edit'),('approve')) AS a(action)
      WHERE r.system_key = 'ADMIN_EMPRESA' AND r.tenant_id IN ${demo}
      ON CONFLICT DO NOTHING`,
   );
@@ -73,6 +83,10 @@ export async function resetState() {
       "DELETE FROM catalog_item WHERE version_id IN (SELECT id FROM catalog_version WHERE catalog = 'hazard_catalog')",
     );
     await client.query("DELETE FROM catalog_version WHERE catalog = 'hazard_catalog'");
+    await client.query(
+      "DELETE FROM catalog_item WHERE version_id IN (SELECT id FROM catalog_version WHERE catalog = 'standards_0312')",
+    );
+    await client.query("DELETE FROM catalog_version WHERE catalog = 'standards_0312'");
   } finally {
     client.release();
   }
@@ -108,4 +122,44 @@ export async function loginAdminWith2fa(page: Page) {
   await page.getByRole("button", { name: "Continuar" }).click();
   await expect(page.getByRole("heading", { name: "Panel de plataforma" })).toBeVisible();
   return secret;
+}
+
+/** Catálogo mínimo de estándares (solo pruebas E2E): publicado por SQL porque la carga real es un CSV del SUPER ADMIN. */
+export async function seedStandardsCatalog() {
+  const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+  const client = await pool.connect();
+  try {
+    await client.query("SET session_replication_role = replica");
+    const { rows } = await client.query(
+      `INSERT INTO catalog_version (catalog, version, status, effective_from, source_norm, published_at)
+       VALUES ('standards_0312', 1, 'published', '2019-01-01', 'Resolución 0312 de 2019 (E2E)', now()) RETURNING id`,
+    );
+    const items = [
+      ["1.1.1", 4],
+      ["1.1.2", 6],
+    ];
+    for (const [i, [code, weight]] of items.entries())
+      await client.query(
+        "INSERT INTO catalog_item (version_id, code, data, sort_order) VALUES ($1, $2, $3, $4)",
+        [
+          rows[0].id,
+          code,
+          JSON.stringify({
+            phva: "P",
+            standardCode: "1",
+            standardName: "Recursos",
+            itemCode: code,
+            criterion: `Criterio ${code}`,
+            verification: "Documento",
+            weight,
+            appliesToGroups: [7, 21, 60],
+            sourceNorm: "Res. 0312 (E2E)",
+          }),
+          i,
+        ],
+      );
+  } finally {
+    client.release();
+    await pool.end();
+  }
 }

@@ -48,6 +48,12 @@ Registro vivo: se agrega al detectarlo y se tacha (o mueve a "Resuelto") al cerr
 - [ ] Perfiles de cargo/profesiograma y fechas de documentos por persona (Fase 3, medicina del trabajo).
 - [ ] Contratistas como empresa (NIT, requisitos de SST, evaluación): hoy solo personas con campo "empresa contratista".
 
+- [ ] **Catálogo de estándares mínimos (Res. 0312) sin cargar**: la autoevaluación no puede iniciarse hasta que el SUPER ADMIN lo importe (CSV/JSON) con ciclo PHVA, estándar, ítem, criterio, verificación, valor y grupos aplicables. Requiere el texto oficial.
+- [ ] Tratamiento de "no aplica" en el puntaje (hoy: cuenta con su valor máximo), mes de aplicación (12) y plazo de registro ante el Ministerio (vacío = sin recordatorio): `TODO-NORMA`. Parámetros nuevos no sembrados en producción.
+- [ ] Evidencias de la autoevaluación como adjuntos (hoy descripción/enlace): requiere almacenamiento de archivos.
+- [ ] Plan de mejoramiento: se integrará con acciones CAPA (Fase 4) y con el plan anual (2.6); recordatorios por correo de acciones vencidas (Fase 6).
+- [ ] Botón para exportar la autoevaluación a PDF/Excel (Fase 6, reportes regulatorios).
+
 ## Resuelto
 
 - [x] Enlace repo–Vercel, Neon, SUPER_ADMIN, DNS en Cloudflare.

@@ -71,6 +71,27 @@ export const SEEDS: Seed[] = [
         "Parametrizable (la norma exige verificar el pago, no fija este día)",
       ),
       p(
+        "autoevaluacion.mes_aplicacion",
+        12,
+        "mes",
+        "Mes a partir del cual se recuerda aplicar la autoevaluación de estándares mínimos",
+        "Resolución 0312 de 2019",
+      ),
+      p(
+        "autoevaluacion.plazo_registro_ministerio",
+        "",
+        "fecha AAAA-MM-DD",
+        "Fecha límite para registrar la autoevaluación en la plataforma del Ministerio del Trabajo (la fija la circular anual; vacío = sin recordatorio)",
+        "Circular anual del Ministerio del Trabajo",
+      ),
+      p(
+        "autoevaluacion.no_aplica_cuenta_completo",
+        true,
+        "",
+        "Un ítem que no aplica (con justificación) se califica con su valor máximo",
+        "Resolución 0312 de 2019",
+      ),
+      p(
         "psicosocial.periodicidad_riesgo_alto_meses",
         12,
         "meses",
