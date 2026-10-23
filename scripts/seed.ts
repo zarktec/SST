@@ -7,6 +7,7 @@ import { closeDb, schema, systemDb, withTenant } from "../src/core/db";
 import { seedTenantRoles } from "../src/core/rbac/seed-roles";
 import { ensureIntegrations } from "../src/integrations/registry/service";
 import { seedHolidays } from "../src/core/calendar/service";
+import { seedCatalogs } from "../src/modules/platform/catalogs/service";
 import { seedPlans } from "../src/modules/platform/plans/service";
 import { uuidv7 } from "../src/lib/uuid";
 
@@ -16,6 +17,7 @@ export async function seed() {
   await ensureIntegrations();
   await seedPlans();
   await seedHolidays([2026, 2027, 2028, 2029, 2030]);
+  await seedCatalogs();
 
   const email = process.env.SUPER_ADMIN_EMAIL?.toLowerCase();
   const password = process.env.SUPER_ADMIN_PASSWORD;

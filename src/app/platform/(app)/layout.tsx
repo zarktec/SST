@@ -8,7 +8,7 @@ const NAV: NavItem[] = [
   { href: "/empresas", label: "Empresas", icon: "Building2" },
   { href: "/planes", label: "Planes", icon: "CreditCard" },
   { href: "/integrations", label: "Integraciones", icon: "Plug" },
-  { href: "/auditoria", label: "Auditoría", icon: "ScrollText" },
+  { href: "/catalogos", label: "Catálogos", icon: "ScrollText" },
 ];
 
 export default async function PlatformLayout({ children }: LayoutProps<"/platform">) {

@@ -32,3 +32,5 @@ export const subscriptionStatus = pgEnum("subscription_status", [
   "suspended",
   "cancelled",
 ]);
+
+export const catalogStatus = pgEnum("catalog_status", ["draft", "published", "retired"]);

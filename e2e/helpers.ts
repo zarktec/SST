@@ -47,6 +47,11 @@ export async function resetState() {
       await client.query(`DELETE FROM ${t} WHERE tenant_id IN ${sub}`);
     }
     await client.query("DELETE FROM tenant WHERE slug LIKE 'e2e-%'");
+    // Catálogo vacío usado por las pruebas E2E (las versiones publicadas son inmutables: se borra con triggers desactivados).
+    await client.query(
+      "DELETE FROM catalog_item WHERE version_id IN (SELECT id FROM catalog_version WHERE catalog = 'hazard_catalog')",
+    );
+    await client.query("DELETE FROM catalog_version WHERE catalog = 'hazard_catalog'");
   } finally {
     client.release();
   }
