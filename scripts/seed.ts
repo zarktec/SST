@@ -3,12 +3,13 @@ config({ path: ".env.local" });
 config();
 import { hashPassword } from "better-auth/crypto";
 import { and, eq } from "drizzle-orm";
-import { closeDb, schema, systemDb, withTenant } from "../src/core/db";
+import { closeDb, schema, systemDb, withPlatform, withTenant } from "../src/core/db";
 import { seedTenantRoles } from "../src/core/rbac/seed-roles";
 import { ensureIntegrations } from "../src/integrations/registry/service";
 import { seedHolidays } from "../src/core/calendar/service";
 import { seedCatalogs } from "../src/modules/platform/catalogs/service";
-import { seedPlans } from "../src/modules/platform/plans/service";
+import { createTrialSubscription } from "../src/modules/billing/subscriptions";
+import { getTrialPlan, seedPlans } from "../src/modules/platform/plans/service";
 import { uuidv7 } from "../src/lib/uuid";
 
 /** Seed idempotente: SUPER ADMIN inicial (variables de entorno), integraciones y empresa demo. */
@@ -59,6 +60,34 @@ export async function seed() {
     })
     .onConflictDoNothing()
     .returning();
+  const [demoTenant] = demo
+    ? [demo]
+    : await db.select().from(schema.tenant).where(eq(schema.tenant.slug, "demo"));
+  const trial = await getTrialPlan();
+  if (demoTenant && trial) {
+    // Suscripción de prueba de la empresa demo (idempotente).
+    await withPlatform(
+      { actorId: "seed", action: "seed.demo.subscription", tenantId: demoTenant.id, audit: false },
+      async (tx) => {
+        const has = await tx
+          .select({ id: schema.subscription.id })
+          .from(schema.subscription)
+          .where(eq(schema.subscription.tenantId, demoTenant.id));
+        if (!has.length)
+          await createTrialSubscription(tx, demoTenant.id, {
+            planId: trial.id,
+            period: null,
+            amountCents: null,
+            vat: {
+              enabled: trial.vatEnabled,
+              included: trial.vatIncluded,
+              rateBp: trial.vatRateBp,
+            },
+            trialDays: trial.trialDays ?? 30,
+          });
+      },
+    );
+  }
   if (demo) {
     await withTenant({ tenantId: demo.id }, async (tx) => {
       await seedTenantRoles(tx, demo.id);

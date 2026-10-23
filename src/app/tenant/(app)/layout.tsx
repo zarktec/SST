@@ -17,7 +17,11 @@ export default async function TenantAppLayout({ children }: LayoutProps<"/tenant
     <AppShell
       brandName={ctx.tenant.tradeName}
       logoUrl={ctx.tenant.brand.logoLightUrl}
-      nav={NAV}
+      nav={
+        ctx.roleKey === "ADMIN_EMPRESA"
+          ? [...NAV, { href: "/facturacion", label: "Facturación", icon: "CreditCard" }]
+          : NAV
+      }
       userLabel={ctx.user.email}
       banner={
         ctx.readOnly ? (

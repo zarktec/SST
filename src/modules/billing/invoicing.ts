@@ -278,7 +278,7 @@ export async function listInvoices(tenantId: string) {
         createdAt: invoice.createdAt,
       })
       .from(invoice)
-      .orderBy(invoice.createdAt),
+      .orderBy(desc(invoice.createdAt)),
   );
 }
 

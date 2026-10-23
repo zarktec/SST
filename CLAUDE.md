@@ -50,6 +50,10 @@ Ver sección "Estado de fases" al final; actualizar al cerrar cada fase.
   - Pendiente de Fase 0: probar Google/Microsoft con credenciales reales (Microsoft Entra: al final, por decisión del dueño); CSP con nonce y E2E en CI (Fase 7); Edge Config para caché de hosts (Fase 1, con API de dominios de Vercel); flujo de validación AUCO (Aucoface) y su webhook, en la fase del complemento.
   - E2E local: `pnpm build && pnpm db:migrate && pnpm db:seed && pnpm exec playwright test` (usa `.env.local`, hosts `*.localhost:3000`).
 
+- Fase 1: **completa** (pendiente de tu revisión y de las pruebas reales de integraciones). Hecho: planes/cupones/IVA configurables, empresas + suscripciones (trial, mora, suspensión, cancelación), festivos/días hábiles, catálogos normativos versionados, Wompi (tokenización en navegador, cobro recurrente, reintentos, webhooks), Siigo (factura por pago, conciliación, notas crédito), portal de facturación de la empresa (`/facturacion`), vista SUPER ADMIN "Pagos y facturas", landing `/precios` y registro self-service (`/registro`).
+  - Decisiones provisionales: los cambios de plan aplican en la próxima renovación (sin prorrateo; pendiente del dueño); motivo de nota crédito y responsabilidades fiscales/códigos DIAN `TODO-NORMA` (validar con contador); correo de factura sin PDF adjunto (se descarga del portal).
+  - Pendiente: pruebas sandbox reales de Wompi/Siigo/AUCO; `RESEND_API_KEY`, `BLOB_READ_WRITE_TOKEN`, token de API de Vercel para dominios por empresa; impersonación de soporte; catálogo completo de municipios DANE.
+
 ## Despliegue (Vercel)
 
 - Proyecto Vercel `sst` (equipo ZarK, `prj_kpoOB6LCtrFYpXrk1s6oXhU1aQfm`), Next.js, Node 22, región iad1. Dominios agregados: `sst.zark.pro`, `admin.`, `auth.` y `*.sst.zark.pro`.

@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Card, CardDescription, CardTitle } from "@/components/ui/card";
 import { requireTenantMember } from "@/core/auth/session";
 
@@ -15,6 +16,11 @@ export default async function TenantHome() {
           partir de la Fase 2.
         </CardDescription>
       </Card>
+      {ctx.roleKey === "ADMIN_EMPRESA" && (
+        <Link href="/facturacion" className="text-primary text-sm underline">
+          Ir a Facturación (plan, pagos y facturas)
+        </Link>
+      )}
     </div>
   );
 }

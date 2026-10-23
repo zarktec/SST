@@ -12,6 +12,7 @@ export const wompi: IntegrationDef = {
       kind: "config",
       type: "url",
       required: true,
+      clientSafe: true, // URL pública: el navegador tokeniza la tarjeta directo contra la pasarela
       defaults: {
         sandbox: "https://sandbox.wompi.co/v1",
         production: "https://production.wompi.co/v1",

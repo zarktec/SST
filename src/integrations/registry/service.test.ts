@@ -98,11 +98,15 @@ describe.skipIf(!hasTestDb)("centro de integraciones", () => {
     expect(rt.config.apiBaseUrl).toBe("https://production.wompi.co/v1");
   });
 
-  it("al navegador solo viaja la llave pública", async () => {
+  it("al navegador solo viajan la llave pública y la URL pública de la API", async () => {
     await saveConfig("wompi", "sandbox", { publicKey: "pub_test_1" }, ACTOR);
     await setSecret("wompi", "sandbox", "privateKey", "prv_test_nunca_1234", { actorId: ACTOR });
     const safe = await getClientSafeConfig("wompi");
-    expect(safe).toEqual({ env: "sandbox", publicKey: "pub_test_1" });
+    expect(safe).toEqual({
+      env: "sandbox",
+      apiBaseUrl: "https://sandbox.wompi.co/v1",
+      publicKey: "pub_test_1",
+    });
   });
 
   it("probar conexión guarda el resultado y cuenta fallos consecutivos", async () => {

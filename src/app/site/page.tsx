@@ -9,12 +9,14 @@ export default function Landing() {
         Monta, administra y demuestra el cumplimiento de tu Sistema de Gestión de Seguridad y Salud
         en el Trabajo, con la evidencia lista desde la app.
       </p>
-      <p className="text-muted-foreground text-sm">
-        Precios y registro de empresas: disponibles en la Fase 1.
-      </p>
-      <Link href="/precios">
-        <Button variant="outline">Ver planes</Button>
-      </Link>
+      <div className="flex flex-wrap gap-3">
+        <Link href="/registro">
+          <Button>Empieza tu prueba gratuita</Button>
+        </Link>
+        <Link href="/precios">
+          <Button variant="outline">Ver planes y precios</Button>
+        </Link>
+      </div>
     </main>
   );
 }
