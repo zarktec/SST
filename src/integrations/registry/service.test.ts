@@ -138,6 +138,27 @@ describe.skipIf(!hasTestDb)("centro de integraciones", () => {
     });
   });
 
+  it("AUCO: usa la llave pública (puk_) en GET /company del ambiente stage", async () => {
+    await saveConfig("auco", "sandbox", { publicKey: "puk_test_ABC123" }, ACTOR);
+    let seen: { url: string; auth: string } | undefined;
+    const f = (async (url: string, init: RequestInit) => {
+      seen = { url, auth: (init.headers as Record<string, string>).Authorization };
+      return new Response(JSON.stringify({ name: "Zark" }), { status: 200 });
+    }) as unknown as typeof fetch;
+    expect(await testConnection("auco", "sandbox", ACTOR, f)).toEqual({
+      ok: true,
+      message: 'Conexión correcta con la organización "Zark".',
+    });
+    expect(seen).toEqual({ url: "https://dev.auco.ai/v1.5/ext/company", auth: "puk_test_ABC123" });
+    const unauthorized = (async () =>
+      new Response("{}", { status: 401 })) as unknown as typeof fetch;
+    expect((await testConnection("auco", "sandbox", ACTOR, unauthorized)).message).toMatch(/401/);
+    await saveConfig("auco", "sandbox", { publicKey: "abc" }, ACTOR);
+    expect((await testConnection("auco", "sandbox", ACTOR, f)).message).toMatch(/puk_/);
+    const safe = await getClientSafeConfig("auco");
+    expect(Object.keys(safe).sort()).toEqual(["env", "publicKey"]);
+  });
+
   it("alerta de secretos de Microsoft próximos a vencer, vencidos y de fallos repetidos", async () => {
     const now = new Date("2026-10-01T00:00:00Z");
     await setSecret("microsoft", "production", "clientSecret", "ms_secret_valor_0001", {
