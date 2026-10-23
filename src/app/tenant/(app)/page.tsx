@@ -95,6 +95,7 @@ export default async function TenantHome() {
             ["/comites", "Comités", "committees"],
             ["/medicina", "Medicina del trabajo", "medical"],
             ["/acciones", "Acciones (CAPA)", "actions"],
+            ["/accidentes", "Accidentes e incidentes", "incidents"],
             ["/convivencia", "Convivencia laboral", "ccl"],
             ["/acoso-sexual", "Acoso sexual", "harassment"],
           ]

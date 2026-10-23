@@ -17,3 +17,4 @@ export * from "./committees";
 export * from "./convivencia";
 export * from "./medical";
 export * from "./actions";
+export * from "./incidents";

@@ -76,6 +76,13 @@ Registro vivo: se agrega al detectarlo y se tacha (o mueve a "Resuelto") al cerr
 - [ ] Ausentismo: costo estimado digitado a mano (no se calcula con salario).
 - [ ] Cifrado de salud: los accesos de lectura de evaluaciones y quejas se registran; falta vista de auditoría para el SUPER ADMIN con autorización del tenant (impersonación).
 
+## Fase 4 (se agrega a medida que avanza)
+
+- [ ] Accidentes: plazos de reporte ARL/EPS (2 días hábiles) e investigación (15 días) y composición del equipo investigador son `TODO-NORMA` (parámetros `at.*`, aún no sembrados en producción; aplican los valores por defecto del código).
+- [ ] Accidentes: el FURAT se entrega como datos precargados para copiar al formato de la ARL (no se genera el PDF oficial ni se envía por la API de la ARL). Fotos del evento: pendientes de `BLOB_READ_WRITE_TOKEN`.
+- [ ] Accidentes: remisión a la ARL solo registra la fecha; falta adjuntar el informe y notificar a la ARL por correo. Investigación sin árbol de causas gráfico (texto por línea).
+- [ ] Enfermedad laboral: registro y calificación manual; falta seguimiento periódico y vínculo con medicina (vigilancia epidemiológica).
+
 ## Resuelto
 
 - [x] Enlace repo–Vercel, Neon, SUPER_ADMIN, DNS en Cloudflare.

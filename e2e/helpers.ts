@@ -31,6 +31,9 @@ export async function resetState() {
   const demo = "(SELECT id FROM tenant WHERE slug = 'demo')";
   for (const t of [
     "corrective_action",
+    "incident_investigation",
+    "incident",
+    "occupational_disease",
     "job_adaptation_task",
     "medical_evaluation",
     "absence",
