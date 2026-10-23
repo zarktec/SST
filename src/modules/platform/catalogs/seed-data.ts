@@ -155,6 +155,20 @@ export const SEEDS: Seed[] = [
         "Resolución 3461 de 2025; Ley 1010 de 2006",
       ),
       p(
+        "medicina.periodica_meses",
+        12,
+        "meses",
+        "Periodicidad de la evaluación médica periódica cuando el profesiograma no define otra (valor provisional)",
+        "Resolución 1843 de 2025",
+      ),
+      p(
+        "medicina.recordatorio_dias",
+        30,
+        "días",
+        "Anticipación del recordatorio de la evaluación periódica",
+        "Parametrizable (no hay norma que lo fije)",
+      ),
+      p(
         "psicosocial.periodicidad_riesgo_alto_meses",
         12,
         "meses",

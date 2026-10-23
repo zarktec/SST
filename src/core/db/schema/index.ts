@@ -15,3 +15,4 @@ export * from "./training";
 export * from "./ppe";
 export * from "./committees";
 export * from "./convivencia";
+export * from "./medical";

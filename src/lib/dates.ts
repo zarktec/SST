@@ -9,3 +9,10 @@ export function addMonths(date: string, n: number): string {
 export const daysBetween = (from: string, to: string): number =>
   Math.round((Date.parse(to) - Date.parse(from)) / 86_400_000);
 export const todayYmd = (): string => new Date().toISOString().slice(0, 10);
+
+export function addDays(date: string, n: number): string {
+  return new Date(Date.parse(date) + n * 86_400_000).toISOString().slice(0, 10);
+}
+/** Días entre dos fechas AAAA-MM-DD contando ambos extremos (una incapacidad del 1 al 3 son 3 días). */
+export const daysInclusive = (start: string, end: string): number =>
+  Math.round((Date.parse(end) - Date.parse(start)) / 86_400_000) + 1;

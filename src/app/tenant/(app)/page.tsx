@@ -93,6 +93,7 @@ export default async function TenantHome() {
             ["/capacitacion", "Capacitación", "training"],
             ["/epp", "EPP", "ppe"],
             ["/comites", "Comités", "committees"],
+            ["/medicina", "Medicina del trabajo", "medical"],
             ["/convivencia", "Convivencia laboral", "ccl"],
             ["/acoso-sexual", "Acoso sexual", "harassment"],
           ]

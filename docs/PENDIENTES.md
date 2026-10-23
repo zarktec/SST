@@ -62,6 +62,20 @@ Registro vivo: se agrega al detectarlo y se tacha (o mueve a "Resuelto") al cerr
 - [ ] Menú de navegación móvil: solo caben 5 ítems; el resto de módulos de "Planear" se alcanza desde el inicio. Diseñar un menú "Más" cuando haya más módulos (Fase 3+).
 - [ ] Onboarding paso 5 "plan de trabajo sugerido": ya existe en el plan anual (botón "Sugerir actividades"); falta enlazarlo desde el onboarding.
 
+## Fase 3 (se agrega a medida que avanza)
+
+- [ ] **Todos los números de la Fase 3 son provisionales (`TODO-NORMA`)**: umbral COPASST/Vigía (10), periodo (2 años), mínimos del CCL por parte, plazos de citación/reunión/seguimiento del CCL, periodicidad de la evaluación periódica (12 meses), retorno por ausencia (90 días), adaptación del puesto (20 días). Parámetros nuevos no sembrados en catálogos ya publicados (producción): el código usa los valores por defecto.
+- [ ] Composición del CCL por tamaño de empresa (Res. 3461 de 2025) y del COPASST por número de trabajadores: hoy solo paridad y mínimos configurables.
+- [ ] El acceso de los miembros del CCL se liga al **correo de su ficha de trabajador** (debe coincidir con el de su usuario). Falta un vínculo explícito usuario–trabajador y portal del trabajador (Fase 6).
+- [ ] Capacitaciones obligatorias del comité (CCL/COPASST) y reglamento del comité como documento firmado; brigada de emergencias (Fase 5).
+- [ ] Asistencia por QR: el freno de intentos por IP es en memoria (por instancia). Pasar a un limitador compartido (BD/Redis) con Inngest/Edge Config.
+- [ ] Votaciones: los enlaces personales se descargan en CSV una sola vez (o llegan por correo si hay RESEND_API_KEY); no hay reenvío individual ni recuperación de un enlace perdido (hay que regenerar la votación).
+- [ ] Certificado PDF solo de asistencia/aprobación; QR de verificación pública del certificado.
+- [ ] EPP: entregas con firma del trabajador en el dispositivo del encargado; firma en el celular del trabajador por QR (reutilizar el flujo de capacitación). Control de inventario por talla.
+- [ ] Medicina: solo concepto, restricciones y recomendaciones (nunca historia clínica). Falta profesiograma (exámenes por cargo y periodicidad), recordatorios por correo y reporte de ausentismo exportable (Fase 6); el indicador de ausentismo del catálogo `indicators` se conectará en la Fase 4.
+- [ ] Ausentismo: costo estimado digitado a mano (no se calcula con salario).
+- [ ] Cifrado de salud: los accesos de lectura de evaluaciones y quejas se registran; falta vista de auditoría para el SUPER ADMIN con autorización del tenant (impersonación).
+
 ## Resuelto
 
 - [x] Enlace repo–Vercel, Neon, SUPER_ADMIN, DNS en Cloudflare.
