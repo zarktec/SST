@@ -6,6 +6,8 @@ import { syncDomains } from "@/modules/platform/tenants/service";
 import { getPaymentProvider } from "@/integrations/payments";
 import { retryDueCharges } from "@/modules/billing/charging";
 import { billingHandlers } from "@/modules/billing/handlers";
+import { getInvoicingProvider } from "@/integrations/invoicing";
+import { reconcileInvoices } from "@/modules/billing/invoicing";
 import { registerBillingHooks } from "@/modules/billing/hooks";
 
 export const maxDuration = 300;
@@ -42,6 +44,7 @@ export async function GET(req: Request) {
     reminders: [],
   });
   const retries = await guard("reintentos", () => retryDueCharges(getPaymentProvider()), []);
+  const invoices = await guard("facturas", () => reconcileInvoices(getInvoicingProvider()), []);
   const domains = await guard("dominios", () => syncDomains(), { checked: 0, changed: 0 });
   const alerts = await guard("integraciones", () => integrationAlerts(), []);
   return NextResponse.json({
@@ -52,6 +55,7 @@ export async function GET(req: Request) {
       reminders: sweep.reminders.length,
     },
     retries: retries.length,
+    invoices: invoices.length,
     domains,
     alerts: alerts.length,
     errors,

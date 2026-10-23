@@ -1,4 +1,5 @@
 import { sql } from "drizzle-orm";
+import { customType } from "drizzle-orm/pg-core";
 import {
   bigint,
   boolean,
@@ -13,9 +14,18 @@ import {
   uuid,
 } from "drizzle-orm/pg-core";
 import { createdAt, id, updatedAt } from "./_helpers";
-import { billingPeriod, couponKind, paymentStatus, subscriptionStatus } from "./enums";
+import {
+  billingPeriod,
+  couponKind,
+  invoiceKind,
+  invoiceStatus,
+  paymentStatus,
+  subscriptionStatus,
+} from "./enums";
 import { coupon, plan } from "./plans";
 import { tenant } from "./tenancy";
+
+const customBytea = customType<{ data: Buffer }>({ dataType: () => "bytea" });
 
 /** Festivos de Colombia (editable por el SUPER ADMIN; se siembra con el cálculo de Ley Emiliani). */
 export const holiday = pgTable("holiday", {
@@ -200,4 +210,70 @@ export const webhookEvent = pgTable(
     error: text(),
   },
   (t) => [uniqueIndex("webhook_event_uq").on(t.provider, t.eventKey)],
+);
+
+/**
+ * Datos de facturación electrónica de la empresa (obligatorios antes del primer cobro). La empresa los edita
+ * directamente (RLS por empresa); los cambios aplican a las facturas siguientes.
+ */
+export const billingProfile = pgTable("billing_profile", {
+  tenantId: uuid()
+    .primaryKey()
+    .references(() => tenant.id),
+  /** Person | Company */
+  personType: text().notNull(),
+  /** Código DIAN/Siigo del tipo de documento: 13 CC, 22 CE, 31 NIT, 41 pasaporte… */
+  idType: text().notNull(),
+  identification: text().notNull(),
+  checkDigit: text(),
+  legalName: text().notNull(),
+  address: text().notNull(),
+  stateCode: text().notNull(),
+  cityCode: text().notNull(),
+  postalCode: text(),
+  phone: text().notNull(),
+  invoiceEmail: text().notNull(),
+  fiscalResponsibilities: text().array().notNull().default([]),
+  vatResponsible: boolean().notNull().default(false),
+  updatedBy: text(),
+  updatedAt: updatedAt(),
+});
+
+/** Factura electrónica o nota crédito de un pago. Una factura por pago (payment_id único por tipo). */
+export const invoice = pgTable(
+  "invoice",
+  {
+    id: id(),
+    tenantId: uuid()
+      .notNull()
+      .references(() => tenant.id),
+    paymentId: uuid()
+      .notNull()
+      .references(() => payment.id),
+    kind: invoiceKind().notNull().default("invoice"),
+    /** Para notas crédito: la factura que corrigen. */
+    refInvoiceId: uuid(),
+    provider: text().notNull().default("siigo"),
+    providerId: text(),
+    number: text(),
+    cufe: text(),
+    status: invoiceStatus().notNull().default("pending"),
+    dianStatus: text(),
+    reason: text(),
+    totalCents: bigint({ mode: "bigint" }).notNull(),
+    errors: jsonb().$type<string[]>(),
+    attempts: integer().notNull().default(0),
+    nextRetryAt: timestamp({ withTimezone: true }),
+    /** PDF guardado (bytea) y su tamaño: se sirve con autorización por la ruta de descarga. */
+    pdf: customBytea(),
+    pdfSize: integer(),
+    issuedAt: timestamp({ withTimezone: true }),
+    createdAt: createdAt(),
+    updatedAt: updatedAt(),
+  },
+  (t) => [
+    uniqueIndex("invoice_payment_kind_uq").on(t.paymentId, t.kind),
+    index("invoice_tenant_idx").on(t.tenantId, t.createdAt),
+    index("invoice_status_idx").on(t.status, t.nextRetryAt),
+  ],
 );

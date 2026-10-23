@@ -7,6 +7,7 @@ const NAV: NavItem[] = [
   { href: "/", label: "Resumen", icon: "Home" },
   { href: "/empresas", label: "Empresas", icon: "Building2" },
   { href: "/planes", label: "Planes", icon: "CreditCard" },
+  { href: "/pagos", label: "Pagos y facturas", icon: "Receipt" },
   { href: "/integrations", label: "Integraciones", icon: "Plug" },
   { href: "/catalogos", label: "Catálogos", icon: "ScrollText" },
 ];

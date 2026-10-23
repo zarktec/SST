@@ -42,3 +42,13 @@ export const paymentStatus = pgEnum("payment_status", [
   "voided",
   "error",
 ]);
+
+export const invoiceKind = pgEnum("invoice_kind", ["invoice", "credit_note"]);
+export const invoiceStatus = pgEnum("invoice_status", [
+  "pending",
+  "processing",
+  "issued",
+  "accepted",
+  "rejected",
+  "error",
+]);

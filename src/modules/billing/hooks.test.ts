@@ -49,6 +49,7 @@ describe.skipIf(!hasTestDb)("avisos de cobro a la empresa", () => {
     await retryDueCharges(prov, d("2026-12-02T06:00:00Z"));
     expect(devOutbox.map((m) => m.subject)).toEqual([
       "No pudimos procesar tu pago",
+      "Completa tus datos de facturación", // sin perfil no se puede emitir la factura electrónica
       "Recibimos tu pago",
     ]);
   });

@@ -6,6 +6,7 @@ import {
   CreditCard,
   Home,
   Plug,
+  Receipt,
   ScrollText,
   ShieldAlert,
   Users,
@@ -25,6 +26,7 @@ const ICONS = {
   Building2,
   CreditCard,
   Plug,
+  Receipt,
   ScrollText,
 };
 export type NavItem = { href: string; label: string; icon: keyof typeof ICONS };

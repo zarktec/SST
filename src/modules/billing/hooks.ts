@@ -4,7 +4,9 @@ import { formatCOP, formatDate } from "@/lib/format";
 import { originFor, rootDomain } from "@/core/tenancy/hosts";
 import { primaryHostForTenant } from "@/core/tenancy/primary-host";
 import { adminEmails } from "./handlers";
+import { getInvoicingProvider } from "@/integrations/invoicing";
 import { paymentHooks, type Payment } from "./charging";
+import { invoiceApprovedPayment } from "./invoicing";
 
 let registered = false;
 
@@ -31,6 +33,8 @@ export function registerBillingHooks() {
       `<p>El cobro de ${formatCOP(p.totalCents)} fue rechazado${p.declineReason ? ` (${p.declineReason})` : ""}.</p><p>${next}</p><p><a href="${link}">Ir a Facturación</a> para reintentar con "Pagar ahora" o usar otro método de pago.</p>`,
     );
   });
+  // Factura electrónica: si Siigo no responde o no está configurado, queda pendiente y la conciliación diaria la reintenta.
+  paymentHooks.onApproved.push((p: Payment) => invoiceApprovedPayment(p, getInvoicingProvider()));
   paymentHooks.onApproved.push(async (p: Payment) => {
     await notify(
       p.tenantId,
