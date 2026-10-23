@@ -64,6 +64,13 @@ export const SEEDS: Seed[] = [
         "Parametrizable (no hay norma que lo fije)",
       ),
       p(
+        "contratistas.ss_verificacion_dia",
+        10,
+        "día del mes",
+        "Día del mes hasta el cual la verificación del pago de seguridad social del mes anterior es solo pendiente (después se marca vencida)",
+        "Parametrizable (la norma exige verificar el pago, no fija este día)",
+      ),
+      p(
         "psicosocial.periodicidad_riesgo_alto_meses",
         12,
         "meses",

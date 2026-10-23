@@ -29,8 +29,22 @@ export async function resetState() {
   await pool.query("DELETE FROM integration");
   // Onboarding de la empresa demo: vuelve a empezar en cada prueba.
   const demo = "(SELECT id FROM tenant WHERE slug = 'demo')";
-  for (const t of ["work_center", "sst_responsible", "tenant_alert"])
+  for (const t of [
+    "contractor_ss_check",
+    "worker",
+    "work_center",
+    "sst_responsible",
+    "tenant_alert",
+  ])
     await pool.query(`DELETE FROM ${t} WHERE tenant_id IN ${demo}`);
+  // El administrador demo gestiona personas en las pruebas (por defecto ADMIN_EMPRESA solo las ve).
+  await pool.query(
+    `INSERT INTO role_permission (id, tenant_id, role_id, module, action, scope)
+     SELECT gen_random_uuid(), r.tenant_id, r.id, 'workers', a.action::permission_action, 'all'
+     FROM role r CROSS JOIN (VALUES ('create'),('edit')) AS a(action)
+     WHERE r.system_key = 'ADMIN_EMPRESA' AND r.tenant_id IN ${demo}
+     ON CONFLICT DO NOTHING`,
+  );
   await pool.query(
     "UPDATE tenant SET workers_count = NULL, standards_group = NULL, onboarding_completed_at = NULL, risk_class = NULL WHERE slug = 'demo'",
   );

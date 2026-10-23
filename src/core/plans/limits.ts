@@ -1,5 +1,5 @@
 import "server-only";
-import { and, count, eq, isNull, sum } from "drizzle-orm";
+import { and, count, eq, gte, isNull, ne, or, sql, sum } from "drizzle-orm";
 import { schema, withPlatform } from "@/core/db";
 import { writability, type SubStatus } from "@/modules/billing/lifecycle";
 import type { PlanLimits, PlanModuleKey } from "./modules";
@@ -116,8 +116,25 @@ const counters: Record<keyof PlanLimits, Counter> = {
         return Math.ceil(Number(r.bytes ?? 0) / (1024 * 1024));
       },
     ),
-  // TODO(Fase 2): contar trabajadores activos cuando exista la tabla `worker`.
-  workers: async () => 0,
+  // Trabajadores activos (sin retiro o con retiro futuro); los contratistas no cuentan contra el límite.
+  workers: (tenantId) =>
+    withPlatform(
+      { actorId: "system", action: "usage.workers", tenantId, audit: false },
+      async (tx) => {
+        const [r] = await tx
+          .select({ n: count() })
+          .from(schema.worker)
+          .where(
+            and(
+              eq(schema.worker.tenantId, tenantId),
+              isNull(schema.worker.deletedAt),
+              ne(schema.worker.kind, "contractor"),
+              or(isNull(schema.worker.endDate), gte(schema.worker.endDate, sql`current_date`)),
+            ),
+          );
+        return r.n;
+      },
+    ),
 };
 
 export function registerUsageCounter(metric: keyof PlanLimits, counter: Counter) {

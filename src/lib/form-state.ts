@@ -4,6 +4,8 @@ export type FormState = {
   message: string;
   fieldErrors?: Record<string, string>;
   values?: Record<string, string | boolean | string[]>;
+  /** Detalle adicional (p. ej. filas con error de una carga masiva). */
+  details?: string[];
 } | null;
 
 export function formValues(f: FormData): Record<string, string | boolean | string[]> {

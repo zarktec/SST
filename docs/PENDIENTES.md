@@ -42,6 +42,12 @@ Registro vivo: se agrega al detectarlo y se tacha (o mueve a "Resuelto") al cerr
 - [ ] Revisar por qué `redirect("/")` desde una server action en el host de la empresa llega al sitio de marketing (se evitó navegando desde el cliente).
 - [ ] Evaluación inicial / plan de trabajo sugerido del onboarding (paso 5): depende de la autoevaluación (2.3) y el plan anual (2.6).
 
+- [ ] Documentos de la ficha del trabajador (soportes, contratos): requiere almacenamiento de archivos (`BLOB_READ_WRITE_TOKEN`).
+- [ ] Día límite de verificación de seguridad social de contratistas (`contratistas.ss_verificacion_dia`, hoy 10): `TODO-NORMA`; mismo caso de parámetros no sembrados en producción.
+- [ ] Alertas por correo/push de contratistas con seguridad social vencida (hoy solo aviso en `/personas`; notificaciones en Fase 6).
+- [ ] Perfiles de cargo/profesiograma y fechas de documentos por persona (Fase 3, medicina del trabajo).
+- [ ] Contratistas como empresa (NIT, requisitos de SST, evaluación): hoy solo personas con campo "empresa contratista".
+
 ## Resuelto
 
 - [x] Enlace repo–Vercel, Neon, SUPER_ADMIN, DNS en Cloudflare.
