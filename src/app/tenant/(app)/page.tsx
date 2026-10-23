@@ -93,6 +93,8 @@ export default async function TenantHome() {
             ["/capacitacion", "Capacitación", "training"],
             ["/epp", "EPP", "ppe"],
             ["/comites", "Comités", "committees"],
+            ["/convivencia", "Convivencia laboral", "ccl"],
+            ["/acoso-sexual", "Acoso sexual", "harassment"],
           ]
             .filter(([, , m]) => can(perms, m as never, "view"))
             .map(([href, label]) => (
@@ -104,6 +106,21 @@ export default async function TenantHome() {
             ))}
         </ul>
       </Card>
+      <p className="text-sm">
+        <Link
+          href="/convivencia/radicar"
+          className="text-primary inline-block min-h-11 py-2 underline"
+        >
+          Radicar una queja de convivencia
+        </Link>
+        {" · "}
+        <Link
+          href="/acoso-sexual/radicar"
+          className="text-primary inline-block min-h-11 py-2 underline"
+        >
+          Reportar acoso sexual o violencia de género
+        </Link>
+      </p>
       {ctx.roleKey === "ADMIN_EMPRESA" && (
         <Link href="/facturacion" className="text-primary text-sm underline">
           Ir a Facturación (plan, pagos y facturas)

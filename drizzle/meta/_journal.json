@@ -225,6 +225,20 @@
       "when": 1792757109826,
       "tag": "0031_committees_rls",
       "breakpoints": true
+    },
+    {
+      "idx": 32,
+      "version": "7",
+      "when": 1792758320904,
+      "tag": "0032_convivencia",
+      "breakpoints": true
+    },
+    {
+      "idx": 33,
+      "version": "7",
+      "when": 1792758321904,
+      "tag": "0033_convivencia_rls",
+      "breakpoints": true
     }
   ]
 }

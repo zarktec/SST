@@ -74,7 +74,15 @@ export const CandidateButton = ({
   >{`Inscribir a ${name}`}</ActionButton>
 );
 
-export function ConformForm({ kind, people }: { kind: "copasst" | "vigia"; people: Person[] }) {
+export function ConformForm({
+  kind,
+  people,
+  centers,
+}: {
+  kind: "copasst" | "vigia" | "ccl";
+  people: Person[];
+  centers?: Person[];
+}) {
   const [s, action, pending] = useActionState(conformAction, null);
   return (
     <form action={action} className="space-y-3">
@@ -88,6 +96,24 @@ export function ConformForm({ kind, people }: { kind: "copasst" | "vigia"; peopl
         type="date"
         required
       />
+      {kind === "ccl" && centers && (
+        <div className="space-y-1">
+          <Label htmlFor="workCenterId">Comité de</Label>
+          <Select
+            id="workCenterId"
+            name="workCenterId"
+            className={sel}
+            defaultValue={typeof s?.values?.workCenterId === "string" ? s.values.workCenterId : ""}
+          >
+            <option value="">Comité central</option>
+            {centers.map((c) => (
+              <option key={c.id} value={c.id}>
+                {c.name}
+              </option>
+            ))}
+          </Select>
+        </div>
+      )}
       <p className="text-muted-foreground text-sm">
         Asigna a cada persona su representación y puesto (deja “—” a quien no integra el comité). La
         representación de los principales debe ser paritaria.
