@@ -64,6 +64,10 @@ export async function resetState() {
   const client = await pool.connect();
   try {
     await client.query("SET session_replication_role = replica");
+    for (const t of ["hazard_row", "hazard_matrix"])
+      await client.query(
+        `DELETE FROM ${t} WHERE tenant_id IN (SELECT id FROM tenant WHERE slug = 'demo')`,
+      );
     const sub = "(SELECT id FROM tenant WHERE slug LIKE 'e2e-%')";
     for (const t of [
       "subscription_event",

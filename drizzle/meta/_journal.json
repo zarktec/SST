@@ -155,6 +155,20 @@
       "when": 1792752532677,
       "tag": "0021_legal_matrix_rls",
       "breakpoints": true
+    },
+    {
+      "idx": 22,
+      "version": "7",
+      "when": 1792752787777,
+      "tag": "0022_hazards",
+      "breakpoints": true
+    },
+    {
+      "idx": 23,
+      "version": "7",
+      "when": 1792752788777,
+      "tag": "0023_hazards_rls",
+      "breakpoints": true
     }
   ]
 }

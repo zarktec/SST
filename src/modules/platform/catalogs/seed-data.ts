@@ -92,6 +92,13 @@ export const SEEDS: Seed[] = [
         "Resolución 0312 de 2019",
       ),
       p(
+        "matriz_peligros.actualizacion_meses",
+        12,
+        "meses",
+        "Actualización mínima de la matriz de peligros (también ante accidente grave o cambios)",
+        "Decreto 1072 de 2015, art. 2.2.4.6.15",
+      ),
+      p(
         "psicosocial.periodicidad_riesgo_alto_meses",
         12,
         "meses",
