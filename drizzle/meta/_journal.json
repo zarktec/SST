@@ -141,6 +141,20 @@
       "when": 1792751955323,
       "tag": "0019_assessment_rls",
       "breakpoints": true
+    },
+    {
+      "idx": 20,
+      "version": "7",
+      "when": 1792752531677,
+      "tag": "0020_legal_matrix",
+      "breakpoints": true
+    },
+    {
+      "idx": 21,
+      "version": "7",
+      "when": 1792752532677,
+      "tag": "0021_legal_matrix_rls",
+      "breakpoints": true
     }
   ]
 }

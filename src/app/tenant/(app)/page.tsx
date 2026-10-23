@@ -4,6 +4,7 @@ import { Card, CardDescription, CardTitle } from "@/components/ui/card";
 import { requireTenantMember } from "@/core/auth/session";
 import { withTenant } from "@/core/db";
 import { can, loadPermissions } from "@/core/rbac/can";
+import { unevaluatedCount } from "@/modules/legal/service";
 import { assessmentReminderFor } from "@/modules/assessment/service";
 import { getOnboardingState, openAlerts } from "@/modules/company/service";
 import { ResolveAlertButton } from "./onboarding/forms";
@@ -17,6 +18,9 @@ export default async function TenantHome() {
   );
   const canSetup = can(perms, "company", "edit");
   const reminder = await assessmentReminderFor(ctx.tenant.tenantId);
+  const legalPending = can(perms, "legal_matrix", "view")
+    ? await unevaluatedCount(ctx.tenant.tenantId)
+    : 0;
   const [state, alerts] = await Promise.all([
     getOnboardingState(ctx.tenant.tenantId),
     openAlerts(ctx.tenant.tenantId),
@@ -42,6 +46,14 @@ export default async function TenantHome() {
             : "Recuerda registrar la autoevaluación ante el Ministerio del Trabajo. "}
           <Link href="/estandares" className="underline">
             Ir a Estándares
+          </Link>
+        </Alert>
+      )}
+      {legalPending > 0 && (
+        <Alert variant="warning">
+          Hay {legalPending} normas o requisitos sin evaluar en tu matriz legal.{" "}
+          <Link href="/matriz-legal" className="underline">
+            Revisar matriz legal
           </Link>
         </Alert>
       )}
