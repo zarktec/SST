@@ -88,6 +88,9 @@ Registro vivo: se agrega al detectarlo y se tacha (o mueve a "Resuelto") al cerr
 - [ ] Inspecciones (`/inspecciones`): el catálogo `checklist_templates` está vacío (sin textos oficiales); cada empresa crea sus plantillas o importa las de plataforma cuando existan. Frecuencia/programación de inspecciones y recordatorios por sede, y firma del inspector: pendientes. Fotos de hallazgos: `BLOB_READ_WRITE_TOKEN`.
 - [ ] Modo offline: la cola vive en IndexedDB y las pantallas de ejecución se guardan en el service worker (`sst-pages-v2`). Falta (a) borrar esa caché y la cola al cerrar sesión (el mensaje `clear-pages` ya existe en `public/sw.js`, no hay botón de cerrar sesión aún), (b) Background Sync para enviar con la app cerrada (hoy se envía al abrir la pantalla o al volver la red), (c) reportes de condiciones inseguras sin conexión (hoy solo inspecciones).
 
+- [ ] Indicadores (`/indicadores`): se calculan solo los 6 del catálogo (frecuencia, severidad, mortalidad, prevalencia, incidencia, ausentismo médico). Todo `TODO-NORMA`: trabajadores = vinculados en algún momento del periodo (no el promedio mensual), días cargados por muerte = 6000 (`indicadores.dias_cargados_mortal`, NTC 3701), prevalencia solo cuenta casos calificados de origen laboral, metas vacías en el catálogo. Faltan indicadores de estructura y proceso (cumplimiento del plan anual, capacitación, inspecciones, CAPA a tiempo, EPP), exportación y la revisión por la dirección que consume estos resultados (Fase 5).
+- [ ] Los parámetros provisionales nuevos de la Fase 4 (`at.*`, `inspecciones.plazo_accion_dias`, `indicadores.dias_cargados_mortal`) están en el seed pero no en catálogos ya publicados en producción: aplican los valores por defecto del código hasta publicar una versión nueva.
+
 ## Resuelto
 
 - [x] Enlace repo–Vercel, Neon, SUPER_ADMIN, DNS en Cloudflare.

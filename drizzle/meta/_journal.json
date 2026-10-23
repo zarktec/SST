@@ -309,6 +309,20 @@
       "when": 1792764790881,
       "tag": "0043_inspections_rls",
       "breakpoints": true
+    },
+    {
+      "idx": 44,
+      "version": "7",
+      "when": 1792765512439,
+      "tag": "0044_indicators",
+      "breakpoints": true
+    },
+    {
+      "idx": 45,
+      "version": "7",
+      "when": 1792765513439,
+      "tag": "0045_indicators_rls",
+      "breakpoints": true
     }
   ]
 }

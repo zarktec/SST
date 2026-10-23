@@ -197,6 +197,13 @@ export const SEEDS: Seed[] = [
         "Parametrizable (Decreto 1072 de 2015, art. 2.2.4.6.24)",
       ),
       p(
+        "indicadores.dias_cargados_mortal",
+        6000,
+        "días",
+        "Días cargados por un accidente de trabajo mortal que se suman al indicador de severidad",
+        "TODO-NORMA: convención de la NTC 3701; validar con el experto SST",
+      ),
+      p(
         "psicosocial.periodicidad_riesgo_alto_meses",
         12,
         "meses",
