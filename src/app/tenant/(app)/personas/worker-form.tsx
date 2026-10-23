@@ -4,6 +4,7 @@ import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Field } from "@/components/ui/field";
 import { Label } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
 import type { FormState } from "@/lib/form-state";
 import { CONTRACT_TYPES, KINDS } from "@/modules/workers/rules";
 import { retireWorkerAction, saveWorkerAction, ssCheckAction } from "./actions";
@@ -11,7 +12,7 @@ import { retireWorkerAction, saveWorkerAction, ssCheckAction } from "./actions";
 type Row = Record<string, string | number | null | undefined>;
 const sel = "border-input bg-background min-h-11 w-full rounded-md border px-3 text-base";
 
-function Select({
+function FormSelect({
   name,
   label,
   state,
@@ -28,14 +29,14 @@ function Select({
   return (
     <div className="space-y-1">
       <Label htmlFor={name}>{label}</Label>
-      <select
+      <Select
         id={name}
         name={name}
         className={sel}
         defaultValue={typeof v === "string" ? v : (saved ?? "")}
       >
         {children}
-      </select>
+      </Select>
     </div>
   );
 }
@@ -66,14 +67,14 @@ export function WorkerForm({
       {s && <Alert variant={s.ok ? "success" : "destructive"}>{s.message}</Alert>}
       {worker?.id && <input type="hidden" name="id" value={String(worker.id)} />}
       <div className="grid gap-3 sm:grid-cols-2">
-        <Select name="kind" label="Vinculación" state={s} saved={worker?.kind as string}>
+        <FormSelect name="kind" label="Vinculación" state={s} saved={worker?.kind as string}>
           {KINDS.map((k) => (
             <option key={k.value} value={k.value}>
               {k.label}
             </option>
           ))}
-        </Select>
-        <Select
+        </FormSelect>
+        <FormSelect
           name="idType"
           label="Tipo de documento"
           state={s}
@@ -85,22 +86,27 @@ export function WorkerForm({
           <option value="41">Pasaporte</option>
           <option value="42">Documento extranjero (PEP)</option>
           <option value="31">NIT</option>
-        </Select>
+        </FormSelect>
         {f("idNumber", "Número de documento", { inputMode: "numeric", required: true })}
         {f("fullName", "Nombre completo", { required: true })}
         {f("email", "Correo", { type: "email" })}
         {f("phone", "Teléfono", { inputMode: "tel" })}
         {f("position", "Cargo")}
         {f("area", "Área")}
-        <Select name="workCenterId" label="Sede" state={s} saved={worker?.workCenterId as string}>
+        <FormSelect
+          name="workCenterId"
+          label="Sede"
+          state={s}
+          saved={worker?.workCenterId as string}
+        >
           <option value="">Sin sede</option>
           {centers.map((c) => (
             <option key={c.id} value={c.id}>
               {c.name}
             </option>
           ))}
-        </Select>
-        <Select
+        </FormSelect>
+        <FormSelect
           name="contractType"
           label="Tipo de contrato"
           state={s}
@@ -112,7 +118,7 @@ export function WorkerForm({
               {c.label}
             </option>
           ))}
-        </Select>
+        </FormSelect>
         {f("startDate", "Fecha de ingreso", { type: "date", required: true })}
         {f("endDate", "Fecha de retiro", { type: "date" })}
         {f("eps", "EPS")}
@@ -166,10 +172,10 @@ export function SsCheckForm({ id, period }: { id: string; period: string }) {
           label="Periodo (AAAA-MM)"
           required
         />
-        <Select name="paid" label="Pago de seguridad social" state={s} saved="yes">
+        <FormSelect name="paid" label="Pago de seguridad social" state={s} saved="yes">
           <option value="yes">Pagado</option>
           <option value="no">No pagado</option>
-        </Select>
+        </FormSelect>
         <Field idPrefix="ss-" state={s} name="note" label="Observación (planilla, soporte)" />
       </div>
       <Button type="submit" disabled={pending}>

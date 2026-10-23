@@ -5,6 +5,7 @@ import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Field } from "@/components/ui/field";
 import { Label } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
 import type { FormState } from "@/lib/form-state";
 import {
   completeOnboardingAction,
@@ -182,12 +183,12 @@ export function ResponsibleForm({ saved }: { saved: Row }) {
         <Field state={s} saved={saved.fullName} name="fullName" label="Nombre completo" required />
         <div className="space-y-1">
           <Label htmlFor="idType">Tipo de documento</Label>
-          <select id="idType" name="idType" className={sel} defaultValue={v("idType") || "13"}>
+          <Select id="idType" name="idType" className={sel} defaultValue={v("idType") || "13"}>
             <option value="13">Cédula de ciudadanía</option>
             <option value="22">Cédula de extranjería</option>
             <option value="41">Pasaporte</option>
             <option value="42">Documento extranjero</option>
-          </select>
+          </Select>
         </div>
         <Field
           state={s}
@@ -201,7 +202,7 @@ export function ResponsibleForm({ saved }: { saved: Row }) {
         <Field state={s} saved={saved.phone} name="phone" label="Teléfono" inputMode="tel" />
         <div className="space-y-1">
           <Label htmlFor="profile">Perfil</Label>
-          <select
+          <Select
             id="profile"
             name="profile"
             className={sel}
@@ -211,7 +212,7 @@ export function ResponsibleForm({ saved }: { saved: Row }) {
             <option value="tecnologo">Tecnólogo en SST</option>
             <option value="tecnico">Técnico en SST</option>
             <option value="otro">Otro</option>
-          </select>
+          </Select>
         </div>
         <Field
           state={s}

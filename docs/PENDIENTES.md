@@ -54,6 +54,14 @@ Registro vivo: se agrega al detectarlo y se tacha (o mueve a "Resuelto") al cerr
 - [ ] Plan de mejoramiento: se integrará con acciones CAPA (Fase 4) y con el plan anual (2.6); recordatorios por correo de acciones vencidas (Fase 6).
 - [ ] Botón para exportar la autoevaluación a PDF/Excel (Fase 6, reportes regulatorios).
 
+- [ ] **Catálogos sin cargar para la matriz legal**: `legal_requirements` (artículos y requisitos por norma) y `hazard_catalog` (familias y peligros) están vacíos; la matriz legal solo muestra normas y la de peligros usa texto libre. Requiere textos oficiales.
+- [ ] Escalas GTC 45 sembradas (`TODO-NORMA`): una deficiencia "Bajo" no se valora (sin valor numérico); validar el tratamiento con un experto.
+- [ ] Matriz de peligros: filtros por sede/proceso, exportación a Excel/PDF y gráfico de mapa de calor (Fase 6); notificar al responsable cuando toque la revisión anual (parámetro `matriz_peligros.actualizacion_meses`, no sembrado en producción).
+- [ ] Plan anual: la firma es "simple" propia (usuario + fecha + huella del contenido). La firma electrónica completa (OTP, IP, dispositivo, PDF firmado) llega en la Fase 6 y reemplazará este mecanismo.
+- [ ] Plan anual: integración con recordatorios/notificaciones y con el calendario unificado (Fase 6); plan de capacitación anual (Fase 3).
+- [ ] Menú de navegación móvil: solo caben 5 ítems; el resto de módulos de "Planear" se alcanza desde el inicio. Diseñar un menú "Más" cuando haya más módulos (Fase 3+).
+- [ ] Onboarding paso 5 "plan de trabajo sugerido": ya existe en el plan anual (botón "Sugerir actividades"); falta enlazarlo desde el onboarding.
+
 ## Resuelto
 
 - [x] Enlace repo–Vercel, Neon, SUPER_ADMIN, DNS en Cloudflare.

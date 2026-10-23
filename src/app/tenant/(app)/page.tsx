@@ -81,6 +81,26 @@ export default async function TenantHome() {
             : ""}
         </CardDescription>
       </Card>
+      <Card>
+        <CardTitle>Planear</CardTitle>
+        <ul className="mt-2 grid gap-1 text-sm sm:grid-cols-2">
+          {[
+            ["/estandares", "Estándares mínimos", "standards"],
+            ["/matriz-legal", "Matriz legal", "legal_matrix"],
+            ["/peligros", "Matriz de peligros", "hazard_matrix"],
+            ["/plan-anual", "Plan anual de trabajo", "annual_plan"],
+            ["/personas", "Personas", "workers"],
+          ]
+            .filter(([, , m]) => can(perms, m as never, "view"))
+            .map(([href, label]) => (
+              <li key={href}>
+                <Link href={href} className="text-primary inline-block min-h-11 py-2 underline">
+                  {label}
+                </Link>
+              </li>
+            ))}
+        </ul>
+      </Card>
       {ctx.roleKey === "ADMIN_EMPRESA" && (
         <Link href="/facturacion" className="text-primary text-sm underline">
           Ir a Facturación (plan, pagos y facturas)

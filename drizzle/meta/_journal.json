@@ -169,6 +169,20 @@
       "when": 1792752788777,
       "tag": "0023_hazards_rls",
       "breakpoints": true
+    },
+    {
+      "idx": 24,
+      "version": "7",
+      "when": 1792753165420,
+      "tag": "0024_annual_plan",
+      "breakpoints": true
+    },
+    {
+      "idx": 25,
+      "version": "7",
+      "when": 1792753166420,
+      "tag": "0025_annual_plan_rls",
+      "breakpoints": true
     }
   ]
 }

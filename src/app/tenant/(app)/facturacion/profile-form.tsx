@@ -2,6 +2,7 @@
 import { useActionState } from "react";
 import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
+import { Select } from "@/components/ui/select";
 import { Input, Label } from "@/components/ui/input";
 import { DANE_STATES, FISCAL_RESPONSIBILITIES, ID_TYPES } from "@/modules/billing/billing-profile";
 import { saveProfileAction } from "./actions";
@@ -33,7 +34,7 @@ export function ProfileForm({ profile }: { profile: P | null }) {
       <div className="grid gap-3 sm:grid-cols-2">
         <div className="space-y-1">
           <Label htmlFor="personType">Tipo de persona</Label>
-          <select
+          <Select
             id="personType"
             name="personType"
             className={sel}
@@ -41,17 +42,17 @@ export function ProfileForm({ profile }: { profile: P | null }) {
           >
             <option value="Company">Persona jurídica</option>
             <option value="Person">Persona natural</option>
-          </select>
+          </Select>
         </div>
         <div className="space-y-1">
           <Label htmlFor="idType">Tipo de documento</Label>
-          <select id="idType" name="idType" className={sel} defaultValue={v("idType") || "31"}>
+          <Select id="idType" name="idType" className={sel} defaultValue={v("idType") || "31"}>
             {ID_TYPES.map((t) => (
               <option key={t.code} value={t.code}>
                 {t.label}
               </option>
             ))}
-          </select>
+          </Select>
           {err("idType")}
         </div>
         {text("identification", "Número de documento (sin puntos ni DV)", {
@@ -63,7 +64,7 @@ export function ProfileForm({ profile }: { profile: P | null }) {
         {text("address", "Dirección", { required: true })}
         <div className="space-y-1">
           <Label htmlFor="stateCode">Departamento (código DANE)</Label>
-          <select
+          <Select
             id="stateCode"
             name="stateCode"
             className={sel}
@@ -74,7 +75,7 @@ export function ProfileForm({ profile }: { profile: P | null }) {
                 {c}
               </option>
             ))}
-          </select>
+          </Select>
           {err("stateCode")}
         </div>
         {text("cityCode", "Municipio (código DANE de 5 dígitos)", {

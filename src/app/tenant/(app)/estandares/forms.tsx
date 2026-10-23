@@ -5,6 +5,7 @@ import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Field } from "@/components/ui/field";
 import { Label } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
 import type { FormState } from "@/lib/form-state";
 import {
   closeAssessmentAction,
@@ -84,7 +85,7 @@ export function ItemForm({
       <div className="grid gap-3 sm:grid-cols-2">
         <div className="space-y-1">
           <Label htmlFor={`${pfx}status`}>Calificación</Label>
-          <select
+          <Select
             id={`${pfx}status`}
             name="status"
             className={sel}
@@ -96,7 +97,7 @@ export function ItemForm({
                 {label}
               </option>
             ))}
-          </select>
+          </Select>
         </div>
         <Field
           idPrefix={pfx}
@@ -226,7 +227,7 @@ export function ImprovementForm({
         />
         <div className="space-y-1">
           <Label htmlFor={`${pfx}status`}>Estado</Label>
-          <select
+          <Select
             id={`${pfx}status`}
             name="status"
             className={sel}
@@ -235,7 +236,7 @@ export function ImprovementForm({
             <option value="open">Abierta</option>
             <option value="in_progress">En curso</option>
             <option value="done">Cerrada</option>
-          </select>
+          </Select>
         </div>
         <Field
           idPrefix={pfx}

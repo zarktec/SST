@@ -4,6 +4,7 @@ import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Field } from "@/components/ui/field";
 import { Label } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
 import type { FormState } from "@/lib/form-state";
 import {
   approveAction,
@@ -108,7 +109,7 @@ function LevelSelect({
   return (
     <div className="space-y-1">
       <Label htmlFor={name}>{label}</Label>
-      <select
+      <Select
         id={name}
         name={name}
         className={sel}
@@ -119,7 +120,7 @@ function LevelSelect({
             {l.level}
           </option>
         ))}
-      </select>
+      </Select>
     </div>
   );
 }
@@ -164,7 +165,7 @@ export function RowForm({
         {f("hazardName", "Peligro", { required: true })}
         <div className="space-y-1">
           <Label htmlFor={`${pfx}workCenterId`}>Sede</Label>
-          <select
+          <Select
             id={`${pfx}workCenterId`}
             name="workCenterId"
             className={sel}
@@ -176,7 +177,7 @@ export function RowForm({
                 {c.name}
               </option>
             ))}
-          </select>
+          </Select>
         </div>
         {f("effects", "Posibles efectos")}
         {f("exposedWorkers", "Trabajadores expuestos", { inputMode: "numeric" })}

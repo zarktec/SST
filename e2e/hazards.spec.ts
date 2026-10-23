@@ -39,5 +39,5 @@ test("matriz de peligros: crear, valorar automáticamente y aprobar", async ({ p
   await expect(page.getByText("Participación guardada.")).toBeVisible();
   page.once("dialog", (d) => d.accept());
   await page.getByRole("button", { name: "Aprobar matriz" }).click();
-  await expect(page.getByText("Matriz aprobada.")).toBeVisible();
+  await expect(page.getByText(/^Aprobada /)).toBeVisible();
 });

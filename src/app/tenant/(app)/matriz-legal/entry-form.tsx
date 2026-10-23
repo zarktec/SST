@@ -4,6 +4,7 @@ import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Field } from "@/components/ui/field";
 import { Label } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
 import { saveEntryAction } from "./actions";
 
 const sel = "border-input bg-background min-h-11 w-full rounded-md border px-3 text-base";
@@ -30,7 +31,7 @@ export function EntryForm({ kind, code, entry }: { kind: string; code: string; e
       <div className="grid gap-3 sm:grid-cols-2">
         <div className="space-y-1">
           <Label htmlFor={`${pfx}applies`}>¿Aplica a la empresa?</Label>
-          <select
+          <Select
             id={`${pfx}applies`}
             name="applies"
             className={sel}
@@ -38,11 +39,11 @@ export function EntryForm({ kind, code, entry }: { kind: string; code: string; e
           >
             <option value="yes">Sí aplica</option>
             <option value="no">No aplica</option>
-          </select>
+          </Select>
         </div>
         <div className="space-y-1">
           <Label htmlFor={`${pfx}compliance`}>Cumplimiento</Label>
-          <select
+          <Select
             id={`${pfx}compliance`}
             name="compliance"
             className={sel}
@@ -52,7 +53,7 @@ export function EntryForm({ kind, code, entry }: { kind: string; code: string; e
             <option value="cumple">Cumple</option>
             <option value="parcial">Cumple parcialmente</option>
             <option value="no_cumple">No cumple</option>
-          </select>
+          </Select>
         </div>
         <Field
           idPrefix={pfx}
