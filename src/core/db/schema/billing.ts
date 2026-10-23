@@ -1,3 +1,4 @@
+import { sql } from "drizzle-orm";
 import {
   bigint,
   boolean,
@@ -12,7 +13,7 @@ import {
   uuid,
 } from "drizzle-orm/pg-core";
 import { createdAt, id, updatedAt } from "./_helpers";
-import { billingPeriod, couponKind, subscriptionStatus } from "./enums";
+import { billingPeriod, couponKind, paymentStatus, subscriptionStatus } from "./enums";
 import { coupon, plan } from "./plans";
 import { tenant } from "./tenancy";
 
@@ -31,6 +32,36 @@ export const platformSetting = pgTable("platform_setting", {
   updatedBy: text(),
   updatedAt: updatedAt(),
 });
+
+/**
+ * Método de pago tokenizado en la pasarela. NUNCA se guardan datos de tarjeta: solo el id de la fuente de
+ * pago, el tipo, la franquicia, los últimos 4 dígitos y el vencimiento (spec 5.7).
+ */
+export const paymentSource = pgTable(
+  "payment_source",
+  {
+    id: id(),
+    tenantId: uuid()
+      .notNull()
+      .references(() => tenant.id),
+    provider: text().notNull().default("wompi"),
+    providerSourceId: text().notNull(),
+    type: text().notNull(),
+    brand: text(),
+    last4: text(),
+    expMonth: integer(),
+    expYear: integer(),
+    holder: text(),
+    active: boolean().notNull().default(true),
+    createdBy: text(),
+    createdAt: createdAt(),
+    deletedAt: timestamp({ withTimezone: true }),
+  },
+  (t) => [
+    uniqueIndex("payment_source_provider_uq").on(t.provider, t.providerSourceId),
+    index("payment_source_tenant_idx").on(t.tenantId),
+  ],
+);
 
 /**
  * Suscripción de una empresa (una por empresa). Tiene tenant_id + RLS: la empresa solo la LEE; las
@@ -66,9 +97,9 @@ export const subscription = pgTable(
     // Cambio programado (bajar de plan o de anual a mensual aplica al final del periodo).
     scheduledPlanId: uuid().references(() => plan.id),
     scheduledPeriod: billingPeriod(),
-    // Métodos de pago (FK a payment_source se agrega en el paso de Wompi).
-    defaultPaymentSourceId: uuid(),
-    backupPaymentSourceId: uuid(),
+    // Métodos de pago: predeterminado y de respaldo.
+    defaultPaymentSourceId: uuid().references(() => paymentSource.id),
+    backupPaymentSourceId: uuid().references(() => paymentSource.id),
     /** Recordatorios de fin de trial ya enviados: [7,3,1,0]. */
     trialRemindersSent: integer().array().notNull().default([]),
     createdAt: createdAt(),
@@ -99,4 +130,74 @@ export const subscriptionEvent = pgTable(
     at: timestamp({ withTimezone: true }).notNull().defaultNow(),
   },
   (t) => [index("subscription_event_tenant_idx").on(t.tenantId, t.at)],
+);
+
+/**
+ * Cobros. Un registro por INTENTO: (suscripción, periodo, n.º de intento) es único y `reference` es única en la
+ * pasarela (SUB-{suscripción}-{periodo} y sufijo -R2, -R3… en reintentos), lo que hace el cobro idempotente.
+ * Montos en centavos (enteros).
+ */
+export const payment = pgTable(
+  "payment",
+  {
+    id: id(),
+    tenantId: uuid()
+      .notNull()
+      .references(() => tenant.id),
+    subscriptionId: uuid()
+      .notNull()
+      .references(() => subscription.id),
+    planId: uuid()
+      .notNull()
+      .references(() => plan.id),
+    period: billingPeriod().notNull(),
+    /** Fecha (Colombia) del vencimiento que se cobra: identifica el ciclo de facturación. */
+    periodKey: text().notNull(),
+    attempt: integer().notNull().default(1),
+    /** default | backup | manual (pago iniciado por la empresa con "Pagar ahora"). */
+    sourceRole: text().notNull().default("default"),
+    paymentSourceId: uuid().references(() => paymentSource.id),
+    reference: text().notNull(),
+    provider: text().notNull().default("wompi"),
+    providerTxId: text(),
+    status: paymentStatus().notNull().default("pending"),
+    netCents: bigint({ mode: "bigint" }).notNull(),
+    vatCents: bigint({ mode: "bigint" }).notNull(),
+    totalCents: bigint({ mode: "bigint" }).notNull(),
+    discountCents: bigint({ mode: "bigint" })
+      .notNull()
+      .default(sql`0`),
+    currency: text().notNull().default("COP"),
+    couponId: uuid().references(() => coupon.id),
+    periodStart: timestamp({ withTimezone: true }),
+    periodEnd: timestamp({ withTimezone: true }),
+    declineReason: text(),
+    nextRetryAt: timestamp({ withTimezone: true }),
+    providerPayload: jsonb(),
+    createdAt: createdAt(),
+    updatedAt: updatedAt(),
+  },
+  (t) => [
+    uniqueIndex("payment_reference_uq").on(t.reference),
+    uniqueIndex("payment_cycle_attempt_uq").on(t.subscriptionId, t.periodKey, t.attempt),
+    index("payment_tenant_idx").on(t.tenantId, t.createdAt),
+    index("payment_retry_idx").on(t.status, t.nextRetryAt),
+    uniqueIndex("payment_provider_tx_uq").on(t.provider, t.providerTxId),
+  ],
+);
+
+/** Eventos de la pasarela recibidos (idempotencia por checksum + auditoría). Global: sin acceso para empresas. */
+export const webhookEvent = pgTable(
+  "webhook_event",
+  {
+    id: id(),
+    provider: text().notNull(),
+    eventKey: text().notNull(),
+    type: text().notNull(),
+    payload: jsonb().notNull(),
+    receivedAt: timestamp({ withTimezone: true }).notNull().defaultNow(),
+    processedAt: timestamp({ withTimezone: true }),
+    error: text(),
+  },
+  (t) => [uniqueIndex("webhook_event_uq").on(t.provider, t.eventKey)],
 );

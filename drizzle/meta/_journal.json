@@ -71,6 +71,20 @@
       "when": 1792730658006,
       "tag": "0009_catalog_immutability",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1792731343630,
+      "tag": "0010_payments",
+      "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1792731344469,
+      "tag": "0011_payments_rls",
+      "breakpoints": true
     }
   ]
 }

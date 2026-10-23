@@ -175,7 +175,7 @@ export async function markPastDue(tenantId: string, reason: string, now = new Da
     { actorId: SYSTEM_ACTOR, action: "billing.past_due", tenantId, reason },
     async (tx) => {
       const sub = await load(tx, tenantId);
-      if (sub.status !== "active" && sub.status !== "past_due") return;
+      if (sub.status !== "active" && sub.status !== "past_due" && sub.status !== "trialing") return;
       await transition(
         tx,
         sub,

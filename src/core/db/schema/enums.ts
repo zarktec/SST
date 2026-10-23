@@ -34,3 +34,11 @@ export const subscriptionStatus = pgEnum("subscription_status", [
 ]);
 
 export const catalogStatus = pgEnum("catalog_status", ["draft", "published", "retired"]);
+
+export const paymentStatus = pgEnum("payment_status", [
+  "pending",
+  "approved",
+  "declined",
+  "voided",
+  "error",
+]);

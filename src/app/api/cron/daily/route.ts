@@ -3,7 +3,10 @@ import { NextResponse } from "next/server";
 import { integrationAlerts } from "@/integrations/registry/service";
 import { runLifecycleSweep } from "@/modules/billing/subscriptions";
 import { syncDomains } from "@/modules/platform/tenants/service";
+import { getPaymentProvider } from "@/integrations/payments";
+import { retryDueCharges } from "@/modules/billing/charging";
 import { billingHandlers } from "@/modules/billing/handlers";
+import { registerBillingHooks } from "@/modules/billing/hooks";
 
 export const maxDuration = 300;
 
@@ -22,19 +25,35 @@ function authorized(req: Request): boolean {
  */
 export async function GET(req: Request) {
   if (!authorized(req)) return new NextResponse("Unauthorized", { status: 401 });
-  const [sweep, domains, alerts] = await Promise.all([
-    runLifecycleSweep(billingHandlers()),
-    syncDomains(),
-    integrationAlerts(),
-  ]);
+  registerBillingHooks();
+  const errors: string[] = [];
+  const guard = async <T>(name: string, fn: () => Promise<T>, fallback: T): Promise<T> => {
+    try {
+      return await fn();
+    } catch (e) {
+      errors.push(`${name}: ${e instanceof Error ? e.message : "error"}`);
+      return fallback;
+    }
+  };
+  // Un fallo en una tarea (p. ej. Wompi sin configurar) no impide las demás.
+  const sweep = await guard("suscripciones", () => runLifecycleSweep(billingHandlers()), {
+    evaluated: 0,
+    actions: [],
+    reminders: [],
+  });
+  const retries = await guard("reintentos", () => retryDueCharges(getPaymentProvider()), []);
+  const domains = await guard("dominios", () => syncDomains(), { checked: 0, changed: 0 });
+  const alerts = await guard("integraciones", () => integrationAlerts(), []);
   return NextResponse.json({
-    ok: true,
+    ok: errors.length === 0,
     sweep: {
       evaluated: sweep.evaluated,
       actions: sweep.actions.length,
       reminders: sweep.reminders.length,
     },
+    retries: retries.length,
     domains,
     alerts: alerts.length,
+    errors,
   });
 }

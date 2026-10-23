@@ -28,8 +28,11 @@ export async function adminEmails(tenantId: string): Promise<string[]> {
 /** Handlers del barrido diario. El cobro real lo implementa el procesador de pagos (paso Wompi). */
 export function billingHandlers(overrides: Partial<SweepHandlers> = {}): SweepHandlers {
   return {
-    async requestCharge() {
-      // TODO(1.4): encolar el cobro con el PaymentProvider (Wompi).
+    async requestCharge(sub, reason) {
+      // Si la pasarela no está activa/configurada no se cobra ni se castiga a la empresa: se informa en el resumen del cron.
+      const { chargeSubscription } = await import("./charging");
+      const { getPaymentProvider } = await import("@/integrations/payments");
+      await chargeSubscription(sub.tenantId, { reason, provider: getPaymentProvider() });
     },
     async sendTrialReminder(sub, day) {
       const host = (await primaryHostForTenant(sub.tenantId)) ?? rootDomain();

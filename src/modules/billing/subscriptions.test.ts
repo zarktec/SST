@@ -128,9 +128,13 @@ describe.skipIf(!hasTestDb)("ciclo de vida de suscripciones (persistencia)", () 
       async () => undefined,
     );
     const t = await newTenant("sub-d", 5);
+    const [src] = await systemDb()
+      .insert(schema.paymentSource)
+      .values({ tenantId: t.id, providerSourceId: "ps-sweep-1", type: "CARD" })
+      .returning();
     await systemDb()
       .update(schema.subscription)
-      .set({ defaultPaymentSourceId: "01a16700-0000-7000-8000-000000000001" })
+      .set({ defaultPaymentSourceId: src.id })
       .where(eq(schema.subscription.tenantId, t.id));
     await runLifecycleSweep({ ...noop, requestCharge }, d("2026-11-07T00:00:00Z"));
     expect(requestCharge).toHaveBeenCalledWith(
