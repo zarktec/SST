@@ -72,6 +72,9 @@ Ver sección "Estado de fases" al final; actualizar al cerrar cada fase. Pendien
 - Fase 7: **completa** (pendiente de tu revisión; ver `docs/PENDIENTES.md`). Seguridad (CSP con nonce, límite de intentos compartido, `pnpm audit` limpio), accesibilidad (axe en E2E), paginación, E2E en CI (`.github/workflows/ci.yml`), fecha de hoy en hora de Colombia, `/usuarios` (invitaciones y roles) y documentación (`README.md`, `docs/OPERACION.md`, `docs/GUIA_USUARIO.md`).
   - Pendiente: primera corrida real en GitHub Actions y protección de rama; Sentry; pruebas reales de Wompi/Siigo/AUCO; catálogos oficiales y validación de `TODO-NORMA`.
 
+- Fase 8 (UX): **hecha** (pendiente de tu revisión). Todos los formularios de agregar/editar van en modales (`FormModal`, `src/components/ui/modal.tsx`: `<dialog>` nativo, hoja inferior en móvil, contenido montado solo al abrir). `useActionState` de `@/components/forms/use-form-state` cierra el modal y muestra un aviso (`toast`) al guardar bien (`keepOpen` en el `FormState` lo evita, p. ej. reporte de carga masiva). Menú agrupado por módulos según permisos (`src/components/layout/nav-config.ts`, una sola definición para barra lateral, menú móvil e inicio), barra superior con búsqueda y alertas, inicio con accesos rápidos. Panel SUPER ADMIN: planes, cupones y empresas también en modales. E2E: `openModal(page, "Texto del botón")` de `e2e/helpers.ts`.
+  - Quedan inline a propósito: onboarding (asistente), conformar comités, calificación de ítems de estándares, formularios públicos (radicar queja/acoso, asistencia, voto) y login.
+
 ## Despliegue (Vercel)
 
 - Proyecto Vercel `sst` (equipo ZarK, `prj_kpoOB6LCtrFYpXrk1s6oXhU1aQfm`), Next.js, Node 22, región iad1. Dominios agregados: `sst.zark.pro`, `admin.`, `auth.` (el wildcard `*.sst.zark.pro` ya no se usa: las empresas van por ruta; los dominios propios se agregan por API).

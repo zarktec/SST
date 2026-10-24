@@ -136,6 +136,13 @@ Registro vivo: se agrega al detectarlo y se tacha (o mueve a "Resuelto") al cerr
 - [x] Documentación: `README.md`, `docs/OPERACION.md` (variables, despliegue, restauración PITR, lista previa a producción) y `docs/GUIA_USUARIO.md`.
 - [x] Gestión de usuarios de la empresa (`/usuarios`): invitar por correo con rol, revocar, cambiar rol, desactivar/activar; siempre queda un administrador activo; auditado. Pendiente: editor de permisos por rol personalizado; acceso temporal para auditores externos.
 
+## Fase 8 (UX)
+
+- [x] Formularios de agregar/editar en modales, menú por módulos, barra superior con búsqueda y alertas, inicio con accesos.
+- [ ] Revisión de UX con personas reales en móvil (modal largo con firma, menú) y ajuste de textos de botones.
+- [ ] Triggers repetidos por fila ("Editar") sin contexto para lectores de pantalla: agregar `aria-label` con el nombre del registro.
+- [ ] Onboarding y "conformar comité" siguen como páginas: evaluar convertirlos en pasos dentro de modal.
+
 ## Resuelto
 
 - [x] Enlace repo–Vercel, Neon, SUPER_ADMIN, DNS en Cloudflare.
