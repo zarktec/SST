@@ -48,6 +48,14 @@ export default async function IncidentPage({ params }: PageProps<"/tenant/accide
           <Link className="text-primary text-sm underline" href={`/accidentes/${id}/furat`}>
             Ver datos precargados del FURAT
           </Link>
+          {inv && (
+            <>
+              {" · "}
+              <a className="text-primary text-sm underline" href={`/informes/investigacion/${id}`}>
+                Descargar informe de investigación (PDF)
+              </a>
+            </>
+          )}
         </p>
       </Card>
       <Card>

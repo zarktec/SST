@@ -142,6 +142,10 @@ export default async function TenantHome() {
           Calendario de obligaciones
         </Link>
         {" · "}
+        <Link href="/informes" className="text-primary inline-block min-h-11 py-2 underline">
+          Informes y exportaciones
+        </Link>
+        {" · "}
         <Link
           href="/convivencia/radicar"
           className="text-primary inline-block min-h-11 py-2 underline"

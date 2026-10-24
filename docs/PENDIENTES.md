@@ -112,6 +112,9 @@ Registro vivo: se agrega al detectarlo y se tacha (o mueve a "Resuelto") al cerr
 
 - [ ] Documentos (`/documentos`): el contenido es texto (no hay carga de archivos PDF/Word hasta tener `BLOB_READ_WRITE_TOKEN`); el catálogo `doc_templates` está vacío (política, objetivos, procedimientos: sin textos oficiales). Periodicidad de revisión (12 meses) `TODO-NORMA`. Falta flujo de aprobación con varios niveles, distribución controlada y aceptación por trabajador en el portal (Fase 6.4), y exportar la lista maestra (6.3).
 
+- [ ] Informes (`/informes`): 13 informes en PDF (con la marca), Excel y CSV, informe de investigación de accidentes, carpeta de inspección y exportación total. Pendiente: (a) las plantillas **no son editables por el SUPER ADMIN** (hoy el formato está en código; la spec lo pide editable porque los formatos oficiales cambian); (b) la carpeta de inspección se organiza por ciclo PHVA, no por estándar de la Res. 0312 (falta el catálogo oficial); (c) el registro de la autoevaluación en el Ministerio sigue manual (sin API pública): el informe entrega los datos y la app ya guarda la fecha de confirmación; (d) la versión "para la ARL" de la autoevaluación es el mismo informe; (e) el PDF usa fuente estándar (sin caracteres fuera de Latin-1) y no incluye el logo de la empresa (Blob); (f) las exportaciones son síncronas: para empresas grandes pasar a la cola con aviso al terminar.
+- [ ] Exportación total: omite contenido cifrado (salud, quejas), firmas, huellas y la facturación; falta el procedimiento de autorización del titular para entregar esos datos (Ley 1581 de 2012) y el archivo cifrado de retención tras cancelar la cuenta.
+
 ## Resuelto
 
 - [x] Enlace repo–Vercel, Neon, SUPER_ADMIN, DNS en Cloudflare.
