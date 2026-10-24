@@ -8,6 +8,7 @@ import { formatCOP, formatDate, formatDateTime } from "@/lib/format";
 import { isOverdue, monthsOf } from "@/modules/annual-plan/rules";
 import { getPlan } from "@/modules/annual-plan/service";
 import { ActivityForm, CreatePlan, Reopen, Sign, StatusForm, Suggest } from "./forms";
+import { todayYmd } from "@/lib/dates";
 
 export const metadata = { title: "Plan anual de trabajo" };
 const PHVA: Record<string, string> = { P: "Planear", H: "Hacer", V: "Verificar", A: "Actuar" };
@@ -25,7 +26,7 @@ export default async function AnnualPlanPage({ searchParams }: PageProps<"/tenan
   const thisYear = new Date().getUTCFullYear();
   const year = Number(sp.anio) >= 2020 && Number(sp.anio) <= 2100 ? Number(sp.anio) : thisYear;
   const data = await getPlan(ctx.tenant.tenantId, year);
-  const today = new Date().toISOString().slice(0, 10);
+  const today = todayYmd();
   const canCreate = can(ctx.permissions, "annual_plan", "create");
   const signed = data?.plan.status === "signed";
   const canEdit = can(ctx.permissions, "annual_plan", "edit");

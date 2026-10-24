@@ -6,11 +6,12 @@ import { reportIncident } from "@/modules/incidents/service";
 import { seedCatalogs } from "@/modules/platform/catalogs/service";
 import { createWorker } from "@/modules/workers/service";
 import { IndicatorError, dashboard, saveAnalysis, saveTarget } from "./service";
+import { todayYmd } from "@/lib/dates";
 
 pointToTestDb();
 let n = 0;
 const mk = () => createTenantWithSubscription(`ix-${++n}`).then((t) => t.id);
-const today = new Date().toISOString().slice(0, 10);
+const today = todayYmd();
 const ref = `${today.slice(0, 7)}-01`;
 const find = (rows: Awaited<ReturnType<typeof dashboard>>, code: string) =>
   rows.find((r) => r.code === code)!;

@@ -4,6 +4,10 @@ on:
     branches: [main, "claude/**"]
   pull_request:
 
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   check:
     runs-on: ubuntu-latest
@@ -33,5 +37,53 @@ jobs:
       - run: pnpm lint
       - run: pnpm typecheck
       - run: pnpm format:check
+      - run: pnpm audit --prod --audit-level=high
       - run: pnpm test
       - run: pnpm build
+
+  # Pruebas E2E (Playwright) contra `next start`: escritorio y móvil de 375 px, accesibilidad (axe), seguridad (CSP) y flujos
+  # de cada módulo. Usa subdominios *.localhost (Chromium los resuelve a loopback).
+  e2e:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: sst_owner
+          POSTGRES_PASSWORD: sst_owner
+          POSTGRES_DB: sst_e2e
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U sst_owner" --health-interval 5s --health-timeout 5s
+          --health-retries 10
+    env:
+      CI: "true"
+      NEXT_PUBLIC_ROOT_DOMAIN: localhost:3000
+      DATABASE_URL: postgres://sst_owner:sst_owner@localhost:5432/sst_e2e
+      ENCRYPTION_MASTER_KEY: AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=
+      BLIND_INDEX_KEY: AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=
+      AUTH_SECRET: ci-only-secret-ci-only-secret-ci-only
+      SUPER_ADMIN_EMAIL: admin@zark.pro
+      SUPER_ADMIN_PASSWORD: SuperClave-2026!
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm exec playwright install --with-deps chromium
+      - run: pnpm build
+      - run: pnpm db:migrate
+      - run: pnpm db:seed
+      - run: pnpm exec playwright test
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-report
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 7

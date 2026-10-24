@@ -11,6 +11,7 @@ import {
   listRequests,
   resolveRequest,
 } from "./service";
+import { todayYmd } from "@/lib/dates";
 
 pointToTestDb();
 let n = 0;
@@ -47,7 +48,7 @@ describe.skipIf(!hasTestDb)("protección de datos (Ley 1581)", () => {
       type: "rectification",
       detail: "Mi cargo actual es Supervisor de bodega",
     });
-    expect(q.dueOn > new Date().toISOString().slice(0, 10)).toBe(true);
+    expect(q.dueOn > todayYmd()).toBe(true);
     expect(r.dueOn >= q.dueOn).toBe(true); // el reclamo tiene más plazo que la consulta
     await createRequest(
       t,

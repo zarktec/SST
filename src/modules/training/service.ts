@@ -16,6 +16,7 @@ import {
   type QuestionInput,
   type SessionInput,
 } from "./rules";
+import { todayYmd } from "@/lib/dates";
 
 const {
   trainingCourse,
@@ -26,7 +27,7 @@ const {
   worker,
 } = schema;
 const ctxOf = (tenantId: string, userId?: string) => ({ tenantId, userId });
-const today = () => new Date().toISOString().slice(0, 10);
+const today = () => todayYmd();
 
 export class TrainingError extends Error {}
 

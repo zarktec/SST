@@ -19,12 +19,13 @@ import {
   saveReview,
   signReview,
 } from "./service";
+import { todayYmd } from "@/lib/dates";
 
 pointToTestDb();
 const sig = `data:image/png;base64,${Buffer.concat([Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]), Buffer.alloc(400, 7)]).toString("base64")}`;
 let n = 0;
 const mk = () => createTenantWithSubscription(`au-${++n}`).then((t) => t.id);
-const today = new Date().toISOString().slice(0, 10);
+const today = todayYmd();
 const year = Number(today.slice(0, 4));
 
 describe.skipIf(!hasTestDb)("auditoría interna y revisión por la dirección", () => {

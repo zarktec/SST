@@ -12,11 +12,12 @@ import {
   type ItemStatus,
   type RatingRange,
 } from "./rules";
+import { todayYmd } from "@/lib/dates";
 
 const { selfAssessment, selfAssessmentItem, improvementItem, tenant } = schema;
 export type Assessment = typeof selfAssessment.$inferSelect;
 const ctxOf = (tenantId: string, userId?: string) => ({ tenantId, userId });
-const today = () => new Date().toISOString().slice(0, 10);
+const today = () => todayYmd();
 
 export class AssessmentError extends Error {}
 

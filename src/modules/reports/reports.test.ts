@@ -11,11 +11,12 @@ import { REPORTS, buildInvestigationReport, buildReport } from "./builders";
 import { exportAllData } from "./export-all";
 import { buildInspectionFolder } from "./inspection-folder";
 import { renderReport } from "./render";
+import { todayYmd } from "@/lib/dates";
 
 pointToTestDb();
 let n = 0;
 const mk = () => createTenantWithSubscription(`rp-${++n}`).then((t) => t.id);
-const today = new Date().toISOString().slice(0, 10);
+const today = todayYmd();
 const year = Number(today.slice(0, 4));
 const brand = { name: "Empresa Demo", color: "#0f766e" };
 

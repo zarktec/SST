@@ -5,6 +5,7 @@ import { requirePermission } from "@/core/auth/session";
 import { can } from "@/core/rbac/can";
 import { listAssessments, listImprovements } from "@/modules/assessment/service";
 import { ImprovementForm } from "../forms";
+import { todayYmd } from "@/lib/dates";
 
 export const metadata = { title: "Plan de mejoramiento" };
 
@@ -16,7 +17,7 @@ export default async function ImprovementPlan() {
   ]);
   const year = new Map(assessments.map((a) => [a.id, a.year]));
   const canEdit = can(ctx.permissions, "standards", "edit");
-  const today = new Date().toISOString().slice(0, 10);
+  const today = todayYmd();
   const open = items.filter((i) => i.status !== "done");
   return (
     <div className="space-y-4">

@@ -8,7 +8,14 @@ export function addMonths(date: string, n: number): string {
 
 export const daysBetween = (from: string, to: string): number =>
   Math.round((Date.parse(to) - Date.parse(from)) / 86_400_000);
-export const todayYmd = (): string => new Date().toISOString().slice(0, 10);
+const BOGOTA = new Intl.DateTimeFormat("en-CA", {
+  timeZone: "America/Bogota",
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit",
+});
+/** Fecha de hoy (AAAA-MM-DD) en hora de Colombia: después de las 7 p. m. la fecha UTC ya es la de mañana y no sirve para plazos. */
+export const todayYmd = (d: Date = new Date()): string => BOGOTA.format(d);
 
 export function addDays(date: string, n: number): string {
   return new Date(Date.parse(date) + n * 86_400_000).toISOString().slice(0, 10);

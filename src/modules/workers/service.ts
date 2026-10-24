@@ -15,10 +15,11 @@ import {
   type WorkerData,
   type WorkerInput,
 } from "./rules";
+import { todayYmd } from "@/lib/dates";
 
 const { worker, contractorSsCheck, workCenter } = schema;
 export type Worker = typeof worker.$inferSelect;
-const today = () => new Date().toISOString().slice(0, 10);
+const today = () => todayYmd();
 const ctxOf = (tenantId: string, userId?: string) => ({ tenantId, userId });
 const aad = (tenantId: string) => `worker:${tenantId}:id`;
 const bidx = (tenantId: string, idNumber: string) => blindIndex(idNumber, `worker:${tenantId}`);

@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import type { FormState } from "@/lib/form-state";
 import {
+  consumeRecentSync,
   enqueue,
   flushQueue,
   listQueue,
@@ -140,12 +141,14 @@ export function SyncStatus({ warm = [] }: { warm?: string[] }) {
     }
   }, [refresh, router]);
   useEffect(() => {
+    // Si otra pantalla acaba de sincronizar, esta lista pudo llegar vieja del servidor: se refresca una vez.
+    if (consumeRecentSync(performance.timeOrigin)) router.refresh();
     // eslint-disable-next-line react-hooks/set-state-in-effect -- sincroniza con IndexedDB al montar
     sync();
     const on = () => sync();
     window.addEventListener("online", on);
     return () => window.removeEventListener("online", on);
-  }, [sync]);
+  }, [sync, router]);
   useEffect(() => {
     if (!navigator.onLine) return;
     (async () => {

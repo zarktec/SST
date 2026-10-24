@@ -17,11 +17,12 @@ import {
   savePlan,
   scheduleDrill,
 } from "./service";
+import { todayYmd } from "@/lib/dates";
 
 pointToTestDb();
 let n = 0;
 const mk = () => createTenantWithSubscription(`em-${++n}`).then((t) => t.id);
-const today = new Date().toISOString().slice(0, 10);
+const today = todayYmd();
 const person = (t: string) =>
   createWorker(t, "u", {
     kind: "employee",

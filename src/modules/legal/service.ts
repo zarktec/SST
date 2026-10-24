@@ -4,6 +4,7 @@ import { schema, withTenant } from "@/core/db";
 import { assertWritable } from "@/core/plans/limits";
 import { getActiveItems } from "@/modules/platform/catalogs/service";
 import { entrySchema, summarize, type EntryInput, type MatrixRow } from "./rules";
+import { todayYmd } from "@/lib/dates";
 
 const { legalMatrixEntry } = schema;
 export type Entry = typeof legalMatrixEntry.$inferSelect;
@@ -80,7 +81,7 @@ export async function getMatrix(tenantId: string) {
   return {
     lines,
     version: { norms: norms?.version.version ?? null, requirements: reqs?.version.version ?? null },
-    summary: summarize(rows, new Date().toISOString().slice(0, 10)),
+    summary: summarize(rows, todayYmd()),
   };
 }
 

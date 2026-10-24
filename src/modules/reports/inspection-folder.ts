@@ -9,6 +9,7 @@ import { exportTables } from "@/core/reports/types";
 import { masterList } from "@/modules/documents/service";
 import { listIncidents } from "@/modules/incidents/service";
 import { REPORTS, buildInvestigationReport, buildReport } from "./builders";
+import { todayYmd } from "@/lib/dates";
 
 /**
  * "Carpeta de inspección" con un clic: ZIP con los informes de la empresa organizados por ciclo PHVA, los documentos vigentes, las
@@ -73,7 +74,7 @@ export async function buildInspectionFolder(opts: {
   const index: Report = {
     id: "indice",
     title: "Carpeta de inspección del SG-SST",
-    subtitle: `${tenantName} · año ${year} · generada el ${new Date().toISOString().slice(0, 10)}`,
+    subtitle: `${tenantName} · año ${year} · generada el ${todayYmd()}`,
     sections: [
       {
         heading: "Cómo está organizada",

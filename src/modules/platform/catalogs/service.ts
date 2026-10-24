@@ -2,6 +2,7 @@ import "server-only";
 import { and, asc, desc, eq, lte, max, or, isNull, gte, sql } from "drizzle-orm";
 import { schema, systemDb } from "@/core/db";
 import { CATALOG_KEYS, CATALOGS, parseItem, type CatalogKey } from "./definitions";
+import { todayYmd } from "@/lib/dates";
 
 const { catalogVersion, catalogItem } = schema;
 export type CatalogVersion = typeof catalogVersion.$inferSelect;
@@ -62,7 +63,7 @@ export async function catalogOverview() {
  */
 export async function getActiveVersion(
   catalog: CatalogKey,
-  at: string = new Date().toISOString().slice(0, 10),
+  at: string = todayYmd(),
 ): Promise<CatalogVersion | null> {
   const [v] = await systemDb()
     .select()

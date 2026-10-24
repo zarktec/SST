@@ -19,6 +19,7 @@ import {
   scheduleEvaluation,
   sendProfileToIps,
 } from "./service";
+import { todayYmd } from "@/lib/dates";
 
 pointToTestDb();
 let n = 0;
@@ -32,7 +33,7 @@ const person = (t: string, doc: string, startDate = "2024-01-01") =>
     startDate,
     position: "Operario",
   });
-const today = new Date().toISOString().slice(0, 10);
+const today = todayYmd();
 const logs = (t: string) =>
   withPlatform({ actorId: "t", action: "t", tenantId: t, audit: false }, (tx) =>
     tx.select().from(schema.sensitiveAccessLog),

@@ -56,6 +56,30 @@ export async function send(
   }
 }
 
+const SYNCED_KEY = "sst-synced-at";
+/** Deja constancia de que se sincronizó algo: otra pantalla (p. ej. una recién abierta) sabrá que su lista pudo quedar vieja. */
+function markSynced() {
+  try {
+    localStorage.setItem(SYNCED_KEY, String(Date.now()));
+  } catch {
+    /* sin almacenamiento: solo se pierde la actualización automática de la lista */
+  }
+}
+/**
+ * ¿Se sincronizó algo justo antes o durante la carga de esta pantalla? Si es así, su lista pudo renderizarse en el servidor antes de
+ * que la inspección se guardara y conviene refrescarla (un solo uso).
+ */
+export function consumeRecentSync(loadedAt: number): boolean {
+  try {
+    const at = Number(localStorage.getItem(SYNCED_KEY));
+    if (!at || at < loadedAt - 5000) return false;
+    localStorage.removeItem(SYNCED_KEY);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 /** Intenta enviar todo lo pendiente. Devuelve cuántas se enviaron y cuántas quedan. */
 export async function flushQueue(): Promise<{ sent: number; pending: number }> {
   let sent = 0;
@@ -64,6 +88,7 @@ export async function flushQueue(): Promise<{ sent: number; pending: number }> {
     const r = await send(item.payload);
     if (r.result === "sent") {
       await removeFromQueue(item.offlineId);
+      markSynced();
       sent++;
     } else if (r.result === "rejected") await enqueue({ ...item, error: r.message ?? "Rechazada" });
     else break; // sin red o sin sesión: no tiene caso seguir

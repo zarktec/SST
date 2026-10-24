@@ -15,9 +15,10 @@ import {
   requirementAction,
   saveItemAction,
 } from "./actions";
+import { todayYmd } from "@/lib/dates";
 
 const sel = "border-input bg-background min-h-11 w-full rounded-md border px-3 text-base";
-const today = () => new Date().toISOString().slice(0, 10);
+const today = () => todayYmd();
 
 export function ActionButton({
   run,

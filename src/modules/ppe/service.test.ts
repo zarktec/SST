@@ -12,6 +12,7 @@ import {
   saveItem,
   setRequirement,
 } from "./service";
+import { todayYmd } from "@/lib/dates";
 
 pointToTestDb();
 const sig = `data:image/png;base64,${Buffer.concat([Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]), Buffer.alloc(400, 7)]).toString("base64")}`;
@@ -26,7 +27,7 @@ const person = (t: string, doc: string, position = "Soldador") =>
     startDate: "2024-01-01",
     position,
   });
-const today = new Date().toISOString().slice(0, 10);
+const today = todayYmd();
 
 describe.skipIf(!hasTestDb)("EPP", () => {
   afterAll(closeDb);

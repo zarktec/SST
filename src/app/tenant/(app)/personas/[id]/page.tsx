@@ -8,6 +8,7 @@ import { formatDate } from "@/lib/format";
 import { isActive, previousPeriod } from "@/modules/workers/rules";
 import { getWorker, listCenters, workerSsChecks } from "@/modules/workers/service";
 import { RetireForm, SsCheckForm, WorkerForm } from "../worker-form";
+import { todayYmd } from "@/lib/dates";
 
 export const metadata = { title: "Ficha de persona" };
 
@@ -21,7 +22,7 @@ export default async function WorkerPage({ params }: PageProps<"/tenant/personas
   if (!w) notFound();
   const canEdit = can(ctx.permissions, "workers", "edit");
   const checks = w.kind === "contractor" ? await workerSsChecks(ctx.tenant.tenantId, id) : [];
-  const today = new Date().toISOString().slice(0, 10);
+  const today = todayYmd();
   return (
     <div className="space-y-4">
       <Link href="/personas" className="text-primary text-sm underline">

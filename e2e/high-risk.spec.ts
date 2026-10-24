@@ -28,6 +28,8 @@ test("permiso de alturas: bloqueos por certificados y separación de funciones",
   await page.getByRole("link", { name: "Trabajo en alturas" }).click();
   await page.waitForLoadState("load");
 
+  // Mañana: el permiso no puede quedar en el pasado, sin importar la hora a la que corra la prueba.
+  await page.locator("#rq-date").fill(new Date(Date.now() + 86_400_000).toISOString().slice(0, 10));
   await page.locator("#rq-place").fill("Fachada norte");
   await page.locator("#rq-description").fill("Pintura de la fachada con andamio");
   for (const sel of await page.locator('select[id^="rq-c_"]').all()) await sel.selectOption("ok");

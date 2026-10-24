@@ -14,10 +14,11 @@ import {
   type ResponsibleInput,
   type SizeRiskRule,
 } from "./rules";
+import { todayYmd } from "@/lib/dates";
 
 const { tenant, workCenter, sstResponsible, tenantAlert, tenantBranding } = schema;
 const ctxOf = (tenantId: string, userId?: string) => ({ tenantId, userId });
-const today = () => new Date().toISOString().slice(0, 10);
+const today = () => todayYmd();
 
 export class CompanyError extends Error {}
 

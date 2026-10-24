@@ -9,6 +9,7 @@ import { formatDate } from "@/lib/format";
 import { KIND_LABEL } from "@/modules/committees/rules";
 import { activeCommittees, committeeStatus } from "@/modules/committees/service";
 import { CloseCommitmentForm, MinutesForm } from "../forms";
+import { todayYmd } from "@/lib/dates";
 
 export const metadata = { title: "Comité" };
 
@@ -21,7 +22,7 @@ export default async function CommitteePage({ params }: PageProps<"/tenant/comit
   const members = withMembers?.members ?? [];
   const canEdit = can(ctx.permissions, "committees", "edit") && st.committee.status === "active";
   const name = new Map(members.map((m) => [m.workerId, m.name]));
-  const today = new Date().toISOString().slice(0, 10);
+  const today = todayYmd();
   return (
     <div className="space-y-4">
       <Link href="/comites" className="text-primary text-sm underline">

@@ -15,12 +15,13 @@ import {
   saveVehicle,
   submitPreop,
 } from "./service";
+import { todayYmd } from "@/lib/dates";
 
 pointToTestDb();
 let n = 0;
 const mk = (modules: string[] = ["pesv"]) =>
   createTenantWithSubscription(`pv-${++n}`, { modules }).then((t) => t.id);
-const today = new Date().toISOString().slice(0, 10);
+const today = todayYmd();
 
 describe.skipIf(!hasTestDb)("PESV", () => {
   afterAll(closeDb);

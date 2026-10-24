@@ -21,6 +21,7 @@ import {
   saveInvestigation,
   startInvestigation,
 } from "./service";
+import { todayYmd } from "@/lib/dates";
 
 pointToTestDb();
 let n = 0;
@@ -34,7 +35,7 @@ const person = (t: string, doc: string) =>
     startDate: "2024-01-01",
     position: "Operario",
   });
-const today = new Date().toISOString().slice(0, 10);
+const today = todayYmd();
 const base = {
   kind: "accident" as const,
   occurredDate: today,

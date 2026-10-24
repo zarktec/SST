@@ -17,6 +17,7 @@ import {
   setRequirement,
   signAttendanceByToken,
 } from "./service";
+import { todayYmd } from "@/lib/dates";
 
 pointToTestDb();
 const sig = `data:image/png;base64,${Buffer.concat([Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]), Buffer.alloc(400, 7)]).toString("base64")}`;
@@ -165,7 +166,7 @@ describe.skipIf(!hasTestDb)("capacitación", () => {
     expect(m.rows.find((r) => r.workerId !== ana)!.items[0].state).toBe("pendiente");
     const recent = await createSession(t, "u", {
       courseId: course,
-      date: new Date().toISOString().slice(0, 10),
+      date: todayYmd(),
     });
     await registerManualAttendance(t, "u", recent, ana);
     expect((await competenceMatrix(t)).rows.find((r) => r.workerId === ana)!.items[0].state).toBe(

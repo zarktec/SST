@@ -16,6 +16,7 @@ import {
   listWorkers,
   type WorkerFilters,
 } from "@/modules/workers/service";
+import { todayYmd } from "@/lib/dates";
 
 export const metadata = { title: "Personas" };
 const sel = "border-input bg-background min-h-11 rounded-md border px-3 text-base";
@@ -41,7 +42,7 @@ export default async function PeoplePage({ searchParams }: PageProps<"/tenant/pe
   ]);
   const centerName = new Map(centers.map((c) => [c.id, c.name]));
   const canCreate = can(ctx.permissions, "workers", "create");
-  const today = new Date().toISOString().slice(0, 10);
+  const today = todayYmd();
   const pendingSs = contractors.filter((c) => c.state !== "al_dia");
 
   return (
