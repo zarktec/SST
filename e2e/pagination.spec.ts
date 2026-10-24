@@ -18,7 +18,7 @@ test("listas largas: paginación por enlaces, estable y accesible", async ({ pag
   await page.getByLabel("Correo electrónico").fill("demo@demo.test");
   await page.getByLabel("Contraseña").fill("DemoClave-2026!");
   await page.getByRole("button", { name: "Ingresar" }).click();
-  await page.waitForURL(`${TENANT}/`);
+  await page.waitForURL(TENANT);
 
   await page.goto(`${TENANT}/acciones`);
   await expect(page.getByText("Página 1 de 2 · 30 registros")).toBeVisible();

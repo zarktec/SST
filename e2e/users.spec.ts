@@ -9,7 +9,7 @@ test("usuarios: invitar, revocar y proteger al único administrador", async ({ p
   await page.getByLabel("Correo electrónico").fill("demo@demo.test");
   await page.getByLabel("Contraseña").fill("DemoClave-2026!");
   await page.getByRole("button", { name: "Ingresar" }).click();
-  await page.waitForURL(`${TENANT}/`);
+  await page.waitForURL(TENANT);
 
   await page.goto(`${TENANT}/usuarios`);
   await expect(page.getByRole("heading", { name: "Usuarios y roles" })).toBeVisible();

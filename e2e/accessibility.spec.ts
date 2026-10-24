@@ -70,7 +70,7 @@ test("pantallas de la empresa sin violaciones WCAG 2.1 AA", async ({ page }) => 
   await page.getByLabel("Correo electrónico").fill("demo@demo.test");
   await page.getByLabel("Contraseña").fill("DemoClave-2026!");
   await page.getByRole("button", { name: "Ingresar" }).click();
-  await page.waitForURL(`${TENANT}/`);
+  await page.waitForURL(TENANT);
   const out: string[] = [];
   for (const path of APP)
     for (const v of await audit(page, `${TENANT}${path}`)) out.push(`${path} → ${v}`);
@@ -85,7 +85,7 @@ test("botones y campos cumplen el objetivo táctil de 44 px (móvil)", async ({ 
   await page.getByLabel("Correo electrónico").fill("demo@demo.test");
   await page.getByLabel("Contraseña").fill("DemoClave-2026!");
   await page.getByRole("button", { name: "Ingresar" }).click();
-  await page.waitForURL(`${TENANT}/`);
+  await page.waitForURL(TENANT);
   const small: string[] = [];
   for (const path of [
     "/",
@@ -128,7 +128,7 @@ test("navegación con teclado: el primer Tab ofrece saltar al contenido y el foc
   await page.getByLabel("Correo electrónico").fill("demo@demo.test");
   await page.getByLabel("Contraseña").fill("DemoClave-2026!");
   await page.getByRole("button", { name: "Ingresar" }).click();
-  await page.waitForURL(`${TENANT}/`);
+  await page.waitForURL(TENANT);
   await page.waitForLoadState("networkidle");
   await page.keyboard.press("Tab");
   const skip = page.getByRole("link", { name: "Saltar al contenido" });
