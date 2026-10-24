@@ -99,6 +99,8 @@ Registro vivo: se agrega al detectarlo y se tacha (o mueve a "Resuelto") al cerr
 
 - [ ] Riesgo químico (`/quimicos`): la matriz de incompatibilidades por pictograma (4 pares) y la revisión de la FDS cada 5 años son provisionales `TODO-NORMA`; la compatibilidad real depende de la sección 7 de cada FDS y de la clase química (ácidos vs. bases, etc.). No se adjuntan FDS ni fotos de etiquetas (Blob). Falta generador de etiquetas SGA y control de cantidades máximas almacenadas.
 
+- [ ] PESV (`/pesv`, módulo opcional por plan): la lista preoperacional (9 ítems) y el plazo de 2 días por falla crítica son provisionales `TODO-NORMA`; las fórmulas oficiales de los indicadores y del reporte anual de autogestión (Res. 40595 de 2022) no están cargadas: hoy se entregan conteos base. Faltan kilometraje recorrido para la tasa de siniestralidad, preoperacional offline y por QR del vehículo, investigación del siniestro vial con el flujo de accidentes, plan de capacitación de conductores y nivel de riesgo del PESV (según el tamaño de la flota).
+
 ## Resuelto
 
 - [x] Enlace repo–Vercel, Neon, SUPER_ADMIN, DNS en Cloudflare.

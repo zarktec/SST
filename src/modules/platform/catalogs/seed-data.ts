@@ -260,6 +260,20 @@ export const SEEDS: Seed[] = [
         "TODO-NORMA: SGA / Decreto 1496 de 2018 (validar periodicidad)",
       ),
       p(
+        "pesv.alerta_vencimiento_dias",
+        30,
+        "días",
+        "Anticipación de la alerta de vencimiento de SOAT, revisión técnico-mecánica y licencias",
+        "Parametrizable",
+      ),
+      p(
+        "pesv.plazo_falla_critica_dias",
+        2,
+        "días",
+        "Plazo de la acción por una falla crítica en la inspección preoperacional",
+        "TODO-NORMA: parametrizable",
+      ),
+      p(
         "psicosocial.periodicidad_riesgo_alto_meses",
         12,
         "meses",

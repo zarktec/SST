@@ -37,12 +37,12 @@ export async function dbErrorMessage(p: Promise<unknown>): Promise<string> {
 /** Empresa con suscripción de prueba (toda empresa real nace con una; los límites de plan la requieren). */
 export async function createTenantWithSubscription(
   slug: string,
-  limits?: { users?: number | null },
+  limits?: { users?: number | null; modules?: string[] },
 ) {
   const { createPlan, getPlanByKey } = await import("@/modules/platform/plans/service");
   const { createTrialSubscription } = await import("@/modules/billing/subscriptions");
   const { withPlatform } = await import("./context");
-  const key = `test-${limits?.users ?? "unl"}`;
+  const key = `test-${limits?.users ?? "unl"}${limits?.modules?.length ? `-${limits.modules.join("+")}` : ""}`;
   const planId =
     (await getPlanByKey(key))?.id ??
     (await createPlan({
@@ -55,7 +55,7 @@ export async function createTenantWithSubscription(
       vatIncluded: false,
       vatRatePercent: 0,
       limits: { workers: null, users: limits?.users ?? null, centers: null, storageMb: null },
-      modules: [],
+      modules: limits?.modules ?? [],
       visible: false,
       sortOrder: 0,
       active: true,
