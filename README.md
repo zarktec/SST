@@ -1,36 +1,42 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# SST — Plataforma SaaS del SG-SST (Colombia)
 
-## Getting Started
+Plataforma multiempresa para montar, administrar y demostrar el cumplimiento del Sistema de Gestión de Seguridad y Salud en el
+Trabajo: estándares mínimos, matrices, capacitación, comités, medicina del trabajo, accidentes e investigación, inspecciones,
+indicadores, emergencias, alto riesgo, químicos, PESV, vigilancia epidemiológica, auditoría, revisión por la dirección, documentos,
+informes regulatorios y portal del trabajador. Facturación con Wompi y Siigo.
 
-First, run the development server:
+## Documentación
+
+| Documento                                                          | Para quién                       |
+| ------------------------------------------------------------------ | -------------------------------- |
+| [`docs/PRODUCT_SPEC.md`](docs/PRODUCT_SPEC.md)                     | Qué se construye y por qué       |
+| [`docs/ARQUITECTURA_PROPUESTA.md`](docs/ARQUITECTURA_PROPUESTA.md) | Arquitectura aprobada            |
+| [`docs/GUIA_USUARIO.md`](docs/GUIA_USUARIO.md)                     | Usuarios de las empresas         |
+| [`docs/OPERACION.md`](docs/OPERACION.md)                           | Quien despliega y opera          |
+| [`docs/PENDIENTES.md`](docs/PENDIENTES.md)                         | Decisiones abiertas y pendientes |
+| [`CLAUDE.md`](CLAUDE.md)                                           | Convenciones y estado por fase   |
+
+## Inicio rápido (desarrollo)
+
+Requisitos: Node 22, pnpm 10 y PostgreSQL 16.
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+pnpm install
+cp .env.example .env.local     # completa NEXT_PUBLIC_ROOT_DOMAIN=localhost:3000, DATABASE_URL y las llaves (ver docs/OPERACION.md)
+pnpm db:migrate && pnpm db:seed
+pnpm dev                       # http://localhost:3000 · demo.localhost:3000 · admin.localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+La empresa demo (`demo.localhost:3000`) entra con `demo@demo.test` / `DemoClave-2026!` y el SUPER ADMIN (`admin.localhost:3000`) con
+las variables `SUPER_ADMIN_EMAIL` y `SUPER_ADMIN_PASSWORD` (activa 2FA en el primer ingreso).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Comandos
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Comando                                              | Qué hace                                                                      |
+| ---------------------------------------------------- | ----------------------------------------------------------------------------- |
+| `pnpm lint` · `pnpm typecheck` · `pnpm format:check` | Calidad estática                                                              |
+| `pnpm test`                                          | Pruebas unitarias y de BD (requiere `TEST_DATABASE_URL`)                      |
+| `pnpm build && pnpm exec playwright test`            | E2E en escritorio y 375 px, accesibilidad y seguridad (BD migrada y sembrada) |
+| `pnpm db:generate`                                   | Genera una migración Drizzle tras cambiar el esquema                          |
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+El CI (`.github/workflows/ci.yml`) corre todo lo anterior en cada push.

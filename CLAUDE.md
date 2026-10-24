@@ -67,6 +67,9 @@ Ver sección "Estado de fases" al final; actualizar al cerrar cada fase. Pendien
 - Fase 6: **completa** (pendiente de tu revisión; ver `docs/PENDIENTES.md`). 6.1 notificaciones (`/notificaciones`: barrido diario del cron → alertas in-app, correo de lo nuevo y resumen semanal los lunes, push PWA con llaves VAPID; `/calendario` con descarga .ics), 6.2 documentos (`/documentos`: lista maestra, versiones, aprobación firmada por otra persona, política, constancia de lectura; trigger de inmutabilidad), 6.3 informes (`/informes`: 13 informes en PDF/Excel/CSV, informe de investigación, carpeta de inspección ZIP con índice y huellas, exportación total), 6.4 portal del trabajador (`/portal`), privacidad Ley 1581 (`/privacidad`: autorización, solicitudes de titulares), búsqueda global (`/buscar`).
   - Utilidades nuevas: `src/core/reports/{pdf,xlsx,csv,zip,types}.ts` (sin dependencias pesadas: `fflate` + `pdf-lib`), `src/modules/notifications/{collect,service,rules}.ts` (para sumar una alerta, agregarla en `collectAlerts`), `permissionList` en `src/core/rbac/can.ts`. Variables nuevas: `VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`, `VAPID_SUBJECT`.
 
+- Fase 7: **completa** (pendiente de tu revisión; ver `docs/PENDIENTES.md`). Seguridad (CSP con nonce, límite de intentos compartido, `pnpm audit` limpio), accesibilidad (axe en E2E), paginación, E2E en CI (`.github/workflows/ci.yml`), fecha de hoy en hora de Colombia, `/usuarios` (invitaciones y roles) y documentación (`README.md`, `docs/OPERACION.md`, `docs/GUIA_USUARIO.md`).
+  - Pendiente: primera corrida real en GitHub Actions y protección de rama; Sentry; pruebas reales de Wompi/Siigo/AUCO; catálogos oficiales y validación de `TODO-NORMA`.
+
 ## Despliegue (Vercel)
 
 - Proyecto Vercel `sst` (equipo ZarK, `prj_kpoOB6LCtrFYpXrk1s6oXhU1aQfm`), Next.js, Node 22, región iad1. Dominios agregados: `sst.zark.pro`, `admin.`, `auth.` y `*.sst.zark.pro`.

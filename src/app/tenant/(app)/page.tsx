@@ -135,6 +135,7 @@ export default async function TenantHome() {
             ["/reportes", "Condiciones y actos inseguros", "unsafe_reports"],
             ["/inspecciones", "Inspecciones", "inspections"],
             ["/indicadores", "Indicadores", "indicators"],
+            ["/usuarios", "Usuarios y roles", "users"],
             ["/convivencia", "Convivencia laboral", "ccl"],
             ["/acoso-sexual", "Acoso sexual", "harassment"],
           ]
