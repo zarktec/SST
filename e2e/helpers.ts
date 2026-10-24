@@ -248,11 +248,14 @@ export async function seedStandardsCatalog() {
 
 /** Abre el modal de un formulario (botón disparador) y devuelve el diálogo para acotar los campos. */
 export async function openModal(page: Page, trigger: string | RegExp, nth = 0) {
-  await page
+  const button = page
     .getByRole("button", { name: trigger, exact: typeof trigger === "string" })
-    .nth(nth)
-    .click();
+    .nth(nth);
   const dialog = page.getByRole("dialog");
-  await expect(dialog).toBeVisible();
+  // Un clic antes de la hidratación no abre nada: se reintenta hasta que el modal aparezca.
+  await expect(async () => {
+    await button.click({ timeout: 2000 });
+    await expect(dialog).toBeVisible({ timeout: 1500 });
+  }).toPass({ timeout: 15_000 });
   return dialog;
 }

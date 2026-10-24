@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { ADMIN, loginAdminWith2fa, resetState } from "./helpers";
+import { ADMIN, loginAdminWith2fa, openModal, resetState } from "./helpers";
 
 test.beforeEach(resetState);
 
@@ -7,13 +7,14 @@ test("SUPER ADMIN crea una empresa, la ve en el listado y opera su suscripción"
   page,
 }, info) => {
   await loginAdminWith2fa(page);
-  await page.goto(`${ADMIN}/empresas/nueva`);
-  await page.getByLabel("Nombre comercial").fill("Constructora E2E");
-  await page.getByLabel("Razón social").fill("Constructora E2E S.A.S.");
-  await page.getByLabel(/^NIT/).fill("900555111");
-  await page.getByLabel("Identificador en la dirección").fill("e2e-constructora");
-  await page.getByLabel(/^Correo del administrador/).fill("gerente@e2e-constructora.co");
-  await page.getByRole("button", { name: "Crear empresa" }).click();
+  await page.goto(`${ADMIN}/empresas`);
+  const dlg = await openModal(page, "Nueva empresa");
+  await dlg.getByLabel("Nombre comercial").fill("Constructora E2E");
+  await dlg.getByLabel("Razón social").fill("Constructora E2E S.A.S.");
+  await dlg.getByLabel(/^NIT/).fill("900555111");
+  await dlg.getByLabel("Identificador en la dirección").fill("e2e-constructora");
+  await dlg.getByLabel(/^Correo del administrador/).fill("gerente@e2e-constructora.co");
+  await dlg.getByRole("button", { name: "Crear empresa" }).click();
 
   await expect(page.getByRole("heading", { name: "Constructora E2E" })).toBeVisible();
   await expect(page.getByText("Free Trial")).toBeVisible();
@@ -45,12 +46,13 @@ test("SUPER ADMIN crea una empresa, la ve en el listado y opera su suscripción"
   await expect(page.getByText("No hay empresas con esos filtros.")).toBeVisible();
 
   // Identificador duplicado
-  await page.goto(`${ADMIN}/empresas/nueva`);
-  await page.getByLabel("Nombre comercial").fill("Otra");
-  await page.getByLabel("Razón social").fill("Otra S.A.S.");
-  await page.getByLabel("Identificador en la dirección").fill("e2e-constructora");
-  await page.getByLabel(/^Correo del administrador/).fill("otro@otra.co");
-  await page.getByRole("button", { name: "Crear empresa" }).click();
+  await page.goto(`${ADMIN}/empresas`);
+  const dlg2 = await openModal(page, "Nueva empresa");
+  await dlg2.getByLabel("Nombre comercial").fill("Otra");
+  await dlg2.getByLabel("Razón social").fill("Otra S.A.S.");
+  await dlg2.getByLabel("Identificador en la dirección").fill("e2e-constructora");
+  await dlg2.getByLabel(/^Correo del administrador/).fill("otro@otra.co");
+  await dlg2.getByRole("button", { name: "Crear empresa" }).click();
   await expect(page.getByText(/ya está en uso/)).toBeVisible();
 });
 
@@ -58,12 +60,13 @@ test("la empresa creada tiene su login de marca y el administrador invitado pued
   page,
 }) => {
   await loginAdminWith2fa(page);
-  await page.goto(`${ADMIN}/empresas/nueva`);
-  await page.getByLabel("Nombre comercial").fill("Marca E2E");
-  await page.getByLabel("Razón social").fill("Marca E2E S.A.S.");
-  await page.getByLabel("Identificador en la dirección").fill("e2e-marca");
-  await page.getByLabel(/^Correo del administrador/).fill("admin@e2e-marca.co");
-  await page.getByRole("button", { name: "Crear empresa" }).click();
+  await page.goto(`${ADMIN}/empresas`);
+  const dlg = await openModal(page, "Nueva empresa");
+  await dlg.getByLabel("Nombre comercial").fill("Marca E2E");
+  await dlg.getByLabel("Razón social").fill("Marca E2E S.A.S.");
+  await dlg.getByLabel("Identificador en la dirección").fill("e2e-marca");
+  await dlg.getByLabel(/^Correo del administrador/).fill("admin@e2e-marca.co");
+  await dlg.getByRole("button", { name: "Crear empresa" }).click();
   await expect(page.getByRole("heading", { name: "Marca E2E" })).toBeVisible();
   await page.goto("http://localhost:3000/e2e-marca/login");
   await expect(page.getByText("Accede a Marca E2E")).toBeVisible();
