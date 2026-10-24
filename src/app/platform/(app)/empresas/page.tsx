@@ -1,3 +1,5 @@
+import { FormModal } from "@/components/ui/modal";
+import { NewTenantForm } from "./nueva/form";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Button, buttonVariants } from "@/components/ui/button";
@@ -41,9 +43,13 @@ export default async function TenantsPage({ searchParams }: PageProps<"/platform
         <h1 className="text-2xl font-bold">
           Empresas <span className="text-muted-foreground text-base font-normal">({total})</span>
         </h1>
-        <Link href="/empresas/nueva" className={buttonVariants()}>
-          Nueva empresa
-        </Link>
+        <FormModal title="Nueva empresa" trigger="Nueva empresa" triggerVariant="default">
+          <NewTenantForm
+            plans={plans
+              .filter((p) => p.active)
+              .map((p) => ({ id: p.id, name: p.name, isTrial: p.isTrial }))}
+          />
+        </FormModal>
       </div>
       <form className="grid gap-2 sm:grid-cols-[1fr_10rem_10rem_auto]">
         <Input

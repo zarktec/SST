@@ -1,5 +1,6 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { FormModal } from "@/components/ui/modal";
 import { Card, CardTitle } from "@/components/ui/card";
 import { formatCOP, formatDate } from "@/lib/format";
 import { listCoupons, listPlans } from "@/modules/platform/plans/service";
@@ -12,10 +13,14 @@ export default async function CouponsPage() {
   const [coupons, plans] = await Promise.all([listCoupons(), listPlans()]);
   return (
     <div className="space-y-4">
-      <h1 className="text-2xl font-bold">Cupones</h1>
-      <CouponForm
-        plans={plans.filter((p) => !p.isTrial).map((p) => ({ id: p.id, name: p.name }))}
-      />
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <h1 className="text-2xl font-bold">Cupones</h1>
+        <FormModal title="Nuevo cupón" trigger="Nuevo cupón" triggerVariant="default">
+          <CouponForm
+            plans={plans.filter((p) => !p.isTrial).map((p) => ({ id: p.id, name: p.name }))}
+          />
+        </FormModal>
+      </div>
       <Card>
         <CardTitle>Cupones creados</CardTitle>
         {coupons.length === 0 ? (

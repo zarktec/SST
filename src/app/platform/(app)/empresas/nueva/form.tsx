@@ -1,8 +1,7 @@
 "use client";
-import { useActionState } from "react";
+import { useActionState } from "@/components/forms/use-form-state";
 import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 import { Input, Label } from "@/components/ui/input";
 import { createTenantAction } from "../actions";
 
@@ -13,7 +12,7 @@ export function NewTenantForm({
 }) {
   const [state, action, pending] = useActionState(createTenantAction, null);
   return (
-    <Card>
+    <>
       <form action={action} className="space-y-3">
         {state && !state.ok && <Alert variant="destructive">{state.message}</Alert>}
         <div className="space-y-1">
@@ -66,6 +65,6 @@ export function NewTenantForm({
           Crear empresa
         </Button>
       </form>
-    </Card>
+    </>
   );
 }

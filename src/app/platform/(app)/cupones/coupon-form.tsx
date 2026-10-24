@@ -1,17 +1,15 @@
 "use client";
-import { useActionState } from "react";
+import { useActionState } from "@/components/forms/use-form-state";
 import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
-import { Card, CardTitle } from "@/components/ui/card";
 import { Input, Label } from "@/components/ui/input";
 import { createCouponAction } from "../planes/actions";
 
 export function CouponForm({ plans }: { plans: { id: string; name: string }[] }) {
   const [state, action, pending] = useActionState(createCouponAction, null);
   return (
-    <Card>
-      <CardTitle>Nuevo cupón</CardTitle>
-      <form action={action} className="mt-3 space-y-3">
+    <>
+      <form action={action} className="space-y-3">
         {state && <Alert variant={state.ok ? "success" : "destructive"}>{state.message}</Alert>}
         <div className="space-y-1">
           <Label htmlFor="code">Código</Label>
@@ -64,6 +62,6 @@ export function CouponForm({ plans }: { plans: { id: string; name: string }[] })
           Crear cupón
         </Button>
       </form>
-    </Card>
+    </>
   );
 }

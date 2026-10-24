@@ -1,3 +1,7 @@
+import { PLAN_MODULE_KEYS } from "@/core/plans/modules";
+import { FormModal } from "@/components/ui/modal";
+import { createPlanAction } from "./actions";
+import { PlanForm } from "./plan-form";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
@@ -18,9 +22,31 @@ export default async function PlansPage() {
           <Link href="/cupones" className={buttonVariants({ variant: "outline" })}>
             Cupones
           </Link>
-          <Link href="/planes/nuevo" className={buttonVariants()}>
-            Nuevo plan
-          </Link>
+          <FormModal title="Nuevo plan" trigger="Nuevo plan" triggerVariant="default" size="lg">
+            <PlanForm
+              isNew
+              action={createPlanAction}
+              initial={{
+                key: "",
+                name: "",
+                description: "",
+                isTrial: false,
+                trialDays: null,
+                vatEnabled: true,
+                vatIncluded: false,
+                vatRatePercent: 19,
+                limits: { workers: null, users: null, centers: null, storageMb: null },
+                modules: [...PLAN_MODULE_KEYS],
+                visible: true,
+                sortOrder: 10,
+                active: true,
+                monthlyPesos: null,
+                annualPesos: null,
+                monthlySiigoCode: null,
+                annualSiigoCode: null,
+              }}
+            />
+          </FormModal>
         </div>
       </div>
       <ul className="grid gap-3 sm:grid-cols-2">
