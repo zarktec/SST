@@ -95,6 +95,8 @@ Registro vivo: se agrega al detectarlo y se tacha (o mueve a "Resuelto") al cerr
 
 - [ ] Emergencias (`/emergencias`): periodicidades (inspección de equipos 30 d, revisión del plan 12 meses, simulacro mínimo 1/año) y plazos son `TODO-NORMA` parametrizables (`emergencias.*`). Planos de rutas de evacuación: pendientes de `BLOB_READ_WRITE_TOKEN`. Brigada: la capacitación se digita; falta vincularla con las sesiones de capacitación y con la dotación del módulo EPP. Sin recordatorios por correo de vencimientos (Fase 6, notificaciones).
 
+- [ ] Alto riesgo (`/alto-riesgo`): listas de verificación predeterminadas, duración máxima (8 h) y vigencia del certificado de alturas (12 meses, `alturas.vigencia_certificado_meses`) son provisionales `TODO-NORMA` (Res. 4272 de 2021: validar niveles de certificación, reentrenamiento y requisitos del coordinador). Sin firma de cierre ni de los ejecutores; sin plan de rescate/ATS como documentos adjuntos (Blob). Los permisos solo se programan el mismo día (no turnos que crucen la medianoche). Un solo usuario no puede solicitar y autorizar: la empresa necesita al menos dos con permiso `high_risk`.
+
 ## Resuelto
 
 - [x] Enlace repo–Vercel, Neon, SUPER_ADMIN, DNS en Cloudflare.

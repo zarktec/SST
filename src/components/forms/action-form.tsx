@@ -5,12 +5,13 @@ import { Button } from "@/components/ui/button";
 import { Field } from "@/components/ui/field";
 import { Label } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
+import { SignaturePad } from "@/components/ui/signature-pad";
 import type { FormState } from "@/lib/form-state";
 
 export type FieldSpec = {
   name: string;
   label: string;
-  type?: "text" | "date" | "time" | "number" | "textarea" | "select" | "checkbox";
+  type?: "text" | "date" | "time" | "number" | "textarea" | "select" | "checkbox" | "signature";
   options?: { value: string; label: string }[];
   required?: boolean;
   saved?: string | number | boolean | null;
@@ -41,6 +42,8 @@ export function ActionForm({
   variant?: "default" | "outline";
 }) {
   const [s, formAction, pending] = useActionState(action, null);
+  const [sig, setSig] = useState<string | null>(null);
+  const needsSig = fields.some((f) => f.type === "signature");
   return (
     <form action={formAction} className="space-y-3">
       {Object.entries(hidden).map(([k, v]) => (
@@ -57,6 +60,14 @@ export function ActionForm({
               {err}
             </p>
           );
+          if (f.type === "signature")
+            return (
+              <div key={f.name} className="space-y-1 sm:col-span-2">
+                <Label>{f.label}</Label>
+                <SignaturePad onChange={setSig} />
+                <input type="hidden" name={f.name} value={sig ?? ""} />
+              </div>
+            );
           if (f.type === "checkbox")
             return (
               <label
@@ -126,7 +137,7 @@ export function ActionForm({
           );
         })}
       </div>
-      <Button type="submit" size="sm" variant={variant} disabled={pending}>
+      <Button type="submit" size="sm" variant={variant} disabled={pending || (needsSig && !sig)}>
         {submit}
       </Button>
     </form>

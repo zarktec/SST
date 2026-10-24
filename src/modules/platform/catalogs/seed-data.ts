@@ -239,6 +239,20 @@ export const SEEDS: Seed[] = [
         "Parametrizable",
       ),
       p(
+        "alturas.vigencia_certificado_meses",
+        12,
+        "meses",
+        "Vigencia del certificado de trabajo en alturas",
+        "TODO-NORMA: Resolución 4272 de 2021 (validar vigencia y reentrenamiento)",
+      ),
+      p(
+        "alturas.alerta_vencimiento_dias",
+        30,
+        "días",
+        "Anticipación de la alerta de vencimiento de certificados y equipos de alturas",
+        "Parametrizable",
+      ),
+      p(
         "psicosocial.periodicidad_riesgo_alto_meses",
         12,
         "meses",
