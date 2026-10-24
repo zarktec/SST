@@ -5,7 +5,8 @@ import { Pool } from "pg";
 
 config({ path: ".env.local" });
 
-export const TENANT = "http://demo.localhost:3000";
+/** La empresa demo vive en {dominio raíz}/demo (ya no hay subdominios por empresa). */
+export const TENANT = "http://localhost:3000/demo";
 export const ADMIN = "http://admin.localhost:3000";
 export const ADMIN_EMAIL = "admin@zark.pro";
 export const ADMIN_PASSWORD = "SuperClave-2026!";
@@ -138,6 +139,7 @@ export async function resetState() {
       "committee",
       "hazard_row",
       "hazard_matrix",
+      "tenant_domain", // dominio propio conectado en domain.spec
     ])
       await client.query(
         `DELETE FROM ${t} WHERE tenant_id IN (SELECT id FROM tenant WHERE slug = 'demo')`,

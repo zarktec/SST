@@ -1,6 +1,7 @@
-import Link from "next/link";
+import Link from "@/components/ui/link";
 import { Alert } from "@/components/ui/alert";
 import { Card, CardDescription, CardTitle } from "@/components/ui/card";
+import { tp } from "@/core/tenancy/base-path";
 import { requireTenantMember } from "@/core/auth/session";
 import { withTenant } from "@/core/db";
 import { can, loadPermissions } from "@/core/rbac/can";
@@ -31,6 +32,7 @@ export default async function TenantHome() {
   const unread = await unreadCount(ctx.tenant.tenantId, ctx.user.id, permissionList(perms)).catch(
     () => 0,
   );
+  const searchAction = await tp("/buscar");
   return (
     <div className="space-y-4">
       <h1 className="text-2xl font-bold">Hola, {ctx.user.name.split(" ")[0]}</h1>
@@ -85,7 +87,7 @@ export default async function TenantHome() {
           </Link>
         </Alert>
       )}
-      <form action="/buscar" role="search" className="flex gap-2">
+      <form action={searchAction} role="search" className="flex gap-2">
         <input
           type="search"
           name="q"
@@ -185,9 +187,15 @@ export default async function TenantHome() {
         </Link>
       </p>
       {ctx.roleKey === "ADMIN_EMPRESA" && (
-        <Link href="/facturacion" className="text-primary text-sm underline">
-          Ir a Facturación (plan, pagos y facturas)
-        </Link>
+        <p className="text-sm">
+          <Link href="/facturacion" className="text-primary inline-block min-h-11 py-2 underline">
+            Ir a Facturación (plan, pagos y facturas)
+          </Link>
+          {" · "}
+          <Link href="/dominio" className="text-primary inline-block min-h-11 py-2 underline">
+            Dominio propio
+          </Link>
+        </p>
       )}
     </div>
   );

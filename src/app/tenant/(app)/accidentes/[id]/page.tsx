@@ -1,4 +1,4 @@
-import Link from "next/link";
+import Link, { A } from "@/components/ui/link";
 import { notFound } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardTitle } from "@/components/ui/card";
@@ -51,9 +51,9 @@ export default async function IncidentPage({ params }: PageProps<"/tenant/accide
           {inv && (
             <>
               {" · "}
-              <a className="text-primary text-sm underline" href={`/informes/investigacion/${id}`}>
+              <A className="text-primary text-sm underline" href={`/informes/investigacion/${id}`}>
                 Descargar informe de investigación (PDF)
-              </a>
+              </A>
             </>
           )}
         </p>

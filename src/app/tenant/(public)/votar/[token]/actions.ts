@@ -1,15 +1,14 @@
 "use server";
-import { currentHost } from "@/core/auth/session";
 import { headers } from "next/headers";
+import { currentTenant } from "@/core/auth/session";
 import { tooManyAttempts } from "@/core/security/rate-limit";
-import { resolveTenantByHost } from "@/core/tenancy/resolve";
 import { CommitteeError, castVote } from "@/modules/committees/service";
 
 export async function castVoteAction(
   token: string,
   candidateIds: string[],
 ): Promise<{ ok: boolean; message: string }> {
-  const tenant = await resolveTenantByHost(await currentHost());
+  const tenant = await currentTenant();
   if (!tenant) return { ok: false, message: "Empresa no encontrada." };
   const ip = (await headers()).get("x-forwarded-for")?.split(",")[0]?.trim() ?? "";
   if (await tooManyAttempts(`vote:${ip}:${token.slice(0, 16)}`, 10, 600))

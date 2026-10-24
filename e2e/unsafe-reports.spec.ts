@@ -9,7 +9,7 @@ test("reporte anónimo desde el celular y conversión a acción por el revisor",
   await page.getByLabel("Correo electrónico").fill("demo@demo.test");
   await page.getByLabel("Contraseña").fill("DemoClave-2026!");
   await page.getByRole("button", { name: "Ingresar" }).click();
-  await page.waitForURL(`${TENANT}/`);
+  await page.waitForURL(TENANT);
   await page.goto(`${TENANT}/reportes`);
   await page.waitForLoadState("load");
   await page.getByLabel("Descripción").fill("Extintor sin carga en el pasillo");

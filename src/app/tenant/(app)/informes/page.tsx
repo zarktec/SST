@@ -1,3 +1,4 @@
+import { A } from "@/components/ui/link";
 import { Card, CardTitle } from "@/components/ui/card";
 import { requireTenantMember } from "@/core/auth/session";
 import { withTenant } from "@/core/db";
@@ -29,13 +30,13 @@ export default async function ReportsPage({ searchParams }: PageProps<"/tenant/i
       <h1 className="text-2xl font-bold">Informes y exportaciones</h1>
       <nav className="flex flex-wrap items-center gap-2" aria-label="Año">
         {[now - 2, now - 1, now].map((v) => (
-          <a
+          <A
             key={v}
             href={`/informes?year=${v}`}
             className={`${btn} ${v === year ? "bg-primary text-primary-foreground" : ""}`}
           >
             {v}
-          </a>
+          </A>
         ))}
       </nav>
       {can(perms, "reports", "view") && (
@@ -47,9 +48,9 @@ export default async function ReportsPage({ searchParams }: PageProps<"/tenant/i
             inspector del Ministerio del Trabajo o a la ARL.
           </p>
           <p className="mt-2">
-            <a href={`/informes/carpeta-inspeccion?year=${year}`} className={btn}>
+            <A href={`/informes/carpeta-inspeccion?year=${year}`} className={btn}>
               Descargar la carpeta de inspección {year}
-            </a>
+            </A>
           </p>
         </Card>
       )}
@@ -66,9 +67,9 @@ export default async function ReportsPage({ searchParams }: PageProps<"/tenant/i
                   <p className="text-muted-foreground">{r.description}</p>
                   <p className="flex flex-wrap gap-2">
                     {(["pdf", "xlsx", "csv"] as const).map((f) => (
-                      <a key={f} href={`/informes/${r.id}/${f}?year=${year}`} className={btn}>
+                      <A key={f} href={`/informes/${r.id}/${f}?year=${year}`} className={btn}>
                         {f === "xlsx" ? "Excel" : f.toUpperCase()}
-                      </a>
+                      </A>
                     ))}
                   </p>
                 </li>
@@ -85,9 +86,9 @@ export default async function ReportsPage({ searchParams }: PageProps<"/tenant/i
             contenido cifrado de salud ni quejas, firmas ni credenciales.
           </p>
           <p className="mt-2">
-            <a href="/informes/exportacion-total" className={btn}>
+            <A href="/informes/exportacion-total" className={btn}>
               Descargar todos los datos
-            </a>
+            </A>
           </p>
         </Card>
       )}

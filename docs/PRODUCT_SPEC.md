@@ -60,7 +60,7 @@ El producto debe ser robusto, auditable y listo para producción. Su meta es que
 - Debe existir un test automatizado que verifique que un tenant **no puede** leer datos de otro.
 
 ### 3.2 Resolución del tenant por dominio
-- Cada empresa recibe un subdominio: `empresa.midominio.com`. Usa un wildcard domain en Vercel.
+- ~~Cada empresa recibe un subdominio: `empresa.midominio.com` (wildcard en Vercel).~~ **Cambio decidido por el dueño:** cada empresa vive en `midominio.com/{slug}` (sin subdominios ni wildcard); el dominio propio es opcional y es la única forma de tener un host distinto.
 - Cada empresa puede conectar **su propio dominio** (ej. `sst.miempresa.com`). Flujo:
   1. La empresa escribe el dominio en Configuración.
   2. La app lo registra en el proyecto mediante la **API de dominios de Vercel**.

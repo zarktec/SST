@@ -1,4 +1,4 @@
-import Link from "next/link";
+import Link, { A } from "@/components/ui/link";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardTitle } from "@/components/ui/card";
 import { requirePermission } from "@/core/auth/session";
@@ -36,7 +36,7 @@ export default async function InspectionsPage() {
             {active.map((x) => (
               // Enlace normal (no Link): la navegación completa la atiende el service worker aunque no haya conexión.
               <li key={x.id}>
-                <a
+                <A
                   href={`/inspecciones/ejecutar/${x.id}`}
                   className="flex min-h-11 flex-wrap items-center justify-between gap-2 py-3"
                 >
@@ -44,7 +44,7 @@ export default async function InspectionsPage() {
                   <span className="text-muted-foreground">
                     {x.category} · {x.items.length} ítems
                   </span>
-                </a>
+                </A>
               </li>
             ))}
             {active.length === 0 && (

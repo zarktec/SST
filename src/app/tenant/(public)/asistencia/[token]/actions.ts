@@ -1,8 +1,7 @@
 "use server";
 import { headers } from "next/headers";
-import { currentHost } from "@/core/auth/session";
+import { currentTenant } from "@/core/auth/session";
 import { tooManyAttempts } from "@/core/security/rate-limit";
-import { resolveTenantByHost } from "@/core/tenancy/resolve";
 import { TrainingError, signAttendanceByToken } from "@/modules/training/service";
 
 export type AttendanceResult = {
@@ -20,7 +19,7 @@ export async function signAttendanceAction(input: {
 }): Promise<AttendanceResult> {
   const h = await headers();
   const ip = h.get("x-forwarded-for")?.split(",")[0]?.trim() ?? null;
-  const tenant = await resolveTenantByHost(await currentHost());
+  const tenant = await currentTenant();
   if (!tenant) return { ok: false, message: "Empresa no encontrada." };
   // Freno compartido entre instancias: frena la adivinanza de documentos desde un mismo dispositivo (8 intentos / 10 min).
   if (await tooManyAttempts(`attendance:${ip}:${input.token}`, 8, 600))

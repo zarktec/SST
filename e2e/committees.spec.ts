@@ -19,7 +19,7 @@ test("elección electrónica del COPASST: candidatos, voto secreto con enlace pe
   await page.getByLabel("Correo electrónico").fill("demo@demo.test");
   await page.getByLabel("Contraseña").fill("DemoClave-2026!");
   await page.getByRole("button", { name: "Ingresar" }).click();
-  await page.waitForURL(`${TENANT}/`);
+  await page.waitForURL(TENANT);
 
   // Personal por carga masiva
   await page.goto(`${TENANT}/personas/importar`);
@@ -76,7 +76,7 @@ test("elección electrónica del COPASST: candidatos, voto secreto con enlace pe
   ] as const) {
     const ctx = await browser.newContext();
     const phone = await ctx.newPage();
-    await phone.goto(links[i].replace(/^https?:\/\/[^/]+/, TENANT));
+    await phone.goto(links[i]);
     await phone.waitForLoadState("load");
     await phone.getByLabel(who).check();
     phone.once("dialog", (d) => d.accept());
@@ -87,7 +87,7 @@ test("elección electrónica del COPASST: candidatos, voto secreto con enlace pe
   // El mismo enlace no vota dos veces
   const again = await browser.newContext();
   const p2 = await again.newPage();
-  await p2.goto(links[0].replace(/^https?:\/\/[^/]+/, TENANT));
+  await p2.goto(links[0]);
   await expect(p2.getByText("Ya votaste en esta elección")).toBeVisible();
   await again.close();
 

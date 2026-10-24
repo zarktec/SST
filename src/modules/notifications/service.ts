@@ -4,14 +4,15 @@ import webpush from "web-push";
 import { schema, withPlatform, withTenant } from "@/core/db";
 import { sendMail } from "@/core/mail";
 import { emailsForRoles } from "@/core/notify/recipients";
-import { originFor, rootDomain } from "@/core/tenancy/hosts";
+import { tenantUrl } from "@/core/tenancy/urls";
 import { collectAlerts, collectEvents } from "./collect";
 import { bySeverity, diffAlerts, digestHtml, icsCalendar, type AlertItem } from "./rules";
 
 const { notification, notificationRead, pushSubscription, tenant } = schema;
 const ctxOf = (tenantId: string, userId?: string) => ({ tenantId, userId });
 
-const tenantOrigin = (slug: string) => originFor(`${slug}.${rootDomain()}`);
+/** Prefijo de los enlaces de la empresa: dominio propio, o dominio raíz con `/{slug}` (sin barra final). */
+const tenantBase = async (tenantId: string) => (await tenantUrl(tenantId, "/")).replace(/\/$/, "");
 
 /**
  * Sincroniza las notificaciones de la empresa con las alertas vigentes: crea las nuevas, actualiza las que siguen, resuelve las que
@@ -56,11 +57,7 @@ export async function syncNotifications(tenantId: string, opts: { weekly?: boole
         .where(and(eq(notification.tenantId, tenantId), inArray(notification.key, d.resolved)));
   });
   const toSend = fresh.filter((a) => a.severity !== "info");
-  const [t] = await withPlatform(
-    { actorId: "system", action: "notify.tenant", tenantId, audit: false },
-    (tx) => tx.select({ slug: tenant.slug }).from(tenant).where(eq(tenant.id, tenantId)),
-  );
-  const origin = t ? tenantOrigin(t.slug) : "";
+  const origin = await tenantBase(tenantId);
   let emailed = 0;
   const send = async (items: AlertItem[], subject: string, intro: string) => {
     if (!items.length) return;
@@ -186,17 +183,11 @@ export async function markRead(tenantId: string, userId: string, ids: string[]) 
 export async function calendarFor(tenantId: string, perms: Perms) {
   return (await collectEvents(tenantId)).filter((e) => canView(perms, e.module));
 }
-export async function icsFor(
-  tenantId: string,
-  tenantName: string,
-  slug: string,
-  perms: Perms,
-  now = new Date(),
-) {
+export async function icsFor(tenantId: string, tenantName: string, perms: Perms, now = new Date()) {
   return icsCalendar(
     await calendarFor(tenantId, perms),
     `Obligaciones SG-SST · ${tenantName}`,
-    tenantOrigin(slug),
+    await tenantBase(tenantId),
     now,
   );
 }

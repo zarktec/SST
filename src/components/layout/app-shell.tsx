@@ -11,9 +11,11 @@ import {
   ShieldAlert,
   Users,
 } from "lucide-react";
-import Link from "next/link";
 import { usePathname } from "next/navigation";
+import Link from "@/components/ui/link";
+import { stripBase } from "@/core/tenancy/hosts";
 import { cn } from "@/lib/utils";
+import { useBasePath } from "./base-path";
 import { ThemeToggle } from "./theme-toggle";
 
 // Los íconos se pasan por nombre: los componentes no son serializables de Server a Client Components.
@@ -33,7 +35,7 @@ export type NavItem = { href: string; label: string; icon: keyof typeof ICONS };
 
 /**
  * Layout mobile-first: barra de navegación inferior en móvil (objetivos de 44 px+, hasta 5 ítems)
- * y barra lateral en escritorio. `usePathname` devuelve la ruta visible (sin el prefijo interno del proxy).
+ * y barra lateral en escritorio. `usePathname` devuelve la ruta visible (sin el prefijo interno del proxy, pero con `/{slug}`: se quita con `stripBase`).
  */
 function Icon({ name }: { name: keyof typeof ICONS }) {
   const C = ICONS[name];
@@ -55,7 +57,7 @@ export function AppShell({
   children: React.ReactNode;
   banner?: React.ReactNode;
 }) {
-  const pathname = usePathname();
+  const pathname = stripBase(useBasePath(), usePathname());
   const isActive = (href: string) =>
     href === "/" ? pathname === "/" : pathname === href || pathname.startsWith(`${href}/`);
 

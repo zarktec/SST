@@ -11,7 +11,7 @@ test("vigilancia: programa, caso con seguimiento cifrado y batería psicosocial"
   await page.getByLabel("Correo electrónico").fill("demo@demo.test");
   await page.getByLabel("Contraseña").fill("DemoClave-2026!");
   await page.getByRole("button", { name: "Ingresar" }).click();
-  await page.waitForURL(`${TENANT}/`);
+  await page.waitForURL(TENANT);
 
   await page.goto(`${TENANT}/personas/nuevo`);
   await page.waitForLoadState("load");

@@ -10,7 +10,7 @@ import {
   createTenantWithTrial,
 } from "@/modules/platform/tenants/service";
 
-export type SignupState = { ok: boolean; message: string; host?: string } | null;
+export type SignupState = { ok: boolean; message: string; url?: string } | null;
 
 /**
  * Registro self-service: crea la empresa con la prueba gratuita y envía una invitación de administrador al correo
@@ -59,7 +59,7 @@ export async function signupAction(_p: SignupState, f: FormData): Promise<Signup
     return {
       ok: true,
       message: "¡Listo! Te enviamos un correo para entrar a tu empresa.",
-      host: r.host,
+      url: r.url,
     };
   } catch (e) {
     if (e instanceof TenantError) return { ok: false, message: e.message };

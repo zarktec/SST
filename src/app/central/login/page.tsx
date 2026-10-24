@@ -9,12 +9,14 @@ export const metadata = { title: "Ingresar" };
 export default async function CentralLogin({ searchParams }: PageProps<"/central/login">) {
   const sp = await searchParams;
   const host = typeof sp.host === "string" ? sp.host : "";
+  const slug = typeof sp.slug === "string" ? sp.slug : "";
+  const slugQuery = slug ? `&slug=${encodeURIComponent(slug)}` : "";
   const next = sanitizeNext(typeof sp.next === "string" ? sp.next : "/");
   const callbackURL = host
-    ? `/api/auth/handoff/issue?host=${encodeURIComponent(host)}&next=${encodeURIComponent(next)}`
+    ? `/api/auth/handoff/issue?host=${encodeURIComponent(host)}${slugQuery}&next=${encodeURIComponent(next)}`
     : "/select-tenant";
   const providers = await activeProviders(await currentHost());
-  const socialBase = `/api/central/social?host=${encodeURIComponent(host)}&next=${encodeURIComponent(next)}`;
+  const socialBase = `/api/central/social?host=${encodeURIComponent(host)}${slugQuery}&next=${encodeURIComponent(next)}`;
   return (
     <AuthCard
       title="Ingresar"

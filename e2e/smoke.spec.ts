@@ -85,20 +85,48 @@ test("hosts y rutas internas", async ({ page, request }) => {
     const r = viaHost(host, path);
     return request.get(r.url, { headers: r.headers });
   };
+  // Las empresas ya no usan subdominio: cualquier *.root es desconocido
   expect((await get("noexiste.localhost:3000", "/")).status()).toBe(404);
-  // Las carpetas internas no se exponen directamente
-  expect((await get("demo.localhost:3000", "/tenant/login")).status()).toBe(404);
-  expect((await get("demo.localhost:3000", "/platform")).status()).toBe(404);
+  expect((await get("demo.localhost:3000", "/")).status()).toBe(404);
+  // Las carpetas internas no se exponen directamente (ni en la raíz ni bajo /{slug})
+  expect((await get("localhost:3000", "/tenant/login")).status()).toBe(404);
+  expect((await get("localhost:3000", "/platform")).status()).toBe(404);
+  expect((await get("localhost:3000", "/demo/platform")).status()).toBe(404);
+  // Una empresa que no existe cae en 404 y el login de marketing no existe
+  expect((await get("localhost:3000", "/no-existe/login")).status()).toBe(404);
+  expect((await get("localhost:3000", "/login")).status()).toBe(404);
+  // La empresa demo responde en /demo/login
+  expect((await get("localhost:3000", "/demo/login")).status()).toBe(200);
   // Cada host sirve su propia área
   await page.goto("http://localhost:3000/");
   await expect(page.getByRole("heading", { name: /SG-SST listo/ })).toBeVisible();
 });
 
-test("manifest PWA por empresa", async ({ request }) => {
-  const r = viaHost("demo.localhost:3000", "/api/manifest");
-  const m = await (await request.get(r.url, { headers: r.headers })).json();
+test("manifest PWA por empresa (con su ruta base como alcance)", async ({ request }) => {
+  const res = await request.get("http://localhost:3000/demo/api/manifest");
+  const m = await res.json();
   expect(m.name).toBe("Empresa Demo");
   expect(m.display).toBe("standalone");
+  expect(m.start_url).toBe("/demo");
+  expect(m.scope).toBe("/demo/");
   const icon = await request.get(`http://127.0.0.1:3000${m.icons[0].src}`);
   expect(icon.status()).toBe(200);
+});
+
+test("las empresas no ven la sesión de otra: /{slug} exige membresía en esa empresa", async ({
+  page,
+}) => {
+  await page.goto(`${TENANT}/login`);
+  await page.waitForLoadState("networkidle");
+  await page.getByLabel("Correo electrónico").fill("demo@demo.test");
+  await page.getByLabel("Contraseña").fill("DemoClave-2026!");
+  await page.getByRole("button", { name: "Ingresar" }).click();
+  await expect(page.getByRole("heading", { name: "Hola, Ana" })).toBeVisible();
+  // Misma sesión (mismo origen), pero otra empresa inexistente: 404, nunca datos de demo
+  const other = await page.goto("http://localhost:3000/otra-empresa/personas");
+  expect(other?.status()).toBe(404);
+  // Y la navegación interna conserva el prefijo /demo
+  await page.goto(TENANT);
+  await page.getByRole("link", { name: "Personas" }).first().click();
+  await expect(page).toHaveURL(`${TENANT}/personas`);
 });

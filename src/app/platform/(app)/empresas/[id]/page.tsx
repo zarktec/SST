@@ -93,7 +93,7 @@ export default async function TenantDetail({ params }: PageProps<"/platform/empr
               <span>
                 {dm.host}{" "}
                 <span className="text-muted-foreground text-xs">
-                  ({dm.kind === "custom" ? "propio" : "subdominio"})
+                  ({dm.kind === "custom" ? "propio" : "histórico"})
                 </span>
               </span>
               <Badge variant={DOMAIN[dm.status][1]}>{DOMAIN[dm.status][0]}</Badge>

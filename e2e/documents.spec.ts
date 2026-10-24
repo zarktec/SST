@@ -12,7 +12,7 @@ test("documentos: política en borrador, aprobación por otra persona con firma 
   await page.getByLabel("Correo electrónico").fill("demo@demo.test");
   await page.getByLabel("Contraseña").fill("DemoClave-2026!");
   await page.getByRole("button", { name: "Ingresar" }).click();
-  await page.waitForURL(`${TENANT}/`);
+  await page.waitForURL(TENANT);
   await page.goto(`${TENANT}/documentos`);
   await page.waitForLoadState("load");
   await expect(page.getByText(/Aún no hay una política de SST aprobada/)).toBeVisible();

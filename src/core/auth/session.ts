@@ -5,13 +5,20 @@ import { redirect } from "next/navigation";
 import { schema, systemDb, withTenant } from "@/core/db";
 import { loadPermissions, scopeOf } from "@/core/rbac/can";
 import type { Action, PermissionModule } from "@/core/rbac/roles";
+import { tp } from "@/core/tenancy/base-path";
 import { classifyHost } from "@/core/tenancy/hosts";
-import { resolveTenantByHost, type ResolvedTenant } from "@/core/tenancy/resolve";
+import { resolveTenantById, type ResolvedTenant } from "@/core/tenancy/resolve";
 import { resolveTenantAccess } from "./access";
 import { getAuth } from "./config";
 
 export async function currentHost(): Promise<string> {
   return (await headers()).get("host") ?? "";
+}
+
+/** Empresa de la petición actual (la resolvió el proxy por ruta `/{slug}` o dominio propio). */
+export async function currentTenant(): Promise<ResolvedTenant | null> {
+  const id = (await headers()).get("x-tenant-id");
+  return id ? resolveTenantById(id) : null;
 }
 
 export async function getSession() {
@@ -51,15 +58,14 @@ export type TenantSessionContext = {
 };
 
 /**
- * Contexto de la empresa del host actual + acceso del usuario. Aplica las mismas reglas que el
+ * Contexto de la empresa de la petición actual + acceso del usuario. Aplica las mismas reglas que el
  * traspaso de sesión (invitación, dominio permitido, solo-SSO, expiración) en CADA request.
  */
 export async function requireTenantMember(): Promise<TenantSessionContext> {
-  const host = await currentHost();
-  const tenant = await resolveTenantByHost(host);
+  const tenant = await currentTenant();
   if (!tenant) redirect("/");
   const s = await getSession();
-  if (!s) redirect("/login");
+  if (!s) redirect(await tp("/login"));
   const loginMethod = (s.session as { loginMethod?: string | null }).loginMethod ?? null;
   const access = await resolveTenantAccess({
     userId: s.user.id,
@@ -69,7 +75,9 @@ export async function requireTenantMember(): Promise<TenantSessionContext> {
     loginMethod,
   });
   if (!access.ok)
-    redirect(`/login?error=${access.reason === "sso_required" ? "sso_required" : "forbidden"}`);
+    redirect(
+      await tp(`/login?error=${access.reason === "sso_required" ? "sso_required" : "forbidden"}`),
+    );
   const [m] = await systemDb()
     .select({ roleId: schema.membership.roleId, systemKey: schema.role.systemKey })
     .from(schema.membership)
@@ -101,7 +109,7 @@ export async function requirePermission(module: PermissionModule, action: Action
     loadPermissions(tx, ctx.roleId),
   );
   const scope = scopeOf(perms, module, action);
-  if (!scope) redirect("/");
+  if (!scope) redirect(await tp("/"));
   if (action !== "view" && action !== "export" && ctx.readOnly) throw new ForbiddenError();
   return { ...ctx, scope, permissions: perms };
 }

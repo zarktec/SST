@@ -9,7 +9,7 @@ test("emergencias: equipo, plan y simulacro con mejoras que crean acciones", asy
   await page.getByLabel("Correo electrónico").fill("demo@demo.test");
   await page.getByLabel("Contraseña").fill("DemoClave-2026!");
   await page.getByRole("button", { name: "Ingresar" }).click();
-  await page.waitForURL(`${TENANT}/`);
+  await page.waitForURL(TENANT);
   await page.goto(`${TENANT}/emergencias`);
   await page.waitForLoadState("load");
   await expect(page.getByText(/Aún no hay simulacros realizados/)).toBeVisible();

@@ -11,7 +11,7 @@ test("convivencia: cualquier persona radica de forma confidencial; sin el rol no
   await page.getByLabel("Correo electrónico").fill("demo@demo.test");
   await page.getByLabel("Contraseña").fill("DemoClave-2026!");
   await page.getByRole("button", { name: "Ingresar" }).click();
-  await page.waitForURL(`${TENANT}/`);
+  await page.waitForURL(TENANT);
 
   await page.goto(`${TENANT}/convivencia/radicar`);
   await page.waitForLoadState("load");
@@ -38,5 +38,5 @@ test("convivencia: cualquier persona radica de forma confidencial; sin el rol no
   await page.getByRole("button", { name: "Enviar reporte" }).click();
   await expect(page.getByText(/No lo recibe el Comité de Convivencia/)).toBeVisible();
   await page.goto(`${TENANT}/acoso-sexual`);
-  await expect(page).toHaveURL(`${TENANT}/`);
+  await expect(page).toHaveURL(TENANT);
 });

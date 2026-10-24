@@ -9,7 +9,7 @@ async function login(page: Page) {
   await page.getByLabel("Correo electrónico").fill("demo@demo.test");
   await page.getByLabel("Contraseña").fill("DemoClave-2026!");
   await page.getByRole("button", { name: "Ingresar" }).click();
-  await page.waitForURL(`${TENANT}/`);
+  await page.waitForURL(TENANT);
 }
 
 test("el administrador completa el onboarding: clasificación, sede y responsable", async ({
@@ -57,6 +57,6 @@ test("el administrador completa el onboarding: clasificación, sede y responsabl
   await page.goto(`${TENANT}/onboarding?paso=5`);
   await expect(page.getByText("Estándares mínimos aplicables:")).toBeVisible();
   await page.getByRole("button", { name: "Finalizar onboarding" }).click();
-  await page.waitForURL(`${TENANT}/`);
+  await page.waitForURL(TENANT);
   await expect(page.getByText("Te aplican 7 estándares mínimos")).toBeVisible();
 });

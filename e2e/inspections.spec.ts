@@ -9,7 +9,7 @@ async function login(page: import("@playwright/test").Page) {
   await page.getByLabel("Correo electrónico").fill("demo@demo.test");
   await page.getByLabel("Contraseña").fill("DemoClave-2026!");
   await page.getByRole("button", { name: "Ingresar" }).click();
-  await page.waitForURL(`${TENANT}/`);
+  await page.waitForURL(TENANT);
 }
 
 async function createTemplate(page: import("@playwright/test").Page) {
@@ -39,7 +39,7 @@ test("inspección en línea: hallazgo genera acción correctiva", async ({ page 
   await page.getByLabel(/Hallazgo: Pisos secos/).fill("Charco de agua en el pasillo");
   await page.getByRole("button", { name: "Enviar inspección" }).click();
   await page.waitForURL(`${TENANT}/inspecciones`);
-  await page.locator('a[href^="/inspecciones/"]:not([href*="ejecutar"])').first().click();
+  await page.locator('a[href^="/demo/inspecciones/"]:not([href*="ejecutar"])').first().click();
   await expect(page.getByText("Charco de agua en el pasillo")).toBeVisible();
   await expect(page.getByRole("link", { name: /Corregir hallazgo: Pisos secos/ })).toBeVisible();
 });
@@ -61,6 +61,9 @@ test("inspección sin conexión: queda en cola y se sincroniza al reconectar", a
   await page.getByRole("button", { name: "Enviar inspección" }).click();
   await expect(page.getByText(/Sin conexión: la inspección quedó guardada/)).toBeVisible();
   await context.setOffline(false);
+  // Al volver la red la cola se envía sola desde la pantalla donde está la persona (evento `online`). Se espera ese
+  // envío antes de navegar: ir a la lista justo mientras responde el servidor deja la lista renderizada sin la fila.
+  await expect(page.getByText(/1 inspección\(es\) sincronizada/)).toBeVisible();
   await page.goto(`${TENANT}/inspecciones`);
   await page.waitForLoadState("load");
   await expect(page.getByText("Sin hallazgos")).toBeVisible({ timeout: 15_000 });

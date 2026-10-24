@@ -9,7 +9,7 @@ export async function GET() {
   const perms = permissionList(
     await withTenant({ tenantId: ctx.tenant.tenantId }, (tx) => loadPermissions(tx, ctx.roleId)),
   );
-  const body = await icsFor(ctx.tenant.tenantId, ctx.tenant.tradeName, ctx.tenant.slug, perms);
+  const body = await icsFor(ctx.tenant.tenantId, ctx.tenant.tradeName, perms);
   return new NextResponse(body, {
     headers: {
       "Content-Type": "text/calendar; charset=utf-8",

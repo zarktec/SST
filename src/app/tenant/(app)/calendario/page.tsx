@@ -1,4 +1,4 @@
-import Link from "next/link";
+import Link, { A } from "@/components/ui/link";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardTitle } from "@/components/ui/card";
 import { requireTenantMember } from "@/core/auth/session";
@@ -47,9 +47,9 @@ export default async function CalendarPage() {
       </Link>
       <h1 className="text-2xl font-bold">Calendario de obligaciones</h1>
       <p className="flex flex-wrap items-center gap-3 text-sm">
-        <a href="/calendario/ics" className="min-h-11 rounded-md border px-3 py-2">
+        <A href="/calendario/ics" className="min-h-11 rounded-md border px-3 py-2">
           Descargar .ics (Google Calendar, Outlook, Apple)
-        </a>
+        </A>
         <span className="text-muted-foreground">
           En Google Calendar: Configuración → Importar y exportar → Importar.
         </span>

@@ -9,7 +9,7 @@ test("plan anual: crear, agregar actividad, completar con evidencia y firmar", a
   await page.getByLabel("Correo electrónico").fill("demo@demo.test");
   await page.getByLabel("Contraseña").fill("DemoClave-2026!");
   await page.getByRole("button", { name: "Ingresar" }).click();
-  await page.waitForURL(`${TENANT}/`);
+  await page.waitForURL(TENANT);
   const year = new Date().getUTCFullYear();
   await page.goto(`${TENANT}/plan-anual`);
   await expect(page.getByRole("heading", { name: `Plan anual de trabajo ${year}` })).toBeVisible();

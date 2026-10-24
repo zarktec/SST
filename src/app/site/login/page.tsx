@@ -9,7 +9,8 @@ export default function LoginEntry() {
     <main className="mx-auto max-w-md space-y-4 p-6">
       <h1 className="text-2xl font-bold">Ingresar a tu empresa</h1>
       <p className="text-muted-foreground text-sm">
-        Cada empresa tiene su propia dirección. Escríbela para ir a su pantalla de ingreso.
+        Cada empresa tiene su propia dirección. Escríbela para ir a su pantalla de ingreso (o entra
+        directo a esa dirección).
       </p>
       <CompanyLoginForm root={rootDomain()} />
       <p className="text-sm">

@@ -1,5 +1,4 @@
-import { currentHost } from "@/core/auth/session";
-import { resolveTenantByHost } from "@/core/tenancy/resolve";
+import { currentTenant } from "@/core/auth/session";
 import { formatDate } from "@/lib/format";
 import { publicSessionByToken } from "@/modules/training/service";
 import { AttendanceForm } from "./attendance-form";
@@ -8,7 +7,7 @@ export const metadata = { title: "Registro de asistencia", robots: { index: fals
 
 export default async function AttendancePage({ params }: PageProps<"/tenant/asistencia/[token]">) {
   const { token } = await params;
-  const tenant = await resolveTenantByHost(await currentHost());
+  const tenant = await currentTenant();
   const info =
     tenant && /^[0-9a-f]{48}$/.test(token)
       ? await publicSessionByToken(tenant.tenantId, token)

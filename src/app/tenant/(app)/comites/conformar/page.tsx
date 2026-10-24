@@ -1,4 +1,4 @@
-import Link from "next/link";
+import Link from "@/components/ui/link";
 import { Card, CardTitle } from "@/components/ui/card";
 import { requirePermission } from "@/core/auth/session";
 import { suggestedKind } from "@/modules/committees/service";

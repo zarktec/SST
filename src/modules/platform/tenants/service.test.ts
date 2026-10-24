@@ -56,7 +56,7 @@ describe.skipIf(!hasTestDb)("empresas: creación, listado y dominios", () => {
   });
   afterAll(closeDb);
 
-  it("crea la empresa con roles, marca, subdominio y prueba según el plan (duración configurable)", async () => {
+  it("crea la empresa en /{slug} con roles, marca y prueba según el plan (duración configurable)", async () => {
     const trial = (await getPlanByKey("free-trial"))!;
     await updatePlan(trial.id, {
       ...{
@@ -79,7 +79,6 @@ describe.skipIf(!hasTestDb)("empresas: creación, listado y dominios", () => {
         annualSiigoCode: null,
       },
     });
-    const fake = new FakeDomains();
     const now = new Date("2026-11-01T10:00:00Z");
     const r = await createTenantWithTrial(
       {
@@ -90,18 +89,16 @@ describe.skipIf(!hasTestDb)("empresas: creación, listado y dominios", () => {
         owner: { email: "Gerente@Acme.co" },
       },
       "admin",
-      { domains: fake, now },
+      { now },
     );
-    expect(r).toMatchObject({ host: "acme-sas.sst.test", domainStatus: "verified" });
-    expect(fake.calls).toEqual(["add:acme-sas.sst.test"]);
+    expect(r).toMatchObject({ slug: "acme-sas", url: "https://sst.test/acme-sas" });
 
     const d = (await getTenantDetail(r.tenantId))!;
     expect(d.tenant).toMatchObject({ slug: "acme-sas", status: "trial", nit: "900111222" });
     expect(d.subscription).toMatchObject({ status: "trialing" });
     expect(d.subscription?.trialEndsAt?.toISOString()).toBe("2026-12-16T10:00:00.000Z"); // 45 días
-    expect(d.domains).toEqual([
-      expect.objectContaining({ host: "acme-sas.sst.test", status: "verified", kind: "subdomain" }),
-    ]);
+    // Sin subdominio ni dominio propio hasta que la empresa conecte el suyo.
+    expect(d.domains).toEqual([]);
     const roles = await systemDb()
       .select()
       .from(schema.role)
@@ -126,26 +123,34 @@ describe.skipIf(!hasTestDb)("empresas: creación, listado y dominios", () => {
     expect(access).toMatchObject({ ok: true, created: "invitation" });
   });
 
-  it("subdominio duplicado, reservado o inválido no se crea (y no deja basura)", async () => {
-    const fake = new FakeDomains();
+  it("identificador duplicado, reservado o inválido no se crea (y no deja basura)", async () => {
     await createTenantWithTrial(
       { slug: "dup-co", legalName: "Dup", tradeName: "Dup", owner: { email: "a@dup.co" } },
       "admin",
-      { domains: fake },
     );
     await expect(
       createTenantWithTrial(
         { slug: "dup-co", legalName: "Dup 2", tradeName: "Dup 2", owner: { email: "b@dup.co" } },
         "admin",
-        { domains: fake },
       ),
     ).rejects.toBeInstanceOf(TenantError);
-    for (const slug of ["admin", "auth", "www", "a", "-x", "con espacio"]) {
+    // Los slugs son el primer segmento de la ruta: no pueden chocar con marketing ni con la app.
+    for (const slug of [
+      "admin",
+      "auth",
+      "www",
+      "precios",
+      "registro",
+      "login",
+      "api",
+      "a",
+      "-x",
+      "con espacio",
+    ]) {
       await expect(
         createTenantWithTrial(
           { slug, legalName: "X X", tradeName: "X X", owner: { email: "x@x.co" } },
           "admin",
-          { domains: fake },
         ),
       ).rejects.toThrow();
     }
@@ -159,19 +164,18 @@ describe.skipIf(!hasTestDb)("empresas: creación, listado y dominios", () => {
     expect(dups).toHaveLength(1);
   });
 
-  it("si Vercel falla la empresa se crea igual y el dominio queda en error para reintento", async () => {
-    const fake = new FakeDomains({ verified: false, configured: false, error: "Vercel caído" });
+  it("si Vercel falla al registrar el dominio propio queda en error y se reintenta en la sincronización", async () => {
     const r = await createTenantWithTrial(
       { slug: "vercel-down", legalName: "V D", tradeName: "VD", owner: { email: "v@vd.co" } },
       "admin",
-      { domains: fake },
     );
-    expect(r.domainStatus).toBe("error");
+    const fake = new FakeDomains({ verified: false, configured: false, error: "Vercel caído" });
+    await requestCustomDomain(r.tenantId, "sst.vd.co", "owner", fake);
     const [dom] = await systemDb()
       .select()
       .from(schema.tenantDomain)
       .where(eq(schema.tenantDomain.tenantId, r.tenantId));
-    expect(dom).toMatchObject({ status: "error", lastError: "Vercel caído" });
+    expect(dom).toMatchObject({ status: "error", lastError: "Vercel caído", kind: "custom" });
     fake.set({});
     const sync = await syncDomains(fake);
     expect(sync.changed).toBeGreaterThanOrEqual(1);
@@ -187,7 +191,6 @@ describe.skipIf(!hasTestDb)("empresas: creación, listado y dominios", () => {
     const r = await createTenantWithTrial(
       { slug: "propio-co", legalName: "P C", tradeName: "PC", owner: { email: "p@pc.co" } },
       "admin",
-      { domains: new FakeDomains() },
     );
     const fake = new FakeDomains({
       verified: true,
@@ -260,7 +263,6 @@ describe.skipIf(!hasTestDb)("empresas: creación, listado y dominios", () => {
         owner: { email: "uno@lc.co" },
       },
       "admin",
-      { domains: new FakeDomains() },
     );
     for (const [id, email] of [
       ["lc1", "uno@lc.co"],

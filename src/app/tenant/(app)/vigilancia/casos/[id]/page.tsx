@@ -1,4 +1,4 @@
-import Link from "next/link";
+import Link from "@/components/ui/link";
 import { notFound } from "next/navigation";
 import { ActionForm } from "@/components/forms/action-form";
 import { Badge } from "@/components/ui/badge";

@@ -1,20 +1,22 @@
 import { NextResponse } from "next/server";
 import { classifyHost } from "@/core/tenancy/hosts";
-import { resolveTenantByHost } from "@/core/tenancy/resolve";
+import { currentBase } from "@/core/tenancy/base-path";
+import { currentTenant } from "@/core/auth/session";
 
-/** Manifest de la PWA por host: cada empresa se instala con su nombre y color. */
+/** Manifest de la PWA: cada empresa (por ruta `/{slug}` o dominio propio) se instala con su nombre, color y alcance. */
 export async function GET(req: Request) {
   const host = req.headers.get("host") ?? "";
   const kind = classifyHost(host).kind;
-  const tenant = kind === "subdomain" || kind === "custom" ? await resolveTenantByHost(host) : null;
+  const tenant = await currentTenant();
+  const base = await currentBase();
   const name = tenant?.tradeName ?? (kind === "admin" ? "SST Admin" : "SST");
   return NextResponse.json(
     {
       name,
       short_name: name.slice(0, 12),
       description: "Sistema de Gestión de Seguridad y Salud en el Trabajo",
-      start_url: "/",
-      scope: "/",
+      start_url: base || "/",
+      scope: `${base}/`,
       display: "standalone",
       orientation: "portrait",
       lang: "es-CO",

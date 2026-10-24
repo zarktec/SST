@@ -9,7 +9,7 @@ async function login(page: import("@playwright/test").Page) {
   await page.getByLabel("Correo electrónico").fill("demo@demo.test");
   await page.getByLabel("Contraseña").fill("DemoClave-2026!");
   await page.getByRole("button", { name: "Ingresar" }).click();
-  await page.waitForURL(`${TENANT}/`);
+  await page.waitForURL(TENANT);
 }
 
 test("auditoría interna: ejecutar, cerrar y convertir hallazgos en acciones", async ({ page }) => {

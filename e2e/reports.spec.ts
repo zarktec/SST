@@ -11,7 +11,7 @@ test("informes: descargas en PDF/Excel/CSV, carpeta de inspección y exportació
   await page.getByLabel("Correo electrónico").fill("demo@demo.test");
   await page.getByLabel("Contraseña").fill("DemoClave-2026!");
   await page.getByRole("button", { name: "Ingresar" }).click();
-  await page.waitForURL(`${TENANT}/`);
+  await page.waitForURL(TENANT);
   await page.goto(`${TENANT}/acciones`);
   await page.waitForLoadState("load");
   await page.getByLabel("Acción", { exact: true }).fill("Reparar la baranda de la escalera");
@@ -25,6 +25,8 @@ test("informes: descargas en PDF/Excel/CSV, carpeta de inspección y exportació
   await expect(page.getByText("Acciones correctivas, preventivas y de mejora")).toBeVisible();
 
   // *.localhost no se resuelve desde Node: las descargas se piden desde la página (con su sesión).
+  // La empresa vive bajo /{slug}: las rutas se piden con su base.
+  const base = new URL(TENANT).pathname;
   const get = (path: string) =>
     page.evaluate(async (p) => {
       const r = await fetch(p);
@@ -38,7 +40,7 @@ test("informes: descargas en PDF/Excel/CSV, carpeta de inspección y exportació
           ? new TextDecoder().decode(buf)
           : "",
       };
-    }, path);
+    }, `${base}${path}`);
 
   const pdf = await get("/informes/acciones/pdf");
   expect(pdf).toMatchObject({ status: 200, head: "%PDF-" });

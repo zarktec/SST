@@ -1,5 +1,6 @@
-import Link from "next/link";
+import Link from "@/components/ui/link";
 import { Card, CardTitle } from "@/components/ui/card";
+import { tp } from "@/core/tenancy/base-path";
 import { requireTenantMember } from "@/core/auth/session";
 import { withTenant } from "@/core/db";
 import { loadPermissions, permissionList } from "@/core/rbac/can";
@@ -16,10 +17,11 @@ export default async function SearchPage({ searchParams }: PageProps<"/tenant/bu
   );
   const hits = await searchAll(ctx.tenant.tenantId, q, perms);
   const groups = [...new Set(hits.map((h) => h.group))];
+  const searchAction = await tp("/buscar");
   return (
     <div className="space-y-4">
       <h1 className="text-2xl font-bold">Buscar</h1>
-      <form action="/buscar" role="search" className="flex gap-2">
+      <form action={searchAction} role="search" className="flex gap-2">
         <input
           type="search"
           name="q"

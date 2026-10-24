@@ -1,3 +1,4 @@
+import { A } from "@/components/ui/link";
 import { ActionForm, RunButton, type FieldSpec } from "@/components/forms/action-form";
 import { Alert } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
@@ -264,13 +265,13 @@ export default async function HighRiskPage({ searchParams }: PageProps<"/tenant/
           ) : (
             <nav className="mt-2 flex flex-wrap gap-2" aria-label="Tipo de permiso">
               {activeTypes.map((x) => (
-                <a
+                <A
                   key={x.id}
                   href={`/alto-riesgo?tipo=${x.id}`}
                   className={`min-h-11 rounded-md border px-3 py-2 text-sm ${x.id === chosen?.id ? "bg-primary text-primary-foreground" : ""}`}
                 >
                   {x.name}
-                </a>
+                </A>
               ))}
             </nav>
           )}

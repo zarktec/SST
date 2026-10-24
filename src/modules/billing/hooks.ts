@@ -1,8 +1,7 @@
 import "server-only";
 import { sendMail } from "@/core/mail";
 import { formatCOP, formatDate } from "@/lib/format";
-import { originFor, rootDomain } from "@/core/tenancy/hosts";
-import { primaryHostForTenant } from "@/core/tenancy/primary-host";
+import { tenantUrl } from "@/core/tenancy/urls";
 import { adminEmails } from "./handlers";
 import { getInvoicingProvider } from "@/integrations/invoicing";
 import { paymentHooks, type Payment } from "./charging";
@@ -11,7 +10,7 @@ import { invoiceApprovedPayment } from "./invoicing";
 let registered = false;
 
 async function billingUrl(tenantId: string) {
-  return `${originFor((await primaryHostForTenant(tenantId)) ?? rootDomain())}/facturacion`;
+  return tenantUrl(tenantId, "/facturacion");
 }
 
 async function notify(tenantId: string, subject: string, html: string) {

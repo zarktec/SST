@@ -11,7 +11,7 @@ test("portal del trabajador, autorización de datos, solicitud de titular y bús
   await page.getByLabel("Correo electrónico").fill("demo@demo.test");
   await page.getByLabel("Contraseña").fill("DemoClave-2026!");
   await page.getByRole("button", { name: "Ingresar" }).click();
-  await page.waitForURL(`${TENANT}/`);
+  await page.waitForURL(TENANT);
 
   // Sin ficha vinculada, el portal lo avisa.
   await page.goto(`${TENANT}/portal`);

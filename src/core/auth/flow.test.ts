@@ -11,7 +11,8 @@ pointToTestDb();
 
 const ROOT = "sst.test";
 const AUTH = `auth.${ROOT}`;
-const ACME = `acme.${ROOT}`;
+// Dominio propio de la empresa (las empresas ya no usan subdominio: viven en {ROOT}/{slug} o en su dominio).
+const ACME = "sst.acme.co";
 
 const cookieHeader = (res: Response) =>
   res.headers
@@ -30,7 +31,7 @@ describe.skipIf(!hasTestDb)("flujo de login y traspaso entre dominios (Better Au
     await withTenant({ tenantId }, (tx) => seedTenantRoles(tx, tenantId));
     await systemDb()
       .insert(schema.tenantDomain)
-      .values({ tenantId, host: ACME, kind: "subdomain", status: "verified" });
+      .values({ tenantId, host: ACME, kind: "custom", status: "verified" });
     for (const [id, email] of [
       ["u-member", "member@acme.co"],
       ["u-stranger", "stranger@otra.co"],
@@ -117,6 +118,61 @@ describe.skipIf(!hasTestDb)("flujo de login y traspaso entre dominios (Better Au
     // El mismo token no se puede reutilizar
     const replay = await tenantAuth.handler(new Request(consumeUrl, { headers: { host: ACME } }));
     expect(replay.headers.get("location")).toContain("/login?error=handoff_invalid");
+  });
+
+  it("por ruta: auth. emite token hacia el dominio raíz y la sesión queda en {root}/{slug}", async () => {
+    const login = await signIn("member@acme.co");
+    const auth = await getAuth(AUTH);
+    const issue = await auth.handler(
+      new Request(
+        `https://${AUTH}/api/auth/handoff/issue?host=${ROOT}&slug=acme&next=${encodeURIComponent("/acme/panel")}`,
+        { headers: { cookie: cookieHeader(login) } },
+      ),
+    );
+    expect(issue.status).toBe(302);
+    const consumeUrl = new URL(issue.headers.get("location")!);
+    expect(consumeUrl.origin).toBe(`https://${ROOT}`);
+    expect(consumeUrl.pathname).toBe("/api/auth/handoff/consume");
+    const rootAuth = await getAuth(ROOT);
+    const consume = await rootAuth.handler(new Request(consumeUrl, { headers: { host: ROOT } }));
+    expect(consume.status).toBe(302);
+    expect(consume.headers.get("location")).toBe(`https://${ROOT}/acme/panel`);
+    expect(consume.headers.getSetCookie().join(";")).toContain("session_token");
+  });
+
+  it("por ruta: el destino nunca sale de la empresa y el slug debe existir", async () => {
+    const login = await signIn("member@acme.co");
+    const auth = await getAuth(AUTH);
+    const go = (qs: string) =>
+      auth.handler(
+        new Request(`https://${AUTH}/api/auth/handoff/issue?${qs}`, {
+          headers: { cookie: cookieHeader(login) },
+        }),
+      );
+    // next ajeno a la empresa → se corrige a la raíz de la empresa
+    const other = await go(`host=${ROOT}&slug=acme&next=${encodeURIComponent("/otra-empresa/x")}`);
+    const url = new URL(other.headers.get("location")!);
+    const rootAuth = await getAuth(ROOT);
+    const consume = await rootAuth.handler(new Request(url, { headers: { host: ROOT } }));
+    expect(consume.headers.get("location")).toBe(`https://${ROOT}/acme`);
+    // slug inexistente, o slug con un host que no es el raíz → denegado
+    expect((await go(`host=${ROOT}&slug=no-existe`)).headers.get("location")).toContain(
+      "reason=unknown_host",
+    );
+    expect((await go(`host=evil.com&slug=acme`)).headers.get("location")).toContain(
+      "reason=unknown_host",
+    );
+  });
+
+  it("por ruta: un usuario sin invitación no obtiene token", async () => {
+    const login = await signIn("stranger@otra.co");
+    const auth = await getAuth(AUTH);
+    const issue = await auth.handler(
+      new Request(`https://${AUTH}/api/auth/handoff/issue?host=${ROOT}&slug=acme`, {
+        headers: { cookie: cookieHeader(login) },
+      }),
+    );
+    expect(issue.headers.get("location")).toContain("/login/denied?reason=not_invited");
   });
 
   it("un usuario sin invitación no obtiene token", async () => {

@@ -3,7 +3,7 @@ import "server-only";
 /**
  * Dominios de las empresas en el proyecto de Vercel (spec 3.2). Credenciales de infraestructura en
  * variables de entorno: VERCEL_API_TOKEN, VERCEL_PROJECT_ID, VERCEL_TEAM_ID.
- * Sin token (desarrollo/CI) se usa un proveedor nulo que da por verificados los subdominios propios.
+ * Sin token (desarrollo/CI) se usa un proveedor nulo que da por verificados los dominios.
  */
 export type DnsInstruction = { type: "CNAME" | "A" | "TXT"; name: string; value: string };
 export type DomainState = {

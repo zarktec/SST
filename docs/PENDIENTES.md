@@ -4,7 +4,7 @@ Registro vivo: se agrega al detectarlo y se tacha (o mueve a "Resuelto") al cerr
 
 ## Requiere acción del dueño del producto
 
-- [ ] Credenciales y variables en Vercel: `RESEND_API_KEY`, `BLOB_READ_WRITE_TOKEN`, token de API de Vercel (`VERCEL_API_TOKEN`, `VERCEL_PROJECT_ID`, `VERCEL_TEAM_ID`) para dominios por empresa.
+- [ ] Credenciales y variables en Vercel: `RESEND_API_KEY`, `BLOB_READ_WRITE_TOKEN`, token de API de Vercel (`VERCEL_API_TOKEN`, `VERCEL_PROJECT_ID`, `VERCEL_TEAM_ID`) para los dominios propios de las empresas (`/dominio`).
 - [ ] Cuentas sandbox: Wompi, Siigo (con producto, impuesto IVA, forma de pago, tipo de comprobante FV y NC creados) y AUCO.
 - [ ] Decidir prorrateo de mejoras de plan a mitad de ciclo (hoy: el cambio aplica en la próxima renovación).
 - [ ] Decidir si el registro self-service debe exigir verificación del correo antes de crear la empresa (hoy se crea y se invita).
@@ -24,6 +24,10 @@ Registro vivo: se agrega al detectarlo y se tacha (o mueve a "Resuelto") al cerr
 - [ ] Google OAuth con credenciales reales; Microsoft Entra (último).
 
 ## Técnico
+
+- [ ] Empresa por ruta (`sst.zark.pro/{slug}`): las empresas comparten origen en el dominio raíz. Pendiente: aislar por empresa el almacenamiento del navegador más allá de la cola de inspecciones (ya lleva `base`), y que el correo de magic link/verificación use la marca de la empresa también cuando el `callbackURL` no trae el slug.
+- [ ] Dominio propio: la sesión es por origen, así que al pasar a `mi-empresa.com` hay que iniciar sesión de nuevo allí; los correos con enlaces usan el dominio propio verificado si existe. Falta poder cambiar o quitar el dominio propio desde la UI (hoy: un dominio por empresa; cambiarlo lo hace soporte).
+- [ ] Datos viejos: las filas `tenant_domain` con `kind = 'subdomain'` ya no se usan (producción no tiene empresas); borrarlas si aparecen.
 
 - [ ] Inngest como cola (hoy: cola en BD + cron diario de Vercel).
 - [ ] Edge Config para caché de hosts (con la API de dominios de Vercel).

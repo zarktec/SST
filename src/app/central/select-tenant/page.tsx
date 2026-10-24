@@ -3,24 +3,25 @@ import { AuthCard } from "@/components/layout/auth-card";
 import { Alert } from "@/components/ui/alert";
 import { listUserTenants } from "@/core/auth/access";
 import { getSession } from "@/core/auth/session";
-import { originFor } from "@/core/tenancy/hosts";
-import { primaryHostForTenant } from "@/core/tenancy/primary-host";
+import { originFor, withBase } from "@/core/tenancy/hosts";
+import { tenantEntry } from "@/core/tenancy/urls";
 
 export const metadata = { title: "Elige tu empresa" };
+
+/** Enlace de traspaso a la empresa: dominio propio (raíz) o dominio raíz con su `/{slug}`. */
+const handoffUrl = (t: { host: string; base: string; slug: string }) =>
+  `/api/auth/handoff/issue?host=${encodeURIComponent(t.host)}${t.base ? `&slug=${encodeURIComponent(t.slug)}&next=${encodeURIComponent(t.base)}` : ""}`;
 
 export default async function SelectTenant() {
   const s = await getSession();
   if (!s) redirect("/login");
   const tenants = await listUserTenants(s.user.id);
-  const items = (
-    await Promise.all(
-      tenants.map(async (t) => ({ ...t, host: await primaryHostForTenant(t.tenantId) })),
-    )
-  ).filter((t): t is typeof t & { host: string } => Boolean(t.host));
+  const items = await Promise.all(
+    tenants.map(async (t) => ({ ...t, ...(await tenantEntry(t.tenantId)) })),
+  );
 
   // Una sola empresa: entrar directo.
-  if (items.length === 1)
-    redirect(`/api/auth/handoff/issue?host=${encodeURIComponent(items[0].host)}`);
+  if (items.length === 1) redirect(handoffUrl(items[0]));
 
   return (
     <AuthCard title="Elige tu empresa" brandName="SST">
@@ -33,12 +34,12 @@ export default async function SelectTenant() {
           {items.map((t) => (
             <li key={t.tenantId}>
               <a
-                href={`/api/auth/handoff/issue?host=${encodeURIComponent(t.host)}`}
+                href={handoffUrl(t)}
                 className="hover:bg-muted flex min-h-11 flex-col justify-center rounded-md border px-3 py-2"
               >
                 <span className="font-medium">{t.name}</span>
                 <span className="text-muted-foreground text-xs">
-                  {originFor(t.host).replace(/^https?:\/\//, "")}
+                  {`${originFor(t.host)}${withBase(t.base, "/")}`.replace(/^https?:\/\//, "")}
                 </span>
               </a>
             </li>

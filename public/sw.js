@@ -1,12 +1,13 @@
 /* Service worker. Estrategia: navegaciones network-first con respaldo /offline; estáticos de Next cache-first.
-   Excepción (Fase 4.4): las pantallas de ejecución de inspecciones (/inspecciones/ejecutar/*) se guardan tras visitarlas
+   Excepción (Fase 4.4): las pantallas de ejecución de inspecciones (/{slug}/inspecciones/ejecutar/*) se guardan tras visitarlas
    en línea (o precargarlas con el encabezado x-sst-prefetch) para poder hacer inspecciones sin conexión; el envío usa la
    cola de IndexedDB de la página. Nunca se cachean /api ni otras respuestas autenticadas de datos. */
-const VERSION = "v2";
+const VERSION = "v3";
 const SHELL = `sst-shell-${VERSION}`;
 const STATIC = `sst-static-${VERSION}`;
 const PAGES = `sst-pages-${VERSION}`;
-const OFFLINE_PAGE = /^\/inspecciones\/ejecutar\/[0-9a-f-]{36}$/i;
+// Con prefijo opcional de empresa: /{slug}/inspecciones/ejecutar/{id} (dominio raíz) o sin prefijo (dominio propio).
+const OFFLINE_PAGE = /^(?:\/[a-z0-9-]+)?\/inspecciones\/ejecutar\/[0-9a-f-]{36}$/i;
 
 self.addEventListener("install", (e) => {
   e.waitUntil(

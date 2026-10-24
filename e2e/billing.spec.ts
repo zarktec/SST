@@ -16,7 +16,8 @@ test("landing pública: precios y registro self-service crea la empresa con prue
   await page.getByLabel("Tu correo (administrador)").fill("dueno@e2e-registro.test");
   await page.getByRole("button", { name: "Crear mi empresa" }).click();
   await expect(page.getByText("Te enviamos un correo")).toBeVisible();
-  // Mismo subdominio otra vez: rechazado.
+  await expect(page.getByText(/localhost:3000\/e2e-registro/)).toBeVisible();
+  // Mismo identificador otra vez: rechazado.
   await page.goto("http://localhost:3000/registro");
   await page.waitForLoadState("networkidle");
   await page.getByLabel("Razón social o nombre").fill("Otra SAS");
@@ -24,7 +25,7 @@ test("landing pública: precios y registro self-service crea la empresa con prue
   await page.getByLabel("Dirección de tu empresa").fill("e2e-registro");
   await page.getByLabel("Tu correo (administrador)").fill("otro@e2e-registro.test");
   await page.getByRole("button", { name: "Crear mi empresa" }).click();
-  await expect(page.getByText("Ese subdominio ya está en uso")).toBeVisible();
+  await expect(page.getByText("Ese identificador ya está en uso")).toBeVisible();
 });
 
 test("el administrador de la empresa ve Facturación y guarda sus datos fiscales", async ({
@@ -35,7 +36,7 @@ test("el administrador de la empresa ve Facturación y guarda sus datos fiscales
   await page.getByLabel("Correo electrónico").fill("demo@demo.test");
   await page.getByLabel("Contraseña").fill("DemoClave-2026!");
   await page.getByRole("button", { name: "Ingresar" }).click();
-  await page.waitForURL(`${TENANT}/`);
+  await page.waitForURL(TENANT);
   await page.goto(`${TENANT}/facturacion`);
   await expect(page.getByRole("heading", { name: "Facturación", exact: true })).toBeVisible();
   await page.waitForLoadState("load");
