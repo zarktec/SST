@@ -110,6 +110,8 @@ Registro vivo: se agrega al detectarlo y se tacha (o mueve a "Resuelto") al cerr
 
 - [ ] Notificaciones (`/notificaciones`, `/calendario`): el barrido diario las genera a partir de ~35 alertas de los módulos de las Fases 4 y 5 (más evaluaciones médicas); faltan las de capacitación, EPP, comités (renovación), contratistas (seguridad social), autoevaluación y plan anual. Correo: solo al responsable SG-SST y administrador, de lo nuevo (crítico/atención) + resumen semanal los lunes; falta preferencias por usuario. **Push**: requiere `VAPID_PUBLIC_KEY`/`VAPID_PRIVATE_KEY` (`npx web-push generate-vapid-keys`) en Vercel; sin ellas el interruptor no aparece. El cron corre una vez al día (11:00 UTC): para avisos más oportunos, pasar a la cola (Inngest). Calendario: descarga .ics; falta suscripción por URL con token (Google Calendar la actualiza solo) y la agenda por sede.
 
+- [ ] Documentos (`/documentos`): el contenido es texto (no hay carga de archivos PDF/Word hasta tener `BLOB_READ_WRITE_TOKEN`); el catálogo `doc_templates` está vacío (política, objetivos, procedimientos: sin textos oficiales). Periodicidad de revisión (12 meses) `TODO-NORMA`. Falta flujo de aprobación con varios niveles, distribución controlada y aceptación por trabajador en el portal (Fase 6.4), y exportar la lista maestra (6.3).
+
 ## Resuelto
 
 - [x] Enlace repo–Vercel, Neon, SUPER_ADMIN, DNS en Cloudflare.

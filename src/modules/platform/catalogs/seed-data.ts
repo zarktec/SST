@@ -316,6 +316,20 @@ export const SEEDS: Seed[] = [
         "TODO-NORMA: parametrizable",
       ),
       p(
+        "documentos.revision_meses",
+        12,
+        "meses",
+        "Revisión periódica por defecto de los documentos controlados",
+        "TODO-NORMA: parametrizable (Decreto 1072 de 2015, art. 2.2.4.6.12)",
+      ),
+      p(
+        "documentos.alerta_revision_dias",
+        30,
+        "días",
+        "Anticipación de la alerta de revisión de documentos",
+        "Parametrizable",
+      ),
+      p(
         "comites.vigia_umbral_trabajadores",
         10,
         "trabajadores",

@@ -4,6 +4,7 @@ import { listActions } from "@/modules/capa/service";
 import { listAudits } from "@/modules/audits/service";
 import { emergencySummary, listAssets, listDrills, listPlans } from "@/modules/emergencies/service";
 import { highRiskSummary, listCertificates, listEquipment } from "@/modules/high-risk/service";
+import { masterList } from "@/modules/documents/service";
 import { listIncidents } from "@/modules/incidents/service";
 import { periodicStatus, pendingReturnEvaluations } from "@/modules/medical/service";
 import { listVehicles, listDrivers } from "@/modules/pesv/service";
@@ -325,6 +326,42 @@ export async function collectAlerts(tenantId: string): Promise<AlertItem[]> {
       href: "/auditorias",
     });
 
+  const docs = await safe(() => masterList(tenantId), []);
+  if (!docs.some((d) => d.kind === "policy" && d.current))
+    out.push({
+      key: "doc-policy-missing",
+      module: "documents",
+      severity: "warning",
+      title: "No hay una política de SST aprobada y vigente",
+      href: "/documentos",
+    });
+  const dueDocs = docs.filter((d) => d.review === "por_revisar");
+  if (dueDocs.length)
+    out.push({
+      key: "doc-review",
+      module: "documents",
+      severity: "warning",
+      title: plural(dueDocs.length, "documento por revisar", "documentos por revisar"),
+      detail: dueDocs
+        .slice(0, 3)
+        .map((d) => d.code)
+        .join(", "),
+      href: "/documentos",
+    });
+  const drafts = docs.filter((d) => d.draft);
+  if (drafts.length)
+    out.push({
+      key: "doc-drafts",
+      module: "documents",
+      severity: "info",
+      title: plural(
+        drafts.length,
+        "documento pendiente de aprobación",
+        "documentos pendientes de aprobación",
+      ),
+      href: "/documentos",
+    });
+
   const periodic = await safe(() => periodicStatus(tenantId), []);
   const dueEval = periodic.filter((p) => p.state === "vencida");
   if (dueEval.length)
@@ -431,6 +468,16 @@ export async function collectEvents(tenantId: string): Promise<CalendarEvent[]> 
       `Vence certificación del equipo ${e.code}`,
       "high_risk",
       "/alto-riesgo",
+    );
+  for (const d of (await safe(() => masterList(tenantId), [])).filter(
+    (x) => x.current?.nextReviewOn,
+  ))
+    add(
+      `doc-${d.id}`,
+      d.current!.nextReviewOn,
+      `Revisión del documento ${d.code}`,
+      "documents",
+      "/documentos",
     );
   for (const a of audits.filter((x) => x.status === "planned" || x.status === "in_progress"))
     add(`audit-${a.id}`, a.plannedOn, `Auditoría: ${a.title}`, "audits", "/auditorias");

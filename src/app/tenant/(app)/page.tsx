@@ -114,6 +114,7 @@ export default async function TenantHome() {
             ["/vigilancia", "Vigilancia epidemiológica y psicosocial", "medical"],
             ["/auditorias", "Auditoría interna", "audits"],
             ["/revision-direccion", "Revisión por la dirección", "management_review"],
+            ["/documentos", "Documentos y política", "documents"],
             ["/acciones", "Acciones (CAPA)", "actions"],
             ["/accidentes", "Accidentes e incidentes", "incidents"],
             ["/reportes", "Condiciones y actos inseguros", "unsafe_reports"],
