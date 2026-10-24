@@ -92,9 +92,9 @@ test("hosts y rutas internas", async ({ page, request }) => {
   expect((await get("localhost:3000", "/tenant/login")).status()).toBe(404);
   expect((await get("localhost:3000", "/platform")).status()).toBe(404);
   expect((await get("localhost:3000", "/demo/platform")).status()).toBe(404);
-  // Una empresa que no existe cae en 404 y el login de marketing no existe
+  // Una empresa que no existe cae en 404; /login en la raíz es el selector de empresa (no inicia sesión)
   expect((await get("localhost:3000", "/no-existe/login")).status()).toBe(404);
-  expect((await get("localhost:3000", "/login")).status()).toBe(404);
+  expect((await get("localhost:3000", "/login")).status()).toBe(200);
   // La empresa demo responde en /demo/login
   expect((await get("localhost:3000", "/demo/login")).status()).toBe(200);
   // Cada host sirve su propia área
