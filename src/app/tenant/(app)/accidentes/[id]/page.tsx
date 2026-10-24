@@ -1,4 +1,4 @@
-import Link from "@/components/ui/link";
+import Link, { A } from "@/components/ui/link";
 import { notFound } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardTitle } from "@/components/ui/card";
@@ -48,6 +48,14 @@ export default async function IncidentPage({ params }: PageProps<"/tenant/accide
           <Link className="text-primary text-sm underline" href={`/accidentes/${id}/furat`}>
             Ver datos precargados del FURAT
           </Link>
+          {inv && (
+            <>
+              {" · "}
+              <A className="text-primary text-sm underline" href={`/informes/investigacion/${id}`}>
+                Descargar informe de investigación (PDF)
+              </A>
+            </>
+          )}
         </p>
       </Card>
       <Card>

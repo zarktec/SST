@@ -27,3 +27,11 @@ export const scopeOf = (p: Permissions, module: PermissionModule, action: Action
 
 export const can = (p: Permissions, module: PermissionModule, action: Action): boolean =>
   scopeOf(p, module, action) !== null;
+
+/** Permisos efectivos como lista { módulo, acción } (para filtrar notificaciones y calendario por lo que el usuario puede ver). */
+export function permissionList(perms: Permissions): { module: string; action: string }[] {
+  return [...perms.keys()].map((k) => {
+    const [module, action] = k.split(":");
+    return { module, action };
+  });
+}

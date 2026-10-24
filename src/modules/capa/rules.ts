@@ -13,6 +13,7 @@ export const SOURCES: Record<string, string> = {
   unsafe_report: "Reporte de condición o acto inseguro",
   assessment: "Autoevaluación de estándares",
   audit: "Auditoría",
+  management_review: "Revisión por la dirección",
   pve: "Programa de vigilancia",
   drill: "Simulacro",
   complaint: "Queja",

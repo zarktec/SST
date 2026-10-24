@@ -154,6 +154,7 @@ export async function submitInspection(
       .from(inspection)
       .where(and(eq(inspection.tenantId, tenantId), eq(inspection.offlineId, d.offlineId)));
     if (dup) return { id: dup.id, created: false };
+    // Dos reenvíos simultáneos del mismo offlineId: gana uno y el otro lee el existente (sin error de unicidad).
     const [r] = await tx
       .insert(inspection)
       .values({
@@ -172,7 +173,15 @@ export async function submitInspection(
         failCount: sum.fail,
         notes: d.notes?.trim() || null,
       })
+      .onConflictDoNothing({ target: [inspection.tenantId, inspection.offlineId] })
       .returning({ id: inspection.id });
+    if (!r) {
+      const [again] = await tx
+        .select({ id: inspection.id })
+        .from(inspection)
+        .where(and(eq(inspection.tenantId, tenantId), eq(inspection.offlineId, d.offlineId)));
+      return { id: again.id, created: false };
+    }
     return { id: r.id, created: true };
   });
   // Los hallazgos van a CAPA; createAction es idempotente por (origen, ítem), así que un reintento no duplica.

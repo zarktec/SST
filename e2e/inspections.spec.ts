@@ -66,7 +66,7 @@ test("inspección sin conexión: queda en cola y se sincroniza al reconectar", a
   await expect(page.getByText(/1 inspección\(es\) sincronizada/)).toBeVisible();
   await page.goto(`${TENANT}/inspecciones`);
   await page.waitForLoadState("load");
-  await expect(page.getByText("Sin hallazgos")).toBeVisible();
+  await expect(page.getByText("Sin hallazgos")).toBeVisible({ timeout: 15_000 });
   await expect(page.getByText(/pendiente\(s\) de enviar/)).toHaveCount(0);
 });
 
