@@ -85,6 +85,21 @@ export default async function TenantHome() {
           </Link>
         </Alert>
       )}
+      <form action="/buscar" role="search" className="flex gap-2">
+        <input
+          type="search"
+          name="q"
+          aria-label="Buscar"
+          placeholder="Buscar personas, documentos, acciones…"
+          className="border-input bg-background min-h-11 w-full rounded-md border px-3 text-base"
+        />
+        <button
+          type="submit"
+          className="bg-primary text-primary-foreground min-h-11 rounded-md px-4 text-sm font-medium"
+        >
+          Buscar
+        </button>
+      </form>
       <Card>
         <CardTitle>Bienvenido a {ctx.tenant.tradeName}</CardTitle>
         <CardDescription className="mt-1">
@@ -144,6 +159,14 @@ export default async function TenantHome() {
         {" · "}
         <Link href="/informes" className="text-primary inline-block min-h-11 py-2 underline">
           Informes y exportaciones
+        </Link>
+        {" · "}
+        <Link href="/portal" className="text-primary inline-block min-h-11 py-2 underline">
+          Mi portal
+        </Link>
+        {" · "}
+        <Link href="/privacidad" className="text-primary inline-block min-h-11 py-2 underline">
+          Privacidad
         </Link>
         {" · "}
         <Link

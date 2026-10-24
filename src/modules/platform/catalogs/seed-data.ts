@@ -330,6 +330,27 @@ export const SEEDS: Seed[] = [
         "Parametrizable",
       ),
       p(
+        "privacidad.version",
+        "2026-01",
+        "versión",
+        "Versión vigente del aviso de privacidad (al cambiarla se pide una nueva autorización)",
+        "Ley 1581 de 2012",
+      ),
+      p(
+        "privacidad.plazo_consulta_dias",
+        10,
+        "días hábiles",
+        "Plazo para responder la consulta de un titular",
+        "TODO-NORMA: Ley 1581 de 2012, art. 14",
+      ),
+      p(
+        "privacidad.plazo_reclamo_dias",
+        15,
+        "días hábiles",
+        "Plazo para responder el reclamo de un titular (rectificación o supresión)",
+        "TODO-NORMA: Ley 1581 de 2012, art. 15",
+      ),
+      p(
         "comites.vigia_umbral_trabajadores",
         10,
         "trabajadores",

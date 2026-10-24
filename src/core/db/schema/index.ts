@@ -29,3 +29,4 @@ export * from "./pve";
 export * from "./audits";
 export * from "./notifications";
 export * from "./documents";
+export * from "./privacy";

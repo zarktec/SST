@@ -44,7 +44,8 @@ test("autoevaluación: calificar, cerrar, plan de mejoramiento", async ({ page }
 
   page.once("dialog", (d) => d.accept());
   await page.getByRole("button", { name: "Cerrar autoevaluación" }).click();
-  await expect(page.getByText(/Cerrada: 40%/)).toBeVisible({ timeout: 15_000 });
+  await expect(page.getByText(/40\.00%/)).toBeVisible();
+  await expect(page.getByText(/2 de 2 ítems calificados.*cerrada/)).toBeVisible();
 
   await page.goto(`${TENANT}/estandares/plan`);
   await expect(page.getByText("Cumplir: Criterio 1.1.2")).toBeVisible();

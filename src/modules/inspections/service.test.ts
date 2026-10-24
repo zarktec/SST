@@ -64,6 +64,19 @@ describe.skipIf(!hasTestDb)("inspecciones", () => {
     ).toHaveLength(1);
   });
 
+  it("dos envíos simultáneos del mismo offlineId no fallan ni duplican", async () => {
+    const t = await mk();
+    const id = await tpl(t);
+    const s = sub(id);
+    const [a, b] = await Promise.all([
+      submitInspection(t, "u", "Ana", s),
+      submitInspection(t, "u", "Ana", s),
+    ]);
+    expect(a.id).toBe(b.id);
+    expect([a.created, b.created].filter(Boolean)).toHaveLength(1);
+    expect(await listInspections(t)).toHaveLength(1);
+  });
+
   it("rechaza respuestas incompletas, hallazgos sin descripción y fechas futuras", async () => {
     const t = await mk();
     const id = await tpl(t);

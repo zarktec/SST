@@ -435,6 +435,20 @@
       "when": 1792857148326,
       "tag": "0061_documents_rls",
       "breakpoints": true
+    },
+    {
+      "idx": 62,
+      "version": "7",
+      "when": 1792858111826,
+      "tag": "0062_privacy",
+      "breakpoints": true
+    },
+    {
+      "idx": 63,
+      "version": "7",
+      "when": 1792858112826,
+      "tag": "0063_privacy_rls",
+      "breakpoints": true
     }
   ]
 }
