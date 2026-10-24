@@ -9,6 +9,7 @@ import { parsePage } from "@/lib/pagination";
 import { SOURCES, STATUS_LABEL, type Status } from "@/modules/capa/rules";
 import { capaSummary, countActions, listActions } from "@/modules/capa/service";
 import { CreateForm } from "./forms";
+import { FormModal } from "@/components/ui/modal";
 
 export const metadata = { title: "Acciones" };
 const V: Record<string, "default" | "warning" | "success" | "destructive"> = {
@@ -54,7 +55,14 @@ export default async function ActionsPage({ searchParams }: PageProps<"/tenant/a
         <Card>
           <CardTitle>Nueva acción</CardTitle>
           <div className="mt-3">
-            <CreateForm />
+            <FormModal
+              title="Nueva acción"
+              trigger="Nueva acción"
+              triggerVariant="default"
+              size="lg"
+            >
+              <CreateForm />
+            </FormModal>
           </div>
         </Card>
       )}

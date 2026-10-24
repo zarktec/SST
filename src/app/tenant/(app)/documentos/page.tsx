@@ -1,3 +1,4 @@
+import { FormModal } from "@/components/ui/modal";
 import { ActionForm } from "@/components/forms/action-form";
 import { Alert } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
@@ -93,10 +94,13 @@ export default async function DocumentsPage() {
               </p>
             )}
             {d.draft && canApprove && d.draft.createdBy !== ctx.user.id && (
-              <details className="mt-2">
-                <summary className="text-primary min-h-11 cursor-pointer py-2">
-                  Aprobar el borrador v{d.draft.version}
-                </summary>
+              <FormModal
+                title={`Aprobar el borrador v${d.draft!.version}`}
+                trigger="Aprobar el borrador"
+                triggerVariant="default"
+                triggerClassName="mt-2"
+                size="lg"
+              >
                 <p className="text-sm whitespace-pre-wrap">{d.draft.body}</p>
                 <ActionForm
                   action={approveAction}
@@ -114,7 +118,7 @@ export default async function DocumentsPage() {
                     { name: "signature", label: "Firma de quien aprueba", type: "signature" },
                   ]}
                 />
-              </details>
+              </FormModal>
             )}
             {d.draft && canApprove && d.draft.createdBy === ctx.user.id && (
               <p className="text-muted-foreground mt-2 text-sm">
@@ -122,10 +126,12 @@ export default async function DocumentsPage() {
               </p>
             )}
             {edit && (
-              <details className="mt-2">
-                <summary className="text-primary min-h-11 cursor-pointer py-2">
-                  {d.draft ? "Editar el borrador" : "Crear una nueva versión"}
-                </summary>
+              <FormModal
+                title={d.draft ? "Editar el borrador" : "Crear una nueva versión"}
+                trigger={d.draft ? "Editar el borrador" : "Crear una nueva versión"}
+                triggerClassName="mt-2"
+                size="lg"
+              >
                 <ActionForm
                   action={draftAction}
                   idPrefix={`dr-${d.id}-`}
@@ -142,7 +148,7 @@ export default async function DocumentsPage() {
                     { name: "changeNote", label: "Qué cambió", saved: d.draft?.changeNote },
                   ]}
                 />
-              </details>
+              </FormModal>
             )}
             <details className="mt-1">
               <summary className="text-primary min-h-11 cursor-pointer py-2">
@@ -184,23 +190,30 @@ export default async function DocumentsPage() {
             </p>
           )}
           <div className="mt-3">
-            <ActionForm
-              action={createDocumentAction}
-              idPrefix="nd-"
-              submit="Crear documento"
-              fields={[
-                { name: "code", label: "Código (p. ej. POL-001)", required: true },
-                { name: "title", label: "Título", required: true },
-                { name: "kind", label: "Tipo", type: "select", options: [...KINDS] },
-                { name: "ownerName", label: "Responsable" },
-                {
-                  name: "reviewMonths",
-                  label: "Revisar cada (meses; vacío = parámetro por defecto)",
-                  type: "number",
-                },
-                { name: "body", label: "Contenido", type: "textarea", rows: 8 },
-              ]}
-            />
+            <FormModal
+              title="Crear documento"
+              trigger="Crear documento"
+              triggerVariant="default"
+              size="lg"
+            >
+              <ActionForm
+                action={createDocumentAction}
+                idPrefix="nd-"
+                submit="Crear documento"
+                fields={[
+                  { name: "code", label: "Código (p. ej. POL-001)", required: true },
+                  { name: "title", label: "Título", required: true },
+                  { name: "kind", label: "Tipo", type: "select", options: [...KINDS] },
+                  { name: "ownerName", label: "Responsable" },
+                  {
+                    name: "reviewMonths",
+                    label: "Revisar cada (meses; vacío = parámetro por defecto)",
+                    type: "number",
+                  },
+                  { name: "body", label: "Contenido", type: "textarea", rows: 8 },
+                ]}
+              />
+            </FormModal>
           </div>
         </Card>
       )}

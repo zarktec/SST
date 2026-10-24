@@ -12,6 +12,7 @@ import {
   saveReviewAction,
   signReviewAction,
 } from "./actions";
+import { FormModal } from "@/components/ui/modal";
 
 export const metadata = { title: "Revisión por la dirección" };
 const fmt = (v: number | null) =>
@@ -167,10 +168,11 @@ export default async function ReviewPage() {
           ) : (
             <>
               {edit && (
-                <details className="mt-2" open>
-                  <summary className="text-primary min-h-11 cursor-pointer py-2">
-                    Completar la revisión
-                  </summary>
+                <FormModal
+                  title="Completar la revisión"
+                  trigger="Completar la revisión"
+                  triggerClassName="mt-2"
+                >
                   <ActionForm
                     action={saveReviewAction}
                     idPrefix={`rv-${r.id}-`}
@@ -181,13 +183,14 @@ export default async function ReviewPage() {
                   <RunButton action={refreshInputsAction} arg={r.id}>
                     Actualizar entradas del sistema
                   </RunButton>
-                </details>
+                </FormModal>
               )}
               {approve && (
-                <details className="mt-2">
-                  <summary className="text-primary min-h-11 cursor-pointer py-2">
-                    Firmar (alta dirección)
-                  </summary>
+                <FormModal
+                  title="Firmar (alta dirección)"
+                  trigger="Firmar (alta dirección)"
+                  triggerClassName="mt-2"
+                >
                   <ActionForm
                     action={signReviewAction}
                     idPrefix={`sg-${r.id}-`}
@@ -202,7 +205,7 @@ export default async function ReviewPage() {
                       { name: "signature", label: "Firma de la alta dirección", type: "signature" },
                     ]}
                   />
-                </details>
+                </FormModal>
               )}
             </>
           )}
@@ -212,13 +215,15 @@ export default async function ReviewPage() {
         <Card>
           <CardTitle>Nueva revisión</CardTitle>
           <div className="mt-3">
-            <ActionForm
-              action={createReviewAction}
-              idPrefix="nr-"
-              hidden={{ year: String(year) }}
-              submit={`Crear la revisión ${year}`}
-              fields={manual()}
-            />
+            <FormModal title="Nueva revisión" trigger="Nueva revisión" triggerVariant="default">
+              <ActionForm
+                action={createReviewAction}
+                idPrefix="nr-"
+                hidden={{ year: String(year) }}
+                submit={`Crear la revisión ${year}`}
+                fields={manual()}
+              />
+            </FormModal>
           </div>
         </Card>
       )}

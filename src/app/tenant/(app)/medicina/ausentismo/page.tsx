@@ -8,6 +8,7 @@ import { CAUSES } from "@/modules/medical/rules";
 import { absenteeismStats, listAbsences } from "@/modules/medical/service";
 import { listWorkers } from "@/modules/workers/service";
 import { AbsenceForm, CloseAbsenceForm } from "../forms";
+import { FormModal } from "@/components/ui/modal";
 
 export const metadata = { title: "Ausentismo" };
 
@@ -71,7 +72,13 @@ export default async function AbsencePage({
         <Card>
           <CardTitle>Registrar ausencia</CardTitle>
           <div className="mt-3">
-            <AbsenceForm people={people.map((p) => ({ id: p.id, name: p.fullName }))} />
+            <FormModal
+              title="Registrar ausencia"
+              trigger="Registrar ausencia"
+              triggerVariant="default"
+            >
+              <AbsenceForm people={people.map((p) => ({ id: p.id, name: p.fullName }))} />
+            </FormModal>
           </div>
         </Card>
       )}
@@ -86,7 +93,9 @@ export default async function AbsencePage({
                 {a.medical ? <Badge>Médica</Badge> : <Badge variant="warning">No médica</Badge>}
               </p>
               {!a.endDate && can(ctx.permissions, "medical", "edit") && (
-                <CloseAbsenceForm id={a.id} />
+                <FormModal title="Cerrar ausencia" trigger="Cerrar ausencia">
+                  <CloseAbsenceForm id={a.id} />
+                </FormModal>
               )}
             </li>
           ))}

@@ -9,6 +9,7 @@ import { isActive, previousPeriod } from "@/modules/workers/rules";
 import { getWorker, listCenters, workerSsChecks } from "@/modules/workers/service";
 import { RetireForm, SsCheckForm, WorkerForm } from "../worker-form";
 import { todayYmd } from "@/lib/dates";
+import { FormModal } from "@/components/ui/modal";
 
 export const metadata = { title: "Ficha de persona" };
 
@@ -36,18 +37,20 @@ export default async function WorkerPage({ params }: PageProps<"/tenant/personas
         <CardTitle>Ficha</CardTitle>
         <div className="mt-3">
           {canEdit ? (
-            <WorkerForm
-              worker={
-                {
-                  ...w,
-                  createdAt: undefined,
-                  updatedAt: undefined,
-                  deletedAt: undefined,
-                  tenantId: undefined,
-                } as never
-              }
-              centers={centers}
-            />
+            <FormModal title="Editar datos" trigger="Editar datos" size="lg">
+              <WorkerForm
+                worker={
+                  {
+                    ...w,
+                    createdAt: undefined,
+                    updatedAt: undefined,
+                    deletedAt: undefined,
+                    tenantId: undefined,
+                  } as never
+                }
+                centers={centers}
+              />
+            </FormModal>
           ) : (
             <p className="text-muted-foreground text-sm">Solo lectura. Documento: {w.idNumber}</p>
           )}
@@ -60,7 +63,9 @@ export default async function WorkerPage({ params }: PageProps<"/tenant/personas
             El registro se conserva (mínimo 20 años desde el retiro).
           </p>
           <div className="mt-3">
-            <RetireForm id={w.id} start={w.startDate} />
+            <FormModal title="Registrar retiro" trigger="Registrar retiro">
+              <RetireForm id={w.id} start={w.startDate} />
+            </FormModal>
           </div>
         </Card>
       )}
@@ -84,7 +89,9 @@ export default async function WorkerPage({ params }: PageProps<"/tenant/personas
           )}
           {canEdit && (
             <div className="mt-3">
-              <SsCheckForm id={w.id} period={previousPeriod(today)} />
+              <FormModal title="Verificar seguridad social" trigger="Verificar seguridad social">
+                <SsCheckForm id={w.id} period={previousPeriod(today)} />
+              </FormModal>
             </div>
           )}
         </Card>

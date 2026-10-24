@@ -31,6 +31,7 @@ import {
   toggleTypeAction,
   typeAction,
 } from "./actions";
+import { FormModal } from "@/components/ui/modal";
 
 export const metadata = { title: "Tareas de alto riesgo" };
 const STATE = {
@@ -196,10 +197,7 @@ export default async function HighRiskPage({ searchParams }: PageProps<"/tenant/
                   approve &&
                   p.requestedBy !== ctx.user.id &&
                   bl.length === 0 && (
-                    <details>
-                      <summary className="text-primary min-h-11 cursor-pointer py-2">
-                        Autorizar con mi firma
-                      </summary>
+                    <FormModal title="Autorizar con mi firma" trigger="Autorizar con mi firma">
                       <ActionForm
                         action={authorizeAction}
                         idPrefix={`au-${p.id}-`}
@@ -213,14 +211,11 @@ export default async function HighRiskPage({ searchParams }: PageProps<"/tenant/
                           },
                         ]}
                       />
-                    </details>
+                    </FormModal>
                   )}
                 {edit &&
                   (p.state === "vigente" || p.state === "vencido" || p.state === "programado") && (
-                    <details>
-                      <summary className="text-primary min-h-11 cursor-pointer py-2">
-                        Cerrar el permiso
-                      </summary>
+                    <FormModal title="Cerrar el permiso" trigger="Cerrar el permiso">
                       <ActionForm
                         action={closeAction}
                         idPrefix={`cl-${p.id}-`}
@@ -228,16 +223,13 @@ export default async function HighRiskPage({ searchParams }: PageProps<"/tenant/
                         submit="Cerrar permiso"
                         fields={[{ name: "note", label: "Novedades al cierre", type: "textarea" }]}
                       />
-                    </details>
+                    </FormModal>
                   )}
                 {edit &&
                   (p.state === "solicitado" ||
                     p.state === "programado" ||
                     p.state === "vigente") && (
-                    <details>
-                      <summary className="text-primary min-h-11 cursor-pointer py-2">
-                        Cancelar
-                      </summary>
+                    <FormModal title="Cancelar" trigger="Cancelar">
                       <ActionForm
                         action={cancelAction}
                         idPrefix={`ca-${p.id}-`}
@@ -246,7 +238,7 @@ export default async function HighRiskPage({ searchParams }: PageProps<"/tenant/
                         variant="outline"
                         fields={[{ name: "reason", label: "Motivo" }]}
                       />
-                    </details>
+                    </FormModal>
                   )}
               </li>
             );
@@ -277,13 +269,20 @@ export default async function HighRiskPage({ searchParams }: PageProps<"/tenant/
           )}
           {chosen && (
             <div className="mt-3">
-              <ActionForm
-                action={requestAction}
-                idPrefix="rq-"
-                hidden={{ typeId: chosen.id }}
-                submit="Solicitar permiso"
-                fields={requestFields}
-              />
+              <FormModal
+                title="Solicitar permiso"
+                trigger="Solicitar permiso"
+                triggerVariant="default"
+                size="lg"
+              >
+                <ActionForm
+                  action={requestAction}
+                  idPrefix="rq-"
+                  hidden={{ typeId: chosen.id }}
+                  submit="Solicitar permiso"
+                  fields={requestFields}
+                />
+              </FormModal>
             </div>
           )}
         </Card>
@@ -307,10 +306,12 @@ export default async function HighRiskPage({ searchParams }: PageProps<"/tenant/
           {certs.length === 0 && <li className="text-muted-foreground py-2">Sin certificados.</li>}
         </ul>
         {create && workerOpts.length > 0 && (
-          <details className="mt-3">
-            <summary className="text-primary min-h-11 cursor-pointer py-2">
-              Registrar certificado
-            </summary>
+          <FormModal
+            title="Registrar certificado"
+            trigger="Registrar certificado"
+            triggerVariant="default"
+            triggerClassName="mt-3"
+          >
             <ActionForm
               action={certificateAction}
               idPrefix="ce-"
@@ -341,7 +342,7 @@ export default async function HighRiskPage({ searchParams }: PageProps<"/tenant/
                 },
               ]}
             />
-          </details>
+          </FormModal>
         )}
       </Card>
 
@@ -358,10 +359,7 @@ export default async function HighRiskPage({ searchParams }: PageProps<"/tenant/
                 </Badge>
               </p>
               {edit && (
-                <details>
-                  <summary className="text-primary min-h-11 cursor-pointer py-2">
-                    Actualizar o retirar
-                  </summary>
+                <FormModal title="Actualizar o retirar" trigger="Actualizar o retirar">
                   <ActionForm
                     action={equipmentUpdateAction}
                     idPrefix={`eu-${e.id}-`}
@@ -384,15 +382,19 @@ export default async function HighRiskPage({ searchParams }: PageProps<"/tenant/
                   >
                     Retirar equipo
                   </RunButton>
-                </details>
+                </FormModal>
               )}
             </li>
           ))}
           {equipment.length === 0 && <li className="text-muted-foreground py-2">Sin equipos.</li>}
         </ul>
         {create && (
-          <details className="mt-3">
-            <summary className="text-primary min-h-11 cursor-pointer py-2">Agregar equipo</summary>
+          <FormModal
+            title="Agregar equipo"
+            trigger="Agregar equipo"
+            triggerVariant="default"
+            triggerClassName="mt-3"
+          >
             <ActionForm
               action={equipmentAction}
               idPrefix="eq-"
@@ -407,7 +409,7 @@ export default async function HighRiskPage({ searchParams }: PageProps<"/tenant/
                 { name: "certifiedUntil", label: "Certificación vigente hasta", type: "date" },
               ]}
             />
-          </details>
+          </FormModal>
         )}
       </Card>
 
@@ -436,8 +438,7 @@ export default async function HighRiskPage({ searchParams }: PageProps<"/tenant/
                     {x.active ? "Desactivar" : "Activar"}
                   </RunButton>
                 </p>
-                <details>
-                  <summary className="text-primary min-h-11 cursor-pointer py-2">Editar</summary>
+                <FormModal title="Editar" trigger="Editar">
                   <ActionForm
                     action={typeAction}
                     idPrefix={`ty-${x.id}-`}
@@ -479,7 +480,7 @@ export default async function HighRiskPage({ searchParams }: PageProps<"/tenant/
                       },
                     ]}
                   />
-                </details>
+                </FormModal>
               </li>
             ))}
           </ul>

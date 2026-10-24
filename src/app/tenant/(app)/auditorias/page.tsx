@@ -9,6 +9,7 @@ import { formatDate } from "@/lib/format";
 import { RESULTS } from "@/modules/audits/rules";
 import { auditProgram, listAudits } from "@/modules/audits/service";
 import { cancelAuditAction, closeAuditAction, createAuditAction, saveAuditAction } from "./actions";
+import { FormModal } from "@/components/ui/modal";
 
 export const metadata = { title: "Auditoría interna" };
 const STATUS = {
@@ -114,10 +115,11 @@ export default async function AuditsPage() {
               </div>
             )}
             {open && edit && (
-              <details className="mt-2" open={a.status === "in_progress"}>
-                <summary className="text-primary min-h-11 cursor-pointer py-2">
-                  Ejecutar la auditoría
-                </summary>
+              <FormModal
+                title="Ejecutar la auditoría"
+                trigger="Ejecutar la auditoría"
+                triggerClassName="mt-2"
+              >
                 <ActionForm
                   action={saveAuditAction}
                   idPrefix={`ex-${a.id}-`}
@@ -125,7 +127,7 @@ export default async function AuditsPage() {
                   submit="Guardar avance"
                   fields={fields}
                 />
-              </details>
+              </FormModal>
             )}
             {open && a.blockers.length > 0 && a.status === "in_progress" && (
               <Alert variant="warning">
@@ -170,34 +172,40 @@ export default async function AuditsPage() {
         <Card>
           <CardTitle>Programar una auditoría</CardTitle>
           <div className="mt-3">
-            <ActionForm
-              action={createAuditAction}
-              idPrefix="na-"
-              submit="Programar auditoría"
-              fields={[
-                { name: "title", label: "Nombre", required: true },
-                {
-                  name: "plannedOn",
-                  label: "Fecha prevista",
-                  type: "date",
-                  saved: today,
-                  required: true,
-                },
-                { name: "scope", label: "Alcance", type: "textarea", rows: 2 },
-                {
-                  name: "itemsText",
-                  label: "Lista de verificación (un ítem por línea)",
-                  type: "textarea",
-                  rows: 5,
-                },
-                {
-                  name: "fromAssessment",
-                  label:
-                    "Si dejo la lista vacía, usar los criterios de la última autoevaluación de estándares",
-                  type: "checkbox",
-                },
-              ]}
-            />
+            <FormModal
+              title="Programar auditoría"
+              trigger="Programar auditoría"
+              triggerVariant="default"
+            >
+              <ActionForm
+                action={createAuditAction}
+                idPrefix="na-"
+                submit="Programar auditoría"
+                fields={[
+                  { name: "title", label: "Nombre", required: true },
+                  {
+                    name: "plannedOn",
+                    label: "Fecha prevista",
+                    type: "date",
+                    saved: today,
+                    required: true,
+                  },
+                  { name: "scope", label: "Alcance", type: "textarea", rows: 2 },
+                  {
+                    name: "itemsText",
+                    label: "Lista de verificación (un ítem por línea)",
+                    type: "textarea",
+                    rows: 5,
+                  },
+                  {
+                    name: "fromAssessment",
+                    label:
+                      "Si dejo la lista vacía, usar los criterios de la última autoevaluación de estándares",
+                    type: "checkbox",
+                  },
+                ]}
+              />
+            </FormModal>
           </div>
         </Card>
       )}

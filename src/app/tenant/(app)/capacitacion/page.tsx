@@ -6,6 +6,7 @@ import { can } from "@/core/rbac/can";
 import { formatDate } from "@/lib/format";
 import { listCourses, listSessions } from "@/modules/training/service";
 import { SessionForm } from "./forms";
+import { FormModal } from "@/components/ui/modal";
 
 export const metadata = { title: "Capacitación" };
 const ST: Record<string, [string, "default" | "warning" | "success"]> = {
@@ -40,7 +41,13 @@ export default async function TrainingPage() {
                 Primero crea un curso en “Cursos y evaluaciones”.
               </p>
             ) : (
-              <SessionForm courses={courses} />
+              <FormModal
+                title="Programar sesión"
+                trigger="Programar sesión"
+                triggerVariant="default"
+              >
+                <SessionForm courses={courses} />
+              </FormModal>
             )}
           </div>
         </Card>

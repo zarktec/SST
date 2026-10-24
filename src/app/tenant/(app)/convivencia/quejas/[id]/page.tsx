@@ -9,6 +9,7 @@ import { formatDate, formatDateTime } from "@/lib/format";
 import { STAGE_LABEL, type Stage } from "@/modules/convivencia/rules";
 import { AccessDeniedError, getComplaint } from "@/modules/convivencia/service";
 import { AdvanceForm } from "../../forms";
+import { FormModal } from "@/components/ui/modal";
 
 export const metadata = { title: "Queja de convivencia" };
 
@@ -56,7 +57,9 @@ export default async function ComplaintPage({
         <Card>
           <CardTitle>Dar el siguiente paso</CardTitle>
           <div className="mt-3">
-            <AdvanceForm id={c.id} next={next} />
+            <FormModal title="Avanzar trámite" trigger="Avanzar trámite" triggerVariant="default">
+              <AdvanceForm id={c.id} next={next} />
+            </FormModal>
           </div>
         </Card>
       )}

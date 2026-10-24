@@ -7,6 +7,7 @@ import { can } from "@/core/rbac/can";
 import { formatDate } from "@/lib/format";
 import { getHarassmentReport } from "@/modules/convivencia/service";
 import { UpdateForm } from "../forms";
+import { FormModal } from "@/components/ui/modal";
 
 export const metadata = { title: "Reporte de acoso sexual" };
 
@@ -38,7 +39,13 @@ export default async function ReportDetail({ params }: PageProps<"/tenant/acoso-
         <Card>
           <CardTitle>Registrar avance</CardTitle>
           <div className="mt-3">
-            <UpdateForm id={r.id} />
+            <FormModal
+              title="Actualizar trámite"
+              trigger="Actualizar trámite"
+              triggerVariant="default"
+            >
+              <UpdateForm id={r.id} />
+            </FormModal>
           </div>
         </Card>
       )}

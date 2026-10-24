@@ -9,6 +9,7 @@ import { formatDate, formatDateTime } from "@/lib/format";
 import { SOURCES, STATUS_LABEL, TYPES, canMove, type Status } from "@/modules/capa/rules";
 import { getAction } from "@/modules/capa/service";
 import { EditForm, MoveForm, VerifyForm } from "../forms";
+import { FormModal } from "@/components/ui/modal";
 
 export const metadata = { title: "Acción" };
 
@@ -43,7 +44,9 @@ export default async function ActionPage({ params }: PageProps<"/tenant/acciones
         <Card>
           <CardTitle>Responsable, fecha y causa</CardTitle>
           <div className="mt-3">
-            <EditForm a={a} />
+            <FormModal title="Editar" trigger="Editar">
+              <EditForm a={a} />
+            </FormModal>
           </div>
         </Card>
       )}
@@ -57,7 +60,9 @@ export default async function ActionPage({ params }: PageProps<"/tenant/acciones
         <Card>
           <CardTitle>Avance</CardTitle>
           <div className="mt-3">
-            <MoveForm id={a.id} options={options} />
+            <FormModal title="Cambiar estado" trigger="Cambiar estado" triggerVariant="default">
+              <MoveForm id={a.id} options={options} />
+            </FormModal>
           </div>
         </Card>
       )}
@@ -72,7 +77,13 @@ export default async function ActionPage({ params }: PageProps<"/tenant/acciones
         <Card>
           <CardTitle>Verificación de eficacia</CardTitle>
           <div className="mt-3">
-            <VerifyForm id={a.id} />
+            <FormModal
+              title="Verificar eficacia"
+              trigger="Verificar eficacia"
+              triggerVariant="default"
+            >
+              <VerifyForm id={a.id} />
+            </FormModal>
           </div>
         </Card>
       )}

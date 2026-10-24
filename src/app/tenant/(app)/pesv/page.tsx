@@ -24,6 +24,7 @@ import {
   retireVehicleAction,
   vehicleAction,
 } from "./actions";
+import { FormModal } from "@/components/ui/modal";
 
 export const metadata = { title: "PESV" };
 const EXP = {
@@ -147,12 +148,18 @@ export default async function PesvPage() {
         <Card>
           <CardTitle>Inspección preoperacional</CardTitle>
           <div className="mt-3">
-            <ActionForm
-              action={preopAction}
-              idPrefix="po-"
-              submit="Registrar preoperacional"
-              fields={preopFields}
-            />
+            <FormModal
+              title="Registrar preoperacional"
+              trigger="Registrar preoperacional"
+              triggerVariant="default"
+            >
+              <ActionForm
+                action={preopAction}
+                idPrefix="po-"
+                submit="Registrar preoperacional"
+                fields={preopFields}
+              />
+            </FormModal>
           </div>
           <p className="text-muted-foreground mt-2 text-xs">
             Lista provisional: ajústala con tu responsable del PESV.
@@ -181,10 +188,7 @@ export default async function PesvPage() {
                 </Badge>
               </p>
               {edit && (
-                <details>
-                  <summary className="text-primary min-h-11 cursor-pointer py-2">
-                    Editar o retirar
-                  </summary>
+                <FormModal title="Editar o retirar" trigger="Editar o retirar">
                   <ActionForm
                     action={vehicleAction}
                     idPrefix={`v-${v.id}-`}
@@ -199,24 +203,26 @@ export default async function PesvPage() {
                   >
                     Retirar vehículo
                   </RunButton>
-                </details>
+                </FormModal>
               )}
             </li>
           ))}
           {vehicles.length === 0 && <li className="text-muted-foreground py-2">Sin vehículos.</li>}
         </ul>
         {create && (
-          <details className="mt-3">
-            <summary className="text-primary min-h-11 cursor-pointer py-2">
-              Agregar vehículo
-            </summary>
+          <FormModal
+            title="Agregar vehículo"
+            trigger="Agregar vehículo"
+            triggerVariant="default"
+            triggerClassName="mt-3"
+          >
             <ActionForm
               action={vehicleAction}
               idPrefix="nv-"
               submit="Agregar vehículo"
               fields={vehicleFields()}
             />
-          </details>
+          </FormModal>
         )}
       </Card>
 
@@ -244,10 +250,12 @@ export default async function PesvPage() {
           {drivers.length === 0 && <li className="text-muted-foreground py-2">Sin conductores.</li>}
         </ul>
         {create && people.length > 0 && (
-          <details className="mt-3">
-            <summary className="text-primary min-h-11 cursor-pointer py-2">
-              Agregar o actualizar licencia
-            </summary>
+          <FormModal
+            title="Agregar o actualizar licencia"
+            trigger="Agregar o actualizar licencia"
+            triggerVariant="default"
+            triggerClassName="mt-3"
+          >
             <ActionForm
               action={driverAction}
               idPrefix="nd-"
@@ -268,7 +276,7 @@ export default async function PesvPage() {
                 { name: "licenseExpiresOn", label: "Vence", type: "date", required: true },
               ]}
             />
-          </details>
+          </FormModal>
         )}
       </Card>
 
@@ -310,10 +318,12 @@ export default async function PesvPage() {
           {crashes.length === 0 && <li className="text-muted-foreground py-2">Sin siniestros.</li>}
         </ul>
         {create && (
-          <details className="mt-3">
-            <summary className="text-primary min-h-11 cursor-pointer py-2">
-              Registrar siniestro
-            </summary>
+          <FormModal
+            title="Registrar siniestro"
+            trigger="Registrar siniestro"
+            triggerVariant="default"
+            triggerClassName="mt-3"
+          >
             <ActionForm
               action={crashAction}
               idPrefix="cr-"
@@ -349,7 +359,7 @@ export default async function PesvPage() {
                 { name: "description", label: "Qué pasó", type: "textarea" },
               ]}
             />
-          </details>
+          </FormModal>
         )}
       </Card>
     </div>

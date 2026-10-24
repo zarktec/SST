@@ -9,6 +9,7 @@ import { listIncidents } from "@/modules/incidents/service";
 import { listWorkCenters } from "@/modules/company/service";
 import { listWorkers } from "@/modules/workers/service";
 import { ReportForm } from "./forms";
+import { FormModal } from "@/components/ui/modal";
 
 export const metadata = { title: "Accidentes e incidentes" };
 
@@ -56,11 +57,18 @@ export default async function IncidentsPage() {
         <Card>
           <CardTitle>Reportar un evento</CardTitle>
           <div className="mt-3">
-            <ReportForm
-              people={people.map((p) => ({ id: p.id, name: p.fullName }))}
-              centers={centers.map((c) => ({ id: c.id, name: c.name }))}
-              defaultName=""
-            />
+            <FormModal
+              title="Reportar evento"
+              trigger="Reportar evento"
+              triggerVariant="default"
+              size="lg"
+            >
+              <ReportForm
+                people={people.map((p) => ({ id: p.id, name: p.fullName }))}
+                centers={centers.map((c) => ({ id: c.id, name: c.name }))}
+                defaultName=""
+              />
+            </FormModal>
           </div>
         </Card>
       )}

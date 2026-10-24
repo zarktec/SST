@@ -7,6 +7,7 @@ import { formatDate } from "@/lib/format";
 import { listDiseases } from "@/modules/incidents/service";
 import { listWorkers } from "@/modules/workers/service";
 import { DiseaseForm, QualifyForm } from "../forms";
+import { FormModal } from "@/components/ui/modal";
 
 export const metadata = { title: "Enfermedad laboral" };
 
@@ -28,7 +29,14 @@ export default async function DiseasePage() {
         <Card>
           <CardTitle>Registrar un caso</CardTitle>
           <div className="mt-3">
-            <DiseaseForm people={people.map((p) => ({ id: p.id, name: p.fullName }))} />
+            <FormModal
+              title="Registrar caso"
+              trigger="Registrar caso"
+              triggerVariant="default"
+              size="lg"
+            >
+              <DiseaseForm people={people.map((p) => ({ id: p.id, name: p.fullName }))} />
+            </FormModal>
           </div>
         </Card>
       )}
@@ -48,7 +56,11 @@ export default async function DiseasePage() {
                   <Badge variant="warning">Sin calificar</Badge>
                 )}
               </p>
-              {edit && !d.qualification && <QualifyForm id={d.id} />}
+              {edit && !d.qualification && (
+                <FormModal title="Calificar" trigger="Calificar">
+                  <QualifyForm id={d.id} />
+                </FormModal>
+              )}
             </li>
           ))}
           {rows.length === 0 && <li className="text-muted-foreground py-2">Sin casos.</li>}

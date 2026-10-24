@@ -6,6 +6,7 @@ import { can } from "@/core/rbac/can";
 import { quizToText } from "@/modules/training/rules";
 import { listCourses, listQuestions } from "@/modules/training/service";
 import { ArchiveButton, CourseForm, QuizForm } from "../forms";
+import { FormModal } from "@/components/ui/modal";
 
 export const metadata = { title: "Cursos" };
 
@@ -32,10 +33,7 @@ export default async function CoursesPage() {
             )}
           </div>
           {canEdit && (
-            <details className="mt-2">
-              <summary className="text-primary min-h-11 cursor-pointer py-2 text-sm">
-                Editar
-              </summary>
+            <FormModal title="Editar" trigger="Editar" triggerClassName="mt-2">
               <div className="space-y-4">
                 <CourseForm
                   course={
@@ -51,7 +49,7 @@ export default async function CoursesPage() {
                 <QuizForm courseId={c.id} text={quizToText(quizzes[i])} />
                 {can(ctx.permissions, "training", "delete") && <ArchiveButton id={c.id} />}
               </div>
-            </details>
+            </FormModal>
           )}
         </Card>
       ))}
@@ -59,7 +57,9 @@ export default async function CoursesPage() {
         <Card>
           <CardTitle>Nuevo curso</CardTitle>
           <div className="mt-3">
-            <CourseForm />
+            <FormModal title="Nuevo curso" trigger="Nuevo curso" triggerVariant="default" size="lg">
+              <CourseForm />
+            </FormModal>
           </div>
         </Card>
       )}

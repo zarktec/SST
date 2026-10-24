@@ -1,3 +1,4 @@
+import { FormModal } from "@/components/ui/modal";
 import { Alert } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardTitle } from "@/components/ui/card";
@@ -47,14 +48,24 @@ export default async function LegalMatrix() {
               key={`${l.kind}-${l.code}`}
               className={`py-3 ${l.kind === "requirement" ? "pl-4" : ""}`}
             >
-              <details>
-                <summary className="flex min-h-11 cursor-pointer flex-wrap items-center justify-between gap-2 text-sm">
-                  <span>
-                    <span className="font-semibold">{l.title}</span> · {l.detail}
-                    {l.periodicity && (
-                      <span className="text-muted-foreground"> ({l.periodicity})</span>
-                    )}
-                  </span>
+              <div className="flex flex-wrap items-center justify-between gap-2 text-sm">
+                <span>
+                  <span className="font-semibold">{l.title}</span> · {l.detail}
+                  {l.periodicity && (
+                    <span className="text-muted-foreground"> ({l.periodicity})</span>
+                  )}
+                  {l.url && (
+                    <a
+                      href={l.url}
+                      className="text-primary ml-2 text-sm underline"
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      Ver norma
+                    </a>
+                  )}
+                </span>
+                <span className="flex items-center gap-2">
                   {!l.entry ? (
                     <Badge variant="warning">Sin evaluar</Badge>
                   ) : l.entry.applies === "no" ? (
@@ -64,29 +75,22 @@ export default async function LegalMatrix() {
                       {STATE[l.entry.compliance][1]}
                     </Badge>
                   )}
-                </summary>
-                <div className="mt-3">
-                  {canEdit ? (
-                    <EntryForm
-                      kind={l.kind}
-                      code={l.code}
-                      entry={l.entry ? { ...l.entry } : null}
-                    />
-                  ) : (
-                    <p className="text-muted-foreground text-sm">Solo lectura.</p>
-                  )}
-                  {l.url && (
-                    <a
-                      href={l.url}
-                      className="text-primary mt-2 inline-block text-sm underline"
-                      target="_blank"
-                      rel="noreferrer"
+                  {canEdit && (
+                    <FormModal
+                      title={`Evaluar: ${l.title}`}
+                      description={l.detail}
+                      trigger={l.entry ? "Editar" : "Evaluar"}
+                      triggerVariant={l.entry ? "outline" : "default"}
                     >
-                      Ver norma
-                    </a>
+                      <EntryForm
+                        kind={l.kind}
+                        code={l.code}
+                        entry={l.entry ? { ...l.entry } : null}
+                      />
+                    </FormModal>
                   )}
-                </div>
-              </details>
+                </span>
+              </div>
             </li>
           ))}
         </ul>

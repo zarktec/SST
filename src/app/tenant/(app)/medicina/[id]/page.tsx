@@ -8,6 +8,7 @@ import { formatCOP, formatDate } from "@/lib/format";
 import { CONCEPTS } from "@/modules/medical/rules";
 import { getEvaluation } from "@/modules/medical/service";
 import { IpsForm } from "../forms";
+import { FormModal } from "@/components/ui/modal";
 
 export const metadata = { title: "Evaluación médica ocupacional" };
 
@@ -61,7 +62,9 @@ export default async function EvaluationPage({ params }: PageProps<"/tenant/medi
         <Card>
           <CardTitle>Enviar a la IPS</CardTitle>
           <div className="mt-3">
-            <IpsForm id={e.id} />
+            <FormModal title="Enviar a la IPS" trigger="Enviar a la IPS" triggerVariant="default">
+              <IpsForm id={e.id} />
+            </FormModal>
           </div>
         </Card>
       )}

@@ -9,6 +9,7 @@ import { getActiveItems } from "@/modules/platform/catalogs/service";
 import { ratingFor, type RatingRange } from "@/modules/assessment/rules";
 import { getAssessment } from "@/modules/assessment/service";
 import { CloseButton, ItemForm, MinistryForm } from "../forms";
+import { FormModal } from "@/components/ui/modal";
 
 export const metadata = { title: "Autoevaluación" };
 const PHVA: Record<string, string> = { P: "Planear", H: "Hacer", V: "Verificar", A: "Actuar" };
@@ -86,7 +87,13 @@ export default async function AssessmentPage({ params }: PageProps<"/tenant/esta
             <p className="mt-2 text-sm">Registrada el {a.registeredMinistryAt}.</p>
           ) : (
             <div className="mt-3">
-              <MinistryForm id={a.id} />
+              <FormModal
+                title="Registrar ante el Ministerio"
+                trigger="Registrar ante el Ministerio"
+                triggerVariant="default"
+              >
+                <MinistryForm id={a.id} />
+              </FormModal>
             </div>
           )}
         </Card>

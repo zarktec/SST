@@ -1,7 +1,8 @@
+import { NavIcon } from "@/components/layout/app-shell";
+import { MODULE_GROUPS, type NavItem } from "@/components/layout/nav-config";
 import Link from "@/components/ui/link";
 import { Alert } from "@/components/ui/alert";
 import { Card, CardDescription, CardTitle } from "@/components/ui/card";
-import { tp } from "@/core/tenancy/base-path";
 import { requireTenantMember } from "@/core/auth/session";
 import { withTenant } from "@/core/db";
 import { can, loadPermissions } from "@/core/rbac/can";
@@ -13,6 +14,23 @@ import { permissionList } from "@/core/rbac/can";
 import { unreadCount } from "@/modules/notifications/service";
 
 export const metadata = { title: "Inicio" };
+
+const QUICK: (NavItem & { module: string })[] = [
+  {
+    href: "/reportes",
+    label: "Reportar una condición insegura",
+    icon: "ShieldAlert",
+    module: "unsafe_reports",
+  },
+  { href: "/acciones", label: "Acciones pendientes", icon: "Target", module: "actions" },
+  {
+    href: "/inspecciones",
+    label: "Hacer una inspección",
+    icon: "ListChecks",
+    module: "inspections",
+  },
+  { href: "/accidentes", label: "Reportar un accidente", icon: "Siren", module: "incidents" },
+];
 
 export default async function TenantHome() {
   const ctx = await requireTenantMember();
@@ -32,10 +50,17 @@ export default async function TenantHome() {
   const unread = await unreadCount(ctx.tenant.tenantId, ctx.user.id, permissionList(perms)).catch(
     () => 0,
   );
-  const searchAction = await tp("/buscar");
   return (
     <div className="space-y-4">
-      <h1 className="text-2xl font-bold">Hola, {ctx.user.name.split(" ")[0]}</h1>
+      <div>
+        <h1 className="text-2xl font-bold">Hola, {ctx.user.name.split(" ")[0]}</h1>
+        <p className="text-muted-foreground text-sm">
+          {ctx.tenant.tradeName}
+          {state.tenant.standardsGroup
+            ? ` · te aplican ${state.tenant.standardsGroup} estándares mínimos`
+            : ""}
+        </p>
+      </div>
       {(canSetup ? alerts : []).map((a) => (
         <Alert
           key={a.id}
@@ -87,91 +112,55 @@ export default async function TenantHome() {
           </Link>
         </Alert>
       )}
-      <form action={searchAction} role="search" className="flex gap-2">
-        <input
-          type="search"
-          name="q"
-          aria-label="Buscar"
-          placeholder="Buscar personas, documentos, acciones…"
-          className="border-input bg-background min-h-11 w-full rounded-md border px-3 text-base"
-        />
-        <button
-          type="submit"
-          className="bg-primary text-primary-foreground min-h-11 rounded-md px-4 text-sm font-medium"
-        >
-          Buscar
-        </button>
-      </form>
-      <Card>
-        <CardTitle>Bienvenido a {ctx.tenant.tradeName}</CardTitle>
-        <CardDescription className="mt-1">
-          Rol: {ctx.roleKey ?? "personalizado"}.
-          {state.tenant.standardsGroup
-            ? ` Te aplican ${state.tenant.standardsGroup} estándares mínimos.`
-            : ""}
-        </CardDescription>
-      </Card>
-      <Card>
-        <CardTitle>Módulos</CardTitle>
-        <ul className="mt-2 grid gap-1 text-sm sm:grid-cols-2">
-          {[
-            ["/estandares", "Estándares mínimos", "standards"],
-            ["/matriz-legal", "Matriz legal", "legal_matrix"],
-            ["/peligros", "Matriz de peligros", "hazard_matrix"],
-            ["/plan-anual", "Plan anual de trabajo", "annual_plan"],
-            ["/personas", "Personas", "workers"],
-            ["/capacitacion", "Capacitación", "training"],
-            ["/epp", "EPP", "ppe"],
-            ["/comites", "Comités", "committees"],
-            ["/medicina", "Medicina del trabajo", "medical"],
-            ["/emergencias", "Emergencias", "emergencies"],
-            ["/alto-riesgo", "Tareas de alto riesgo", "high_risk"],
-            ["/quimicos", "Riesgo químico", "chemicals"],
-            ["/pesv", "PESV (seguridad vial)", "pesv"],
-            ["/vigilancia", "Vigilancia epidemiológica y psicosocial", "medical"],
-            ["/auditorias", "Auditoría interna", "audits"],
-            ["/revision-direccion", "Revisión por la dirección", "management_review"],
-            ["/documentos", "Documentos y política", "documents"],
-            ["/acciones", "Acciones (CAPA)", "actions"],
-            ["/accidentes", "Accidentes e incidentes", "incidents"],
-            ["/reportes", "Condiciones y actos inseguros", "unsafe_reports"],
-            ["/inspecciones", "Inspecciones", "inspections"],
-            ["/indicadores", "Indicadores", "indicators"],
-            ["/usuarios", "Usuarios y roles", "users"],
-            ["/convivencia", "Convivencia laboral", "ccl"],
-            ["/acoso-sexual", "Acoso sexual", "harassment"],
-          ]
-            .filter(([, , m]) => can(perms, m as never, "view"))
-            .map(([href, label]) => (
-              <li key={href}>
-                <Link href={href} className="text-primary inline-block min-h-11 py-2 underline">
-                  {label}
-                </Link>
-              </li>
-            ))}
-        </ul>
-      </Card>
+      <section aria-label="Accesos rápidos" className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+        {QUICK.filter((q) => can(perms, q.module as never, "view")).map((q) => (
+          <Link
+            key={q.href}
+            href={q.href}
+            className="bg-card hover:border-primary flex min-h-24 flex-col justify-between gap-2 rounded-xl border p-4 shadow-sm transition-colors"
+          >
+            <span className="bg-primary/10 text-brand-text grid size-9 place-items-center rounded-lg">
+              <NavIcon name={q.icon} />
+            </span>
+            <span className="text-sm leading-tight font-semibold">{q.label}</span>
+          </Link>
+        ))}
+      </section>
+      {MODULE_GROUPS.map((g) => ({
+        ...g,
+        items: g.items.filter((i) => !i.module || can(perms, i.module as never, "view")),
+      }))
+        .filter((g) => g.items.length > 0)
+        .map((g) => (
+          <section key={g.label} aria-labelledby={`g-${g.label}`} className="space-y-2">
+            <h2 id={`g-${g.label}`} className="text-muted-foreground text-sm font-semibold">
+              {g.label}
+            </h2>
+            <ul className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+              {g.items.map((i) => (
+                <li key={i.href}>
+                  <Link
+                    href={i.href}
+                    className="bg-card hover:border-primary flex min-h-16 items-center gap-3 rounded-xl border p-3 shadow-sm transition-colors"
+                  >
+                    <span className="bg-muted text-brand-text grid size-10 shrink-0 place-items-center rounded-lg">
+                      <NavIcon name={i.icon} />
+                    </span>
+                    <span className="min-w-0">
+                      <span className="block truncate text-sm font-semibold">{i.label}</span>
+                      {i.hint && (
+                        <span className="text-muted-foreground block truncate text-xs">
+                          {i.hint}
+                        </span>
+                      )}
+                    </span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </section>
+        ))}
       <p className="text-sm">
-        <Link href="/notificaciones" className="text-primary inline-block min-h-11 py-2 underline">
-          Alertas
-        </Link>
-        {" · "}
-        <Link href="/calendario" className="text-primary inline-block min-h-11 py-2 underline">
-          Calendario de obligaciones
-        </Link>
-        {" · "}
-        <Link href="/informes" className="text-primary inline-block min-h-11 py-2 underline">
-          Informes y exportaciones
-        </Link>
-        {" · "}
-        <Link href="/portal" className="text-primary inline-block min-h-11 py-2 underline">
-          Mi portal
-        </Link>
-        {" · "}
-        <Link href="/privacidad" className="text-primary inline-block min-h-11 py-2 underline">
-          Privacidad
-        </Link>
-        {" · "}
         <Link
           href="/convivencia/radicar"
           className="text-primary inline-block min-h-11 py-2 underline"
@@ -186,17 +175,6 @@ export default async function TenantHome() {
           Reportar acoso sexual o violencia de género
         </Link>
       </p>
-      {ctx.roleKey === "ADMIN_EMPRESA" && (
-        <p className="text-sm">
-          <Link href="/facturacion" className="text-primary inline-block min-h-11 py-2 underline">
-            Ir a Facturación (plan, pagos y facturas)
-          </Link>
-          {" · "}
-          <Link href="/dominio" className="text-primary inline-block min-h-11 py-2 underline">
-            Dominio propio
-          </Link>
-        </p>
-      )}
     </div>
   );
 }

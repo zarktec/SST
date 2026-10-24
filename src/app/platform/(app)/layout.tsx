@@ -1,4 +1,5 @@
-import { AppShell, type NavItem } from "@/components/layout/app-shell";
+import { AppShell } from "@/components/layout/app-shell";
+import type { NavItem } from "@/components/layout/nav-config";
 import { Alert } from "@/components/ui/alert";
 import { requirePlatformStaff } from "@/core/auth/session";
 import { schema, systemDb } from "@/core/db";
@@ -22,7 +23,8 @@ export default async function PlatformLayout({ children }: LayoutProps<"/platfor
   return (
     <AppShell
       brandName="SST · Admin"
-      nav={NAV}
+      groups={[{ label: "", items: NAV }]}
+      quick={NAV.slice(0, 4)}
       userLabel={`${staff.user.email} · ${staff.role}`}
       banner={
         sandbox.length ? (

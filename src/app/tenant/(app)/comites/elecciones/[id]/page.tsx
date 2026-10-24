@@ -10,6 +10,7 @@ import { KIND_LABEL } from "@/modules/committees/rules";
 import { getElection } from "@/modules/committees/service";
 import { listWorkers } from "@/modules/workers/service";
 import { ApplyForm, CandidateButton, CloseVotingButton, OpenVoting, TieForm } from "../../forms";
+import { FormModal } from "@/components/ui/modal";
 
 export const metadata = { title: "Elección" };
 
@@ -57,10 +58,11 @@ export default async function ElectionPage({
         </ul>
         {e.status === "registration" && canEdit && (
           <div className="mt-3 space-y-3">
-            <details>
-              <summary className="text-primary min-h-11 cursor-pointer py-2 text-sm">
-                Inscribir candidato
-              </summary>
+            <FormModal
+              title="Inscribir candidato"
+              trigger="Inscribir candidato"
+              triggerVariant="default"
+            >
               <div className="flex flex-col gap-2">
                 {people
                   .filter((p) => !candidateWorkers.has(p.id))
@@ -73,7 +75,7 @@ export default async function ElectionPage({
                     />
                   ))}
               </div>
-            </details>
+            </FormModal>
             <OpenVoting electionId={e.id} />
           </div>
         )}
@@ -128,24 +130,32 @@ export default async function ElectionPage({
               <Alert variant="warning" className="mb-3">
                 Hay un empate en el corte de los puestos. Resuélvelo para continuar.
               </Alert>
-              <TieForm
-                electionId={e.id}
-                rows={r.rows.map((x) => ({
-                  candidateId: x.candidateId,
-                  name: x.name,
-                  votes: x.votes,
-                }))}
-              />
+              <FormModal title="Resolver empate" trigger="Resolver empate" triggerVariant="default">
+                <TieForm
+                  electionId={e.id}
+                  rows={r.rows.map((x) => ({
+                    candidateId: x.candidateId,
+                    name: x.name,
+                    votes: x.votes,
+                  }))}
+                />
+              </FormModal>
             </div>
           )}
           {!r.tie && !e.appliedCommitteeId && can(ctx.permissions, "committees", "create") && (
             <div className="mt-3 border-t pt-3">
               <CardTitle>Conformar el comité</CardTitle>
               <div className="mt-3">
-                <ApplyForm
-                  electionId={e.id}
-                  people={people.map((p) => ({ id: p.id, name: p.fullName }))}
-                />
+                <FormModal
+                  title="Inscribir candidato"
+                  trigger="Inscribir candidato"
+                  triggerVariant="default"
+                >
+                  <ApplyForm
+                    electionId={e.id}
+                    people={people.map((p) => ({ id: p.id, name: p.fullName }))}
+                  />
+                </FormModal>
               </div>
             </div>
           )}

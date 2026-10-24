@@ -9,6 +9,7 @@ import { formatDate } from "@/lib/format";
 import { PRIVACY_NOTICE, REQUEST_TYPES } from "@/modules/privacy/rules";
 import { consentStatus, listRequests } from "@/modules/privacy/service";
 import { consentAction, requestAction } from "./actions";
+import { FormModal } from "@/components/ui/modal";
 
 export const metadata = { title: "Privacidad y datos personales" };
 
@@ -45,46 +46,50 @@ export default async function PrivacyPage() {
           )}
         </p>
         <div className="mt-3">
-          <ActionForm
-            action={consentAction}
-            idPrefix="co-"
-            submit={c.accepted ? "Actualizar mi autorización" : "Guardar mi autorización"}
-            fields={[
-              {
-                name: "general",
-                label:
-                  "Autorizo el tratamiento de mis datos personales para la gestión del SG-SST (obligatoria)",
-                type: "checkbox",
-                saved: c.accepted,
-              },
-              {
-                name: "sensitive",
-                label:
-                  "Autorizo el tratamiento de mis datos sensibles de salud para el SG-SST (opcional)",
-                type: "checkbox",
-                saved: c.sensitive,
-              },
-            ]}
-          />
+          <FormModal title="Mi autorización de datos" trigger="Mi autorización de datos">
+            <ActionForm
+              action={consentAction}
+              idPrefix="co-"
+              submit={c.accepted ? "Actualizar mi autorización" : "Guardar mi autorización"}
+              fields={[
+                {
+                  name: "general",
+                  label:
+                    "Autorizo el tratamiento de mis datos personales para la gestión del SG-SST (obligatoria)",
+                  type: "checkbox",
+                  saved: c.accepted,
+                },
+                {
+                  name: "sensitive",
+                  label:
+                    "Autorizo el tratamiento de mis datos sensibles de salud para el SG-SST (opcional)",
+                  type: "checkbox",
+                  saved: c.sensitive,
+                },
+              ]}
+            />
+          </FormModal>
         </div>
       </Card>
       <Card>
         <CardTitle>Ejercer mis derechos</CardTitle>
         <div className="mt-3">
-          <ActionForm
-            action={requestAction}
-            idPrefix="rq-"
-            submit="Radicar solicitud"
-            fields={[
-              {
-                name: "type",
-                label: "Tipo de solicitud",
-                type: "select",
-                options: [...REQUEST_TYPES],
-              },
-              { name: "detail", label: "Describe tu solicitud", type: "textarea" },
-            ]}
-          />
+          <FormModal title="Radicar solicitud" trigger="Radicar solicitud" triggerVariant="default">
+            <ActionForm
+              action={requestAction}
+              idPrefix="rq-"
+              submit="Radicar solicitud"
+              fields={[
+                {
+                  name: "type",
+                  label: "Tipo de solicitud",
+                  type: "select",
+                  options: [...REQUEST_TYPES],
+                },
+                { name: "detail", label: "Describe tu solicitud", type: "textarea" },
+              ]}
+            />
+          </FormModal>
         </div>
         <ul className="mt-3 divide-y text-sm">
           {mine.map((r) => (

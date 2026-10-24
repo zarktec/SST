@@ -21,6 +21,7 @@ import {
 } from "./controls";
 import { requireBillingAdmin } from "./guard";
 import { ProfileForm } from "./profile-form";
+import { FormModal } from "@/components/ui/modal";
 
 export const metadata = { title: "Facturación" };
 
@@ -207,7 +208,13 @@ export default async function BillingPage() {
           Se usan para emitir tu factura electrónica ante la DIAN.
         </CardDescription>
         <div className="mt-3">
-          <ProfileForm profile={profile ? { ...profile, updatedAt: undefined } : null} />
+          <FormModal
+            title="Editar datos de facturación"
+            trigger="Editar datos de facturación"
+            size="lg"
+          >
+            <ProfileForm profile={profile ? { ...profile, updatedAt: undefined } : null} />
+          </FormModal>
         </div>
       </Card>
 

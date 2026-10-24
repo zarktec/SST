@@ -10,6 +10,7 @@ import { STAGE_LABEL, type Stage } from "@/modules/convivencia/rules";
 import { AccessDeniedError, cclMembership, listComplaints } from "@/modules/convivencia/service";
 import { activeCommittees } from "@/modules/committees/service";
 import { ConfidentialityForm } from "./forms";
+import { FormModal } from "@/components/ui/modal";
 
 export const metadata = { title: "Convivencia laboral" };
 
@@ -71,7 +72,13 @@ export default async function ConvivenciaPage() {
         <Card>
           <CardTitle>Acuerdo de confidencialidad</CardTitle>
           <div className="mt-3">
-            <ConfidentialityForm />
+            <FormModal
+              title="Firmar acuerdo de confidencialidad"
+              trigger="Firmar acuerdo de confidencialidad"
+              triggerVariant="default"
+            >
+              <ConfidentialityForm />
+            </FormModal>
           </div>
         </Card>
       )}

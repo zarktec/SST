@@ -10,6 +10,7 @@ import { KIND_LABEL } from "@/modules/committees/rules";
 import { activeCommittees, committeeStatus } from "@/modules/committees/service";
 import { CloseCommitmentForm, MinutesForm } from "../forms";
 import { todayYmd } from "@/lib/dates";
+import { FormModal } from "@/components/ui/modal";
 
 export const metadata = { title: "Comité" };
 
@@ -62,10 +63,17 @@ export default async function CommitteePage({ params }: PageProps<"/tenant/comit
         <Card>
           <CardTitle>Registrar acta de reunión</CardTitle>
           <div className="mt-3">
-            <MinutesForm
-              committeeId={id}
-              members={members.map((m) => ({ id: m.workerId, name: m.name }))}
-            />
+            <FormModal
+              title="Registrar acta"
+              trigger="Registrar acta"
+              triggerVariant="default"
+              size="lg"
+            >
+              <MinutesForm
+                committeeId={id}
+                members={members.map((m) => ({ id: m.workerId, name: m.name }))}
+              />
+            </FormModal>
           </div>
         </Card>
       )}
@@ -89,7 +97,11 @@ export default async function CommitteePage({ params }: PageProps<"/tenant/comit
                     <Badge variant="warning">Abierto</Badge>
                   )}
                 </p>
-                {c.status === "open" && canEdit && <CloseCommitmentForm id={c.id} />}
+                {c.status === "open" && canEdit && (
+                  <FormModal title="Cerrar compromiso" trigger="Cerrar compromiso">
+                    <CloseCommitmentForm id={c.id} />
+                  </FormModal>
+                )}
                 {c.closureNote && <p className="text-muted-foreground">{c.closureNote}</p>}
               </li>
             ))}

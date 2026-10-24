@@ -9,6 +9,7 @@ import { listDeliveries, listItems, ppeMatrix } from "@/modules/ppe/service";
 import { listWorkers } from "@/modules/workers/service";
 import { REASONS } from "@/modules/ppe/rules";
 import { DeliveryForm } from "./forms";
+import { FormModal } from "@/components/ui/modal";
 
 export const metadata = { title: "EPP" };
 const ST: Record<string, ["success" | "destructive" | "warning" | "default", string]> = {
@@ -54,10 +55,21 @@ export default async function PpePage() {
             {items.length === 0 ? (
               <p className="text-muted-foreground text-sm">Primero crea los EPP en el catálogo.</p>
             ) : (
-              <DeliveryForm
-                people={people.map((p) => ({ id: p.id, name: p.fullName }))}
-                items={items.map((i) => ({ id: i.id, name: i.name, requiresSize: i.requiresSize }))}
-              />
+              <FormModal
+                title="Registrar entrega"
+                trigger="Registrar entrega"
+                triggerVariant="default"
+                size="lg"
+              >
+                <DeliveryForm
+                  people={people.map((p) => ({ id: p.id, name: p.fullName }))}
+                  items={items.map((i) => ({
+                    id: i.id,
+                    name: i.name,
+                    requiresSize: i.requiresSize,
+                  }))}
+                />
+              </FormModal>
             )}
           </div>
         </Card>

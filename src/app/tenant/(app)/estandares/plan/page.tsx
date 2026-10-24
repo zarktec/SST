@@ -6,6 +6,7 @@ import { can } from "@/core/rbac/can";
 import { listAssessments, listImprovements } from "@/modules/assessment/service";
 import { ImprovementForm } from "../forms";
 import { todayYmd } from "@/lib/dates";
+import { FormModal } from "@/components/ui/modal";
 
 export const metadata = { title: "Plan de mejoramiento" };
 
@@ -49,7 +50,9 @@ export default async function ImprovementPlan() {
             )}
           </div>
           {canEdit ? (
-            <ImprovementForm it={i} />
+            <FormModal title="Editar" trigger="Editar">
+              <ImprovementForm it={i} />
+            </FormModal>
           ) : (
             <p className="text-sm">
               {i.itemCode} · {i.description}

@@ -7,6 +7,7 @@ import { formatDate } from "@/lib/format";
 import { REQUEST_TYPES } from "@/modules/privacy/rules";
 import { listRequests } from "@/modules/privacy/service";
 import { resolveAction } from "../actions";
+import { FormModal } from "@/components/ui/modal";
 
 export const metadata = { title: "Solicitudes de titulares" };
 
@@ -46,8 +47,7 @@ export default async function RequestsPage() {
               <p>{r.detail}</p>
               {r.resolution && <p className="text-muted-foreground">Respuesta: {r.resolution}</p>}
               {r.status === "open" && (
-                <details>
-                  <summary className="text-primary min-h-11 cursor-pointer py-2">Responder</summary>
+                <FormModal title="Responder" trigger="Responder">
                   <ActionForm
                     action={resolveAction}
                     idPrefix={`rs-${r.id}-`}
@@ -66,7 +66,7 @@ export default async function RequestsPage() {
                       { name: "resolution", label: "Respuesta al titular", type: "textarea" },
                     ]}
                   />
-                </details>
+                </FormModal>
               )}
             </li>
           ))}

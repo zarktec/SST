@@ -5,6 +5,7 @@ import { requirePermission } from "@/core/auth/session";
 import { can } from "@/core/rbac/can";
 import { listItems, ppeMatrix } from "@/modules/ppe/service";
 import { AddRequirement, ArchiveButton, ItemForm, RemoveRequirement, StockForm } from "../forms";
+import { FormModal } from "@/components/ui/modal";
 
 export const metadata = { title: "Catálogo de EPP" };
 
@@ -31,15 +32,12 @@ export default async function CatalogPage() {
             {i.usefulLifeMonths && <Badge>Vida útil {i.usefulLifeMonths} meses</Badge>}
           </div>
           {canEdit && (
-            <details className="mt-2">
-              <summary className="text-primary min-h-11 cursor-pointer py-2 text-sm">
-                Editar
-              </summary>
+            <FormModal title="Editar" trigger="Editar" triggerClassName="mt-2">
               <div className="space-y-3">
                 <ItemForm item={{ ...i }} />
                 {can(ctx.permissions, "ppe", "delete") && <ArchiveButton id={i.id} />}
               </div>
-            </details>
+            </FormModal>
           )}
         </Card>
       ))}
@@ -47,7 +45,9 @@ export default async function CatalogPage() {
         <Card>
           <CardTitle>Nuevo EPP</CardTitle>
           <div className="mt-3">
-            <ItemForm />
+            <FormModal title="Agregar elemento" trigger="Agregar elemento" triggerVariant="default">
+              <ItemForm />
+            </FormModal>
           </div>
         </Card>
       )}
@@ -56,7 +56,12 @@ export default async function CatalogPage() {
           <Card>
             <CardTitle>Ingreso de inventario</CardTitle>
             <div className="mt-3">
-              <StockForm items={items} />
+              <FormModal
+                title="Registrar movimiento de inventario"
+                trigger="Registrar movimiento de inventario"
+              >
+                <StockForm items={items} />
+              </FormModal>
             </div>
           </Card>
           <Card>

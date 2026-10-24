@@ -7,6 +7,7 @@ import { formatDate } from "@/lib/format";
 import { getMatrix, listMatrices, loadScales, reviewStatus } from "@/modules/hazards/service";
 import { listCenters } from "@/modules/workers/service";
 import { ApproveButton, DeleteRowButton, DraftButton, ParticipationForm, RowForm } from "./forms";
+import { FormModal } from "@/components/ui/modal";
 
 export const metadata = { title: "Matriz de peligros" };
 const RISK: Record<string, "destructive" | "warning" | "default" | "success"> = {
@@ -116,7 +117,9 @@ export default async function Hazards() {
             <Card>
               <CardTitle>Participación de los trabajadores</CardTitle>
               <div className="mt-3">
-                <ParticipationForm matrixId={current.id} saved={current.participation} />
+                <FormModal title="Registrar participación" trigger="Registrar participación">
+                  <ParticipationForm matrixId={current.id} saved={current.participation} />
+                </FormModal>
               </div>
             </Card>
           )}
@@ -149,10 +152,7 @@ export default async function Hazards() {
                 </Alert>
               ))}
               {canEdit && (
-                <details className="mt-2">
-                  <summary className="text-primary min-h-11 cursor-pointer py-2 text-sm">
-                    Editar
-                  </summary>
+                <FormModal title="Editar" trigger="Editar" triggerClassName="mt-2">
                   {scales && (
                     <RowForm
                       matrixId={current.id}
@@ -164,7 +164,7 @@ export default async function Hazards() {
                   <div className="mt-2">
                     <DeleteRowButton matrixId={current.id} rowId={r.id} />
                   </div>
-                </details>
+                </FormModal>
               )}
             </Card>
           ))}
@@ -172,7 +172,14 @@ export default async function Hazards() {
             <Card>
               <CardTitle>Agregar peligro</CardTitle>
               <div className="mt-3">
-                <RowForm matrixId={current.id} centers={centers} scales={scales} />
+                <FormModal
+                  title="Agregar peligro"
+                  trigger="Agregar peligro"
+                  triggerVariant="default"
+                  size="lg"
+                >
+                  <RowForm matrixId={current.id} centers={centers} scales={scales} />
+                </FormModal>
               </div>
             </Card>
           )}

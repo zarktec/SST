@@ -4,6 +4,7 @@ import { rootDomain, originFor } from "@/core/tenancy/hosts";
 import { listTenantDomains } from "@/modules/platform/tenants/service";
 import { requireBillingAdmin } from "../facturacion/guard";
 import { ConnectDomainForm, VerifyButton } from "./forms";
+import { FormModal } from "@/components/ui/modal";
 
 export const metadata = { title: "Dominio propio" };
 
@@ -77,7 +78,13 @@ export default async function DomainPage() {
         <Card>
           <CardTitle>Conectar un dominio</CardTitle>
           <div className="mt-3">
-            <ConnectDomainForm />
+            <FormModal
+              title="Conectar dominio propio"
+              trigger="Conectar dominio propio"
+              triggerVariant="default"
+            >
+              <ConnectDomainForm />
+            </FormModal>
           </div>
         </Card>
       )}

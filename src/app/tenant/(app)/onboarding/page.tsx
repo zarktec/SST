@@ -14,6 +14,7 @@ import {
   RemoveCenter,
   ResponsibleForm,
 } from "./forms";
+import { FormModal } from "@/components/ui/modal";
 
 export const metadata = { title: "Onboarding" };
 
@@ -87,10 +88,7 @@ export default async function Onboarding({ searchParams }: PageProps<"/tenant/on
                     {canEdit && <RemoveCenter id={c.id} />}
                   </div>
                   {canEdit && (
-                    <details>
-                      <summary className="text-primary min-h-11 cursor-pointer py-2 text-sm">
-                        Editar
-                      </summary>
+                    <FormModal title="Editar" trigger="Editar">
                       <CenterForm
                         center={
                           {
@@ -101,7 +99,7 @@ export default async function Onboarding({ searchParams }: PageProps<"/tenant/on
                           } as never
                         }
                       />
-                    </details>
+                    </FormModal>
                   )}
                 </li>
               ))}

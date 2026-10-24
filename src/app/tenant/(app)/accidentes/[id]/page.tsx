@@ -17,6 +17,7 @@ import {
   ReportedForm,
   StartButton,
 } from "../forms";
+import { FormModal } from "@/components/ui/modal";
 
 export const metadata = { title: "Evento de trabajo" };
 
@@ -79,7 +80,9 @@ export default async function IncidentPage({ params }: PageProps<"/tenant/accide
         </p>
         {edit && r?.state !== "reportado" && (
           <div className="mt-3">
-            <ReportedForm id={id} />
+            <FormModal title="Registrar reporte" trigger="Registrar reporte">
+              <ReportedForm id={id} />
+            </FormModal>
           </div>
         )}
       </Card>
@@ -103,18 +106,25 @@ export default async function IncidentPage({ params }: PageProps<"/tenant/accide
               )}
             </p>
             {edit && !inv.completedAt && (
-              <InvestigationForm
-                id={id}
-                severe={severe}
-                inv={{
-                  team: inv.team,
-                  method: inv.method,
-                  analysis: inv.analysis,
-                  immediateCauses: inv.immediateCauses,
-                  basicCauses: inv.basicCauses,
-                  conclusions: inv.conclusions,
-                }}
-              />
+              <FormModal
+                title="Registrar investigación"
+                trigger="Registrar investigación"
+                triggerVariant="default"
+                size="lg"
+              >
+                <InvestigationForm
+                  id={id}
+                  severe={severe}
+                  inv={{
+                    team: inv.team,
+                    method: inv.method,
+                    analysis: inv.analysis,
+                    immediateCauses: inv.immediateCauses,
+                    basicCauses: inv.basicCauses,
+                    conclusions: inv.conclusions,
+                  }}
+                />
+              </FormModal>
             )}
             {inv.completedAt && (
               <div className="space-y-1 text-sm">
@@ -146,7 +156,9 @@ export default async function IncidentPage({ params }: PageProps<"/tenant/accide
               </ul>
               {edit && !inv.completedAt && (
                 <div className="mt-3">
-                  <PlanActionForm id={id} />
+                  <FormModal title="Agregar acción" trigger="Agregar acción">
+                    <PlanActionForm id={id} />
+                  </FormModal>
                 </div>
               )}
             </div>
@@ -156,7 +168,11 @@ export default async function IncidentPage({ params }: PageProps<"/tenant/accide
                 {inv.remittedArlAt ? (
                   <p>Remitida el {formatDate(inv.remittedArlAt)}.</p>
                 ) : (
-                  edit && <RemitForm id={id} />
+                  edit && (
+                    <FormModal title="Remitir a la ARL" trigger="Remitir a la ARL">
+                      <RemitForm id={id} />
+                    </FormModal>
+                  )
                 )}
               </div>
             )}
@@ -169,7 +185,12 @@ export default async function IncidentPage({ params }: PageProps<"/tenant/accide
                     Divulgadas el {formatDate(inv.lessonsDisclosedAt.toISOString().slice(0, 10))}
                   </p>
                 )}
-                <LessonsForm id={id} saved={inv.lessonsLearned} />
+                <FormModal
+                  title="Registrar lecciones aprendidas"
+                  trigger="Registrar lecciones aprendidas"
+                >
+                  <LessonsForm id={id} saved={inv.lessonsLearned} />
+                </FormModal>
               </div>
             )}
           </div>

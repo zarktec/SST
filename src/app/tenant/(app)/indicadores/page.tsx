@@ -7,6 +7,7 @@ import { can } from "@/core/rbac/can";
 import { addMonths } from "@/lib/dates";
 import { dashboard } from "@/modules/indicators/service";
 import { AnalysisForm, TargetForm } from "./forms";
+import { FormModal } from "@/components/ui/modal";
 
 export const metadata = { title: "Indicadores" };
 const STATUS = {
@@ -149,13 +150,17 @@ export default async function IndicatorsPage({ searchParams }: PageProps<"/tenan
             </div>
             {edit ? (
               <div className="mt-3 space-y-4">
-                <AnalysisForm
-                  code={r.code}
-                  periodicity={r.periodicity}
-                  from={r.current.from}
-                  saved={r.analysis}
-                />
-                <TargetForm code={r.code} target={r.target} own={r.ownTarget} />
+                <FormModal title="Registrar análisis" trigger="Registrar análisis">
+                  <AnalysisForm
+                    code={r.code}
+                    periodicity={r.periodicity}
+                    from={r.current.from}
+                    saved={r.analysis}
+                  />
+                </FormModal>
+                <FormModal title="Definir meta" trigger="Definir meta">
+                  <TargetForm code={r.code} target={r.target} own={r.ownTarget} />
+                </FormModal>
               </div>
             ) : (
               r.analysis && <p className="mt-3 text-sm whitespace-pre-wrap">{r.analysis}</p>

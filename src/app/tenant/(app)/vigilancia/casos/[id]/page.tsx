@@ -10,6 +10,7 @@ import { formatDate } from "@/lib/format";
 import { RISK_LEVELS } from "@/modules/pve/rules";
 import { getCase, listCases } from "@/modules/pve/service";
 import { closeCaseAction, followupAction } from "../../actions";
+import { FormModal } from "@/components/ui/modal";
 
 export const metadata = { title: "Caso de vigilancia" };
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -64,37 +65,51 @@ export default async function CasePage({ params }: PageProps<"/tenant/vigilancia
         </ul>
         {edit && summary.status === "open" && (
           <div className="mt-3 space-y-4">
-            <ActionForm
-              action={followupAction}
-              idPrefix="fu-"
-              hidden={{ id }}
-              submit="Registrar seguimiento"
-              fields={[
-                { name: "performedOn", label: "Fecha", type: "date", saved: today, required: true },
-                { name: "nextFollowUpOn", label: "Próximo seguimiento", type: "date" },
-                {
-                  name: "note",
-                  label: "Seguimiento (cifrado; sin historia clínica)",
-                  type: "textarea",
-                },
-              ]}
-            />
-            <ActionForm
-              action={closeCaseAction}
-              idPrefix="cc-"
-              hidden={{ id }}
-              submit="Cerrar caso"
-              variant="outline"
-              fields={[
-                {
-                  name: "closedOn",
-                  label: "Fecha de cierre",
-                  type: "date",
-                  saved: today,
-                  required: true,
-                },
-              ]}
-            />
+            <FormModal
+              title="Registrar seguimiento"
+              trigger="Registrar seguimiento"
+              triggerVariant="default"
+            >
+              <ActionForm
+                action={followupAction}
+                idPrefix="fu-"
+                hidden={{ id }}
+                submit="Registrar seguimiento"
+                fields={[
+                  {
+                    name: "performedOn",
+                    label: "Fecha",
+                    type: "date",
+                    saved: today,
+                    required: true,
+                  },
+                  { name: "nextFollowUpOn", label: "Próximo seguimiento", type: "date" },
+                  {
+                    name: "note",
+                    label: "Seguimiento (cifrado; sin historia clínica)",
+                    type: "textarea",
+                  },
+                ]}
+              />
+            </FormModal>
+            <FormModal title="Cerrar caso" trigger="Cerrar caso">
+              <ActionForm
+                action={closeCaseAction}
+                idPrefix="cc-"
+                hidden={{ id }}
+                submit="Cerrar caso"
+                variant="outline"
+                fields={[
+                  {
+                    name: "closedOn",
+                    label: "Fecha de cierre",
+                    type: "date",
+                    saved: today,
+                    required: true,
+                  },
+                ]}
+              />
+            </FormModal>
           </div>
         )}
       </Card>

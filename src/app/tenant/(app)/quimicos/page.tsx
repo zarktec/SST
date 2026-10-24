@@ -10,6 +10,7 @@ import { PICTOGRAMS, SIGNAL_WORDS, compatibilityConflicts } from "@/modules/chem
 import { listSubstances } from "@/modules/chemicals/service";
 import { listWorkCenters } from "@/modules/company/service";
 import { complianceAction, retireAction, substanceAction } from "./actions";
+import { FormModal } from "@/components/ui/modal";
 
 export const metadata = { title: "Riesgo químico" };
 
@@ -118,10 +119,7 @@ export default async function ChemicalsPage() {
                 </p>
               )}
               {edit && (
-                <details>
-                  <summary className="text-primary min-h-11 cursor-pointer py-2">
-                    Editar o retirar
-                  </summary>
+                <FormModal title="Editar o retirar" trigger="Editar o retirar">
                   <ActionForm
                     action={substanceAction}
                     idPrefix={`s-${s.id}-`}
@@ -157,7 +155,7 @@ export default async function ChemicalsPage() {
                   >
                     Retirar del inventario
                   </RunButton>
-                </details>
+                </FormModal>
               )}
             </li>
           ))}
@@ -170,12 +168,19 @@ export default async function ChemicalsPage() {
         <Card>
           <CardTitle>Agregar sustancia</CardTitle>
           <div className="mt-3">
-            <ActionForm
-              action={substanceAction}
-              idPrefix="ns-"
-              submit="Agregar sustancia"
-              fields={fields()}
-            />
+            <FormModal
+              title="Agregar sustancia"
+              trigger="Agregar sustancia"
+              triggerVariant="default"
+              size="lg"
+            >
+              <ActionForm
+                action={substanceAction}
+                idPrefix="ns-"
+                submit="Agregar sustancia"
+                fields={fields()}
+              />
+            </FormModal>
           </div>
           <p className="text-muted-foreground mt-2 text-xs">
             Los archivos de la FDS y las fotos del etiquetado se podrán adjuntar cuando se habilite

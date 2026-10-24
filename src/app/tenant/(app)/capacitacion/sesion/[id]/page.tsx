@@ -11,6 +11,7 @@ import { formatDate, formatDateTime } from "@/lib/format";
 import { getSession } from "@/modules/training/service";
 import { listWorkers } from "@/modules/workers/service";
 import { CloseButton, ManualForm, OpenButton } from "../../forms";
+import { FormModal } from "@/components/ui/modal";
 
 export const metadata = { title: "Sesión de capacitación" };
 
@@ -117,7 +118,9 @@ export default async function SessionPage({
             Para quien no pudo firmar con el celular. Queda marcada como registro manual.
           </p>
           <div className="mt-3">
-            <ManualForm sessionId={s.id} people={people} />
+            <FormModal title="Registrar asistencia manual" trigger="Registrar asistencia manual">
+              <ManualForm sessionId={s.id} people={people} />
+            </FormModal>
           </div>
         </Card>
       )}

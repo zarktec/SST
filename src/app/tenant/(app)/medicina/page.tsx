@@ -15,6 +15,7 @@ import {
 } from "@/modules/medical/service";
 import { listWorkers } from "@/modules/workers/service";
 import { AdaptationForm, ResultForm, ScheduleForm } from "./forms";
+import { FormModal } from "@/components/ui/modal";
 
 export const metadata = { title: "Medicina del trabajo" };
 
@@ -79,10 +80,16 @@ export default async function MedicalPage() {
         <Card>
           <CardTitle>Programar evaluación</CardTitle>
           <div className="mt-3">
-            <ScheduleForm
-              people={people.map((p) => ({ id: p.id, name: p.fullName }))}
-              types={types}
-            />
+            <FormModal
+              title="Programar evaluación"
+              trigger="Programar evaluación"
+              triggerVariant="default"
+            >
+              <ScheduleForm
+                people={people.map((p) => ({ id: p.id, name: p.fullName }))}
+                types={types}
+              />
+            </FormModal>
           </div>
         </Card>
       )}
@@ -97,7 +104,11 @@ export default async function MedicalPage() {
                   {formatDate(x.dueDate)}{" "}
                   {x.overdue && <Badge variant="destructive">Vencida</Badge>}
                 </p>
-                {canEdit && <AdaptationForm id={x.id} />}
+                {canEdit && (
+                  <FormModal title="Registrar adaptación" trigger="Registrar adaptación">
+                    <AdaptationForm id={x.id} />
+                  </FormModal>
+                )}
               </li>
             ))}
           </ul>
@@ -128,12 +139,13 @@ export default async function MedicalPage() {
                   </span>
                 </div>
                 {e.status === "scheduled" && canEdit && (
-                  <details>
-                    <summary className="text-primary min-h-11 cursor-pointer py-2 text-sm">
-                      Registrar resultado
-                    </summary>
+                  <FormModal
+                    title="Registrar resultado"
+                    trigger="Registrar resultado"
+                    triggerVariant="default"
+                  >
                     <ResultForm evaluationId={e.id} />
-                  </details>
+                  </FormModal>
                 )}
               </li>
             ))}

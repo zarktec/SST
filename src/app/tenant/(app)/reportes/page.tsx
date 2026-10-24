@@ -9,6 +9,7 @@ import { countReports, listReports } from "@/modules/unsafe-reports/service";
 import { Pager } from "@/components/ui/pager";
 import { parsePage } from "@/lib/pagination";
 import { ReportForm, ReviewForm } from "./forms";
+import { FormModal } from "@/components/ui/modal";
 
 export const metadata = { title: "Reportar condiciones y actos inseguros" };
 const V: Record<string, "warning" | "success" | "default"> = {
@@ -32,7 +33,14 @@ export default async function ReportsPage({ searchParams }: PageProps<"/tenant/r
     <div className="space-y-4">
       <h1 className="text-2xl font-bold">Reportar una condición o acto inseguro</h1>
       <Card>
-        <ReportForm centers={centers.map((c) => ({ id: c.id, name: c.name }))} />
+        <FormModal
+          title="Reportar acto o condición insegura"
+          trigger="Reportar acto o condición insegura"
+          triggerVariant="default"
+          size="lg"
+        >
+          <ReportForm centers={centers.map((c) => ({ id: c.id, name: c.name }))} />
+        </FormModal>
       </Card>
       {(all || rows.length > 0) && (
         <Card>
@@ -59,7 +67,11 @@ export default async function ReportsPage({ searchParams }: PageProps<"/tenant/r
                     Ver la acción
                   </Link>
                 )}
-                {review && r.status === "new" && <ReviewForm id={r.id} />}
+                {review && r.status === "new" && (
+                  <FormModal title="Revisar" trigger="Revisar">
+                    <ReviewForm id={r.id} />
+                  </FormModal>
+                )}
               </li>
             ))}
             {rows.length === 0 && <li className="text-muted-foreground py-2">Sin reportes.</li>}

@@ -17,6 +17,7 @@ import {
   closeProgramAction,
   programAction,
 } from "./actions";
+import { FormModal } from "@/components/ui/modal";
 
 export const metadata = { title: "Vigilancia epidemiológica" };
 const label = (l: readonly { value: string; label: string }[], v: string) =>
@@ -99,10 +100,11 @@ export default async function PvePage() {
                   </span>
                 </p>
                 {edit && !a.performedOn && (
-                  <details>
-                    <summary className="text-primary min-h-11 cursor-pointer py-2">
-                      Registrar realización
-                    </summary>
+                  <FormModal
+                    title="Registrar realización"
+                    trigger="Registrar realización"
+                    triggerVariant="default"
+                  >
                     <ActionForm
                       action={activityDoneAction}
                       idPrefix={`ad-${a.id}-`}
@@ -120,7 +122,7 @@ export default async function PvePage() {
                         { name: "participants", label: "Participantes", type: "number" },
                       ]}
                     />
-                  </details>
+                  </FormModal>
                 )}
               </li>
             ))}
@@ -129,10 +131,12 @@ export default async function PvePage() {
             )}
           </ul>
           {create && (
-            <details className="mt-2">
-              <summary className="text-primary min-h-11 cursor-pointer py-2">
-                Programar actividad
-              </summary>
+            <FormModal
+              title="Programar actividad"
+              trigger="Programar actividad"
+              triggerVariant="default"
+              triggerClassName="mt-2"
+            >
               <ActionForm
                 action={activityAction}
                 idPrefix={`na-${p.id}-`}
@@ -150,7 +154,7 @@ export default async function PvePage() {
                   },
                 ]}
               />
-            </details>
+            </FormModal>
           )}
           {edit && (
             <div className="mt-2">
@@ -170,24 +174,26 @@ export default async function PvePage() {
         <Card>
           <CardTitle>Nuevo programa</CardTitle>
           <div className="mt-3">
-            <ActionForm
-              action={programAction}
-              idPrefix="np-"
-              submit="Crear programa"
-              fields={[
-                { name: "type", label: "Tipo", type: "select", options: [...PVE_TYPES] },
-                { name: "name", label: "Nombre", required: true },
-                {
-                  name: "startedOn",
-                  label: "Fecha de inicio",
-                  type: "date",
-                  saved: today,
-                  required: true,
-                },
-                { name: "objective", label: "Objetivo", type: "textarea" },
-                { name: "population", label: "Población objetivo", type: "textarea" },
-              ]}
-            />
+            <FormModal title="Crear programa" trigger="Crear programa" triggerVariant="default">
+              <ActionForm
+                action={programAction}
+                idPrefix="np-"
+                submit="Crear programa"
+                fields={[
+                  { name: "type", label: "Tipo", type: "select", options: [...PVE_TYPES] },
+                  { name: "name", label: "Nombre", required: true },
+                  {
+                    name: "startedOn",
+                    label: "Fecha de inicio",
+                    type: "date",
+                    saved: today,
+                    required: true,
+                  },
+                  { name: "objective", label: "Objetivo", type: "textarea" },
+                  { name: "population", label: "Población objetivo", type: "textarea" },
+                ]}
+              />
+            </FormModal>
           </div>
         </Card>
       )}
@@ -241,8 +247,12 @@ export default async function PvePage() {
           {cases.length === 0 && <li className="text-muted-foreground py-2">Sin casos.</li>}
         </ul>
         {create && programs.length > 0 && people.length > 0 && (
-          <details className="mt-3">
-            <summary className="text-primary min-h-11 cursor-pointer py-2">Abrir un caso</summary>
+          <FormModal
+            title="Abrir un caso"
+            trigger="Abrir un caso"
+            triggerVariant="default"
+            triggerClassName="mt-3"
+          >
             <ActionForm
               action={caseAction}
               idPrefix="nc-"
@@ -282,7 +292,7 @@ export default async function PvePage() {
                 },
               ]}
             />
-          </details>
+          </FormModal>
         )}
       </Card>
     </div>

@@ -13,6 +13,7 @@ import {
   suggestedKind,
 } from "@/modules/committees/service";
 import { ElectionForm } from "./forms";
+import { FormModal } from "@/components/ui/modal";
 
 export const metadata = { title: "Comités" };
 const ELECTION: Record<string, string> = {
@@ -103,7 +104,13 @@ export default async function CommitteesPage() {
           ) : (
             <div className="mt-4 border-t pt-4">
               <h3 className="mb-2 text-sm font-semibold">Convocar elección electrónica</h3>
-              <ElectionForm kind={kind} />
+              <FormModal
+                title="Convocar elección"
+                trigger="Convocar elección"
+                triggerVariant="default"
+              >
+                <ElectionForm kind={kind} />
+              </FormModal>
             </div>
           )}
         </Card>

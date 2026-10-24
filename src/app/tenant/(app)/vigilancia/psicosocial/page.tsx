@@ -10,6 +10,7 @@ import { formatDate } from "@/lib/format";
 import { PSY_LEVELS } from "@/modules/pve/rules";
 import { listPsychosocial } from "@/modules/pve/service";
 import { psychosocialAction } from "../actions";
+import { FormModal } from "@/components/ui/modal";
 
 export const metadata = { title: "Riesgo psicosocial" };
 const STATE = {
@@ -49,41 +50,47 @@ export default async function PsychosocialPage() {
         <Card>
           <CardTitle>Registrar una aplicación</CardTitle>
           <div className="mt-3">
-            <ActionForm
-              action={psychosocialAction}
-              idPrefix="ps-"
-              submit="Registrar aplicación"
-              fields={[
-                {
-                  name: "appliedOn",
-                  label: "Fecha de aplicación",
-                  type: "date",
-                  saved: todayYmd(),
-                  required: true,
-                },
-                { name: "psychologistName", label: "Psicólogo(a)", required: true },
-                {
-                  name: "licenseNumber",
-                  label: "Licencia en seguridad y salud en el trabajo",
-                  required: true,
-                },
-                {
-                  name: "riskLevel",
-                  label: "Nivel de riesgo resultante",
-                  type: "select",
-                  options: [...PSY_LEVELS],
-                  saved: "medium",
-                },
-                { name: "scope", label: "Población evaluada" },
-                { name: "responsibleName", label: "Responsable del plan de intervención" },
-                {
-                  name: "interventions",
-                  label: "Plan de intervención (una acción por línea; cada una crea una acción)",
-                  type: "textarea",
-                },
-                { name: "notes", label: "Observaciones", type: "textarea" },
-              ]}
-            />
+            <FormModal
+              title="Registrar aplicación"
+              trigger="Registrar aplicación"
+              triggerVariant="default"
+            >
+              <ActionForm
+                action={psychosocialAction}
+                idPrefix="ps-"
+                submit="Registrar aplicación"
+                fields={[
+                  {
+                    name: "appliedOn",
+                    label: "Fecha de aplicación",
+                    type: "date",
+                    saved: todayYmd(),
+                    required: true,
+                  },
+                  { name: "psychologistName", label: "Psicólogo(a)", required: true },
+                  {
+                    name: "licenseNumber",
+                    label: "Licencia en seguridad y salud en el trabajo",
+                    required: true,
+                  },
+                  {
+                    name: "riskLevel",
+                    label: "Nivel de riesgo resultante",
+                    type: "select",
+                    options: [...PSY_LEVELS],
+                    saved: "medium",
+                  },
+                  { name: "scope", label: "Población evaluada" },
+                  { name: "responsibleName", label: "Responsable del plan de intervención" },
+                  {
+                    name: "interventions",
+                    label: "Plan de intervención (una acción por línea; cada una crea una acción)",
+                    type: "textarea",
+                  },
+                  { name: "notes", label: "Observaciones", type: "textarea" },
+                ]}
+              />
+            </FormModal>
           </div>
         </Card>
       )}

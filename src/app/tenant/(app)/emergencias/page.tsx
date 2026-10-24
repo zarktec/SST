@@ -29,6 +29,7 @@ import {
   retireAssetAction,
   trainingAction,
 } from "./actions";
+import { FormModal } from "@/components/ui/modal";
 
 export const metadata = { title: "Emergencias" };
 const label = (list: readonly { value: string; label: string }[], v: string) =>
@@ -113,10 +114,11 @@ export default async function EmergenciesPage() {
               </p>
               {d.evaluation && <p className="whitespace-pre-wrap">{d.evaluation}</p>}
               {edit && d.status === "planned" && (
-                <details>
-                  <summary className="text-primary min-h-11 cursor-pointer py-2">
-                    Registrar resultado
-                  </summary>
+                <FormModal
+                  title="Registrar resultado"
+                  trigger="Registrar resultado"
+                  triggerVariant="default"
+                >
                   <ActionForm
                     action={drillResultAction}
                     idPrefix={`dr-${d.id}-`}
@@ -148,7 +150,7 @@ export default async function EmergenciesPage() {
                   >
                     Cancelar simulacro
                   </RunButton>
-                </details>
+                </FormModal>
               )}
             </li>
           ))}
@@ -157,32 +159,38 @@ export default async function EmergenciesPage() {
         {create && (
           <div className="mt-3">
             <h3 className="text-sm font-semibold">Programar un simulacro</h3>
-            <ActionForm
-              action={drillAction}
-              idPrefix="nd-"
-              submit="Programar"
-              fields={[
-                { name: "scenario", label: "Escenario", required: true },
-                {
-                  name: "plannedOn",
-                  label: "Fecha prevista",
-                  type: "date",
-                  saved: today,
-                  required: true,
-                },
-                ...(centers.length > 1
-                  ? [
-                      {
-                        name: "workCenterId",
-                        label: "Sede",
-                        type: "select" as const,
-                        options: centerOpts,
-                        empty: "—",
-                      },
-                    ]
-                  : []),
-              ]}
-            />
+            <FormModal
+              title="Programar simulacro"
+              trigger="Programar simulacro"
+              triggerVariant="default"
+            >
+              <ActionForm
+                action={drillAction}
+                idPrefix="nd-"
+                submit="Programar"
+                fields={[
+                  { name: "scenario", label: "Escenario", required: true },
+                  {
+                    name: "plannedOn",
+                    label: "Fecha prevista",
+                    type: "date",
+                    saved: today,
+                    required: true,
+                  },
+                  ...(centers.length > 1
+                    ? [
+                        {
+                          name: "workCenterId",
+                          label: "Sede",
+                          type: "select" as const,
+                          options: centerOpts,
+                          empty: "—",
+                        },
+                      ]
+                    : []),
+                ]}
+              />
+            </FormModal>
           </div>
         )}
       </Card>
@@ -225,10 +233,12 @@ export default async function EmergenciesPage() {
           {plans.length === 0 && <li className="text-muted-foreground py-2">Sin plan.</li>}
         </ul>
         {edit && (
-          <details className="mt-3">
-            <summary className="text-primary min-h-11 cursor-pointer py-2">
-              Crear o actualizar un plan
-            </summary>
+          <FormModal
+            title="Crear o actualizar un plan"
+            trigger="Crear o actualizar un plan"
+            triggerVariant="default"
+            triggerClassName="mt-3"
+          >
             <ActionForm
               action={planAction}
               idPrefix="pl-"
@@ -280,7 +290,7 @@ export default async function EmergenciesPage() {
             <p className="text-muted-foreground text-xs">
               Los planos se podrán adjuntar cuando se habilite el almacenamiento de archivos.
             </p>
-          </details>
+          </FormModal>
         )}
       </Card>
 
@@ -307,10 +317,7 @@ export default async function EmergenciesPage() {
                 </Badge>
               </p>
               {edit && (
-                <details>
-                  <summary className="text-primary min-h-11 cursor-pointer py-2">
-                    Inspeccionar o renovar
-                  </summary>
+                <FormModal title="Inspeccionar o renovar" trigger="Inspeccionar o renovar">
                   <div className="space-y-3">
                     <ActionForm
                       action={inspectAction}
@@ -353,7 +360,7 @@ export default async function EmergenciesPage() {
                       Retirar equipo
                     </RunButton>
                   </div>
-                </details>
+                </FormModal>
               )}
             </li>
           ))}
@@ -362,8 +369,12 @@ export default async function EmergenciesPage() {
           )}
         </ul>
         {create && (
-          <details className="mt-3">
-            <summary className="text-primary min-h-11 cursor-pointer py-2">Agregar equipo</summary>
+          <FormModal
+            title="Agregar equipo"
+            trigger="Agregar equipo"
+            triggerVariant="default"
+            triggerClassName="mt-3"
+          >
             <ActionForm
               action={assetAction}
               idPrefix="na-"
@@ -387,7 +398,7 @@ export default async function EmergenciesPage() {
                   : []),
               ]}
             />
-          </details>
+          </FormModal>
         )}
       </Card>
 
@@ -407,10 +418,7 @@ export default async function EmergenciesPage() {
                 </span>
               </p>
               {edit && (
-                <details>
-                  <summary className="text-primary min-h-11 cursor-pointer py-2">
-                    Capacitación o retiro
-                  </summary>
+                <FormModal title="Capacitación o retiro" trigger="Capacitación o retiro">
                   <ActionForm
                     action={trainingAction}
                     idPrefix={`tr-${m.id}-`}
@@ -434,17 +442,19 @@ export default async function EmergenciesPage() {
                   >
                     Retirar de la brigada
                   </RunButton>
-                </details>
+                </FormModal>
               )}
             </li>
           ))}
           {brigade.length === 0 && <li className="text-muted-foreground py-2">Sin integrantes.</li>}
         </ul>
         {create && people.length > 0 && (
-          <details className="mt-3">
-            <summary className="text-primary min-h-11 cursor-pointer py-2">
-              Agregar integrante
-            </summary>
+          <FormModal
+            title="Agregar integrante"
+            trigger="Agregar integrante"
+            triggerVariant="default"
+            triggerClassName="mt-3"
+          >
             <ActionForm
               action={brigadeAction}
               idPrefix="nb-"
@@ -468,7 +478,7 @@ export default async function EmergenciesPage() {
                 { name: "dotation", label: "Dotación entregada" },
               ]}
             />
-          </details>
+          </FormModal>
         )}
       </Card>
     </div>

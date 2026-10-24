@@ -1,4 +1,4 @@
-import Link from "@/components/ui/link";
+import Link, { A } from "@/components/ui/link";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardTitle } from "@/components/ui/card";
@@ -8,7 +8,7 @@ import { can } from "@/core/rbac/can";
 import { Pager } from "@/components/ui/pager";
 import { formatDate } from "@/lib/format";
 import { parsePage } from "@/lib/pagination";
-import { KINDS, isActive } from "@/modules/workers/rules";
+import { IMPORT_TEMPLATE, KINDS, isActive } from "@/modules/workers/rules";
 import {
   contractorStatuses,
   countWorkers,
@@ -17,6 +17,9 @@ import {
   type WorkerFilters,
 } from "@/modules/workers/service";
 import { todayYmd } from "@/lib/dates";
+import { FormModal } from "@/components/ui/modal";
+import { ImportForm } from "./import-form";
+import { WorkerForm } from "./worker-form";
 
 export const metadata = { title: "Personas" };
 const sel = "border-input bg-background min-h-11 rounded-md border px-3 text-base";
@@ -51,12 +54,36 @@ export default async function PeoplePage({ searchParams }: PageProps<"/tenant/pe
         <h1 className="text-2xl font-bold">Personas</h1>
         {canCreate && (
           <div className="flex flex-wrap gap-2">
-            <Link href="/personas/nuevo">
-              <Button>Registrar</Button>
-            </Link>
-            <Link href="/personas/importar">
-              <Button variant="outline">Carga masiva</Button>
-            </Link>
+            <FormModal
+              title="Registrar persona"
+              trigger="Registrar"
+              triggerVariant="default"
+              size="lg"
+            >
+              <WorkerForm centers={centers} />
+            </FormModal>
+            <FormModal
+              title="Carga masiva de personas"
+              trigger="Carga masiva"
+              description="Sube un CSV con la plantilla; el reporte indica qué filas se omitieron o tienen error."
+            >
+              <div className="mb-4 space-y-1 text-sm">
+                <p>
+                  <A className="text-primary underline" href="/personas/plantilla">
+                    Descargar plantilla-personas.csv
+                  </A>
+                </p>
+                <p className="text-muted-foreground">
+                  Obligatorias: vinculacion (Trabajador, Aprendiz o Contratista), tipo_documento
+                  (CC, CE, TI, PEP, pasaporte), documento, nombre y fecha_ingreso (AAAA-MM-DD o
+                  DD/MM/AAAA). La sede se escribe con el mismo nombre registrado.
+                </p>
+                <p className="text-muted-foreground text-xs break-all">
+                  Columnas: {IMPORT_TEMPLATE}
+                </p>
+              </div>
+              <ImportForm />
+            </FormModal>
           </div>
         )}
       </div>

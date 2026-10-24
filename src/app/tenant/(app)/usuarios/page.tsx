@@ -11,6 +11,7 @@ import {
   inviteAction,
   revokeInvitationAction,
 } from "./actions";
+import { FormModal } from "@/components/ui/modal";
 
 export const metadata = { title: "Usuarios" };
 
@@ -32,15 +33,17 @@ export default async function UsersPage() {
           Recibirá un correo y entra con enlace de acceso usando ese mismo correo. Cuenta para el
           límite de usuarios de tu plan.
         </p>
-        <ActionForm
-          action={inviteAction}
-          submit="Enviar invitación"
-          idPrefix="inv-"
-          fields={[
-            { name: "email", label: "Correo", type: "text", required: true },
-            { name: "roleId", label: "Rol", type: "select", options: roleOptions },
-          ]}
-        />
+        <FormModal title="Invitar persona" trigger="Invitar persona" triggerVariant="default">
+          <ActionForm
+            action={inviteAction}
+            submit="Enviar invitación"
+            idPrefix="inv-"
+            fields={[
+              { name: "email", label: "Correo", type: "text", required: true },
+              { name: "roleId", label: "Rol", type: "select", options: roleOptions },
+            ]}
+          />
+        </FormModal>
       </Card>
 
       {invites.length > 0 && (
@@ -101,8 +104,7 @@ export default async function UsersPage() {
                   </span>
                 </div>
                 {!self && (
-                  <details>
-                    <summary className="min-h-11 cursor-pointer py-2">Cambiar rol</summary>
+                  <FormModal title="Cambiar rol" trigger="Cambiar rol">
                     <ActionForm
                       action={changeRoleAction}
                       submit="Guardar rol"
@@ -119,7 +121,7 @@ export default async function UsersPage() {
                         },
                       ]}
                     />
-                  </details>
+                  </FormModal>
                 )}
               </li>
             );

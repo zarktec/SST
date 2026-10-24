@@ -9,6 +9,7 @@ import { isOverdue, monthsOf } from "@/modules/annual-plan/rules";
 import { getPlan } from "@/modules/annual-plan/service";
 import { ActivityForm, CreatePlan, Reopen, Sign, StatusForm, Suggest } from "./forms";
 import { todayYmd } from "@/lib/dates";
+import { FormModal } from "@/components/ui/modal";
 
 export const metadata = { title: "Plan anual de trabajo" };
 const PHVA: Record<string, string> = { P: "Planear", H: "Hacer", V: "Verificar", A: "Actuar" };
@@ -169,15 +170,12 @@ export default async function AnnualPlanPage({ searchParams }: PageProps<"/tenan
                 {a.budgetCents != null ? ` · ${formatCOP(a.budgetCents)}` : ""}
               </p>
               {canEdit && (
-                <details className="mt-2">
-                  <summary className="text-primary min-h-11 cursor-pointer py-2 text-sm">
-                    Gestionar
-                  </summary>
+                <FormModal title="Gestionar" trigger="Gestionar" triggerClassName="mt-2">
                   <div className="space-y-4">
                     <StatusForm activity={{ ...a }} />
                     {!signed && <ActivityForm planId={data.plan.id} activity={{ ...a }} />}
                   </div>
-                </details>
+                </FormModal>
               )}
             </Card>
           ))}
@@ -185,7 +183,13 @@ export default async function AnnualPlanPage({ searchParams }: PageProps<"/tenan
             <Card>
               <CardTitle>Agregar actividad</CardTitle>
               <div className="mt-3">
-                <ActivityForm planId={data.plan.id} />
+                <FormModal
+                  title="Agregar actividad"
+                  trigger="Agregar actividad"
+                  triggerVariant="default"
+                >
+                  <ActivityForm planId={data.plan.id} />
+                </FormModal>
               </div>
             </Card>
           )}

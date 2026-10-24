@@ -11,6 +11,7 @@ import {
   listTemplates,
 } from "@/modules/inspections/service";
 import { ImportTemplate, SyncStatus, TemplateForm, ToggleTemplate } from "./forms";
+import { FormModal } from "@/components/ui/modal";
 
 export const metadata = { title: "Inspecciones" };
 
@@ -85,7 +86,14 @@ export default async function InspectionsPage() {
           <Card>
             <CardTitle>Nueva plantilla</CardTitle>
             <div className="mt-3">
-              <TemplateForm />
+              <FormModal
+                title="Nueva plantilla"
+                trigger="Nueva plantilla"
+                triggerVariant="default"
+                size="lg"
+              >
+                <TemplateForm />
+              </FormModal>
             </div>
           </Card>
           {catalog.length > 0 && (
@@ -116,8 +124,7 @@ export default async function InspectionsPage() {
                     </span>
                     <ToggleTemplate id={x.id} active={x.active} />
                   </p>
-                  <details>
-                    <summary className="text-primary min-h-11 cursor-pointer py-2">Editar</summary>
+                  <FormModal title="Editar" trigger="Editar">
                     <TemplateForm
                       id={x.id}
                       initial={{
@@ -126,7 +133,7 @@ export default async function InspectionsPage() {
                         itemsText: itemsToText(x.items),
                       }}
                     />
-                  </details>
+                  </FormModal>
                 </li>
               ))}
             </ul>

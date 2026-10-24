@@ -98,3 +98,27 @@ body {
 .safe-bottom {
   padding-bottom: env(safe-area-inset-bottom);
 }
+
+/* Modales: entrada suave (se respeta prefers-reduced-motion) y bloqueo del scroll de fondo. */
+@media (prefers-reduced-motion: no-preference) {
+  dialog[open] {
+    animation: dialog-in 160ms ease-out;
+  }
+  dialog[open]::backdrop {
+    animation: fade-in 160ms ease-out;
+  }
+}
+@keyframes dialog-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+}
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}
+body:has(dialog[open]) {
+  overflow: hidden;
+}
