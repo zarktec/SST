@@ -1,5 +1,5 @@
 import "server-only";
-import { and, asc, eq, inArray, ne } from "drizzle-orm";
+import { and, asc, eq, inArray, ne, sql } from "drizzle-orm";
 import { schema, withPlatform, withTenant } from "@/core/db";
 import { sendMail } from "@/core/mail";
 import { emailsForRoles } from "@/core/notify/recipients";
@@ -170,7 +170,7 @@ export async function verifyEffectiveness(
 
 export async function listActions(
   tenantId: string,
-  f: { status?: "open" | "all"; source?: string } = {},
+  f: { status?: "open" | "all"; source?: string; limit?: number; offset?: number } = {},
 ) {
   return withTenant(ctxOf(tenantId), async (tx) => {
     const rows = await tx
@@ -185,9 +185,28 @@ export async function listActions(
             : undefined,
         ),
       )
-      .orderBy(asc(correctiveAction.dueDate));
+      .orderBy(asc(correctiveAction.dueDate), asc(correctiveAction.id))
+      .limit(f.limit ?? 100_000)
+      .offset(f.offset ?? 0);
     const t = todayYmd();
     return rows.map((a) => ({ ...a, overdueDays: daysOverdue(a, t) }));
+  });
+}
+
+export async function countActions(tenantId: string, f: { status?: "open" | "all" } = {}) {
+  return withTenant(ctxOf(tenantId), async (tx) => {
+    const [r] = await tx
+      .select({ n: sql<number>`count(*)::int` })
+      .from(correctiveAction)
+      .where(
+        and(
+          eq(correctiveAction.tenantId, tenantId),
+          f.status === "open"
+            ? inArray(correctiveAction.status, ["open", "in_progress", "done"])
+            : undefined,
+        ),
+      );
+    return r.n;
   });
 }
 

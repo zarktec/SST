@@ -142,9 +142,12 @@ export type WorkerFilters = {
   kind?: string;
   centerId?: string;
   status?: "active" | "retired";
+  /** Paginación (por defecto, hasta 500 filas). */
+  limit?: number;
+  offset?: number;
 };
 
-export async function listWorkers(tenantId: string, f: WorkerFilters = {}) {
+function workerConds(tenantId: string, f: WorkerFilters): SQL[] {
   const conds: SQL[] = [eq(worker.tenantId, tenantId), isNull(worker.deletedAt)];
   if (f.kind) conds.push(eq(worker.kind, f.kind));
   if (f.centerId) conds.push(eq(worker.workCenterId, f.centerId));
@@ -162,6 +165,21 @@ export async function listWorkers(tenantId: string, f: WorkerFilters = {}) {
       )!,
     );
   }
+  return conds;
+}
+
+export async function countWorkers(tenantId: string, f: WorkerFilters = {}) {
+  const [r] = await withTenant(ctxOf(tenantId), (tx) =>
+    tx
+      .select({ n: sql<number>`count(*)::int` })
+      .from(worker)
+      .where(and(...workerConds(tenantId, f))),
+  );
+  return r.n;
+}
+
+export async function listWorkers(tenantId: string, f: WorkerFilters = {}) {
+  const conds = workerConds(tenantId, f);
   return withTenant(ctxOf(tenantId), (tx) =>
     tx
       .select({
@@ -178,8 +196,9 @@ export async function listWorkers(tenantId: string, f: WorkerFilters = {}) {
       })
       .from(worker)
       .where(and(...conds))
-      .orderBy(asc(worker.fullName))
-      .limit(500),
+      .orderBy(asc(worker.fullName), asc(worker.id))
+      .limit(f.limit ?? 500)
+      .offset(f.offset ?? 0),
   );
 }
 

@@ -3,9 +3,11 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardTitle } from "@/components/ui/card";
 import { requirePermission } from "@/core/auth/session";
 import { can } from "@/core/rbac/can";
+import { Pager } from "@/components/ui/pager";
 import { formatDate } from "@/lib/format";
+import { parsePage } from "@/lib/pagination";
 import { SOURCES, STATUS_LABEL, type Status } from "@/modules/capa/rules";
-import { capaSummary, listActions } from "@/modules/capa/service";
+import { capaSummary, countActions, listActions } from "@/modules/capa/service";
 import { CreateForm } from "./forms";
 
 export const metadata = { title: "Acciones" };
@@ -21,8 +23,11 @@ export default async function ActionsPage({ searchParams }: PageProps<"/tenant/a
   const ctx = await requirePermission("actions", "view");
   const sp = await searchParams;
   const showAll = sp.todas === "1";
-  const [rows, sum] = await Promise.all([
-    listActions(ctx.tenant.tenantId, { status: showAll ? "all" : "open" }),
+  const pg = parsePage(sp);
+  const status = showAll ? "all" : "open";
+  const [rows, total, sum] = await Promise.all([
+    listActions(ctx.tenant.tenantId, { status, limit: pg.limit, offset: pg.offset }),
+    countActions(ctx.tenant.tenantId, { status }),
     capaSummary(ctx.tenant.tenantId),
   ]);
   return (
@@ -83,6 +88,13 @@ export default async function ActionsPage({ searchParams }: PageProps<"/tenant/a
           ))}
           {rows.length === 0 && <li className="text-muted-foreground py-2">No hay acciones.</li>}
         </ul>
+        <Pager
+          base="/acciones"
+          params={{ todas: showAll ? "1" : undefined }}
+          page={pg.page}
+          total={total}
+          size={pg.size}
+        />
       </Card>
     </div>
   );

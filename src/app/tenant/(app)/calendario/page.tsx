@@ -31,8 +31,12 @@ export default async function CalendarPage() {
   );
   const today = todayYmd();
   const all = await calendarFor(ctx.tenant.tenantId, perms);
-  const overdue = all.filter((e) => e.date < today);
-  const upcoming = all.filter((e) => e.date >= today);
+  // La pantalla muestra lo más cercano (el .ics trae todo): 100 vencidas y las próximas 200 dentro de 12 meses.
+  const horizon = `${Number(today.slice(0, 4)) + 1}${today.slice(4)}`;
+  const overdueAll = all.filter((e) => e.date < today);
+  const overdue = overdueAll.slice(-100);
+  const upcomingAll = all.filter((e) => e.date >= today && e.date <= horizon);
+  const upcoming = upcomingAll.slice(0, 200);
   const byMonth = new Map<string, typeof upcoming>();
   for (const e of upcoming)
     byMonth.set(e.date.slice(0, 7), [...(byMonth.get(e.date.slice(0, 7)) ?? []), e]);
@@ -52,7 +56,12 @@ export default async function CalendarPage() {
       </p>
       {overdue.length > 0 && (
         <Card>
-          <CardTitle>Vencidas ({overdue.length})</CardTitle>
+          <CardTitle>
+            Vencidas ({overdueAll.length})
+            {overdueAll.length > overdue.length
+              ? `: se muestran las ${overdue.length} más recientes`
+              : ""}
+          </CardTitle>
           <ul className="mt-2 divide-y text-sm">
             {overdue.map((e) => (
               <li key={e.uid} className="flex flex-wrap items-center gap-2 py-2">
@@ -90,6 +99,12 @@ export default async function CalendarPage() {
           </ul>
         </Card>
       ))}
+      {upcomingAll.length > upcoming.length && (
+        <p className="text-muted-foreground text-sm">
+          Se muestran las próximas {upcoming.length} de {upcomingAll.length} fechas de los
+          siguientes 12 meses; el archivo .ics incluye todas.
+        </p>
+      )}
       {all.length === 0 && (
         <Card>
           <p className="text-muted-foreground text-sm">No hay fechas próximas.</p>

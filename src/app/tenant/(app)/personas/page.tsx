@@ -5,9 +5,17 @@ import { Card, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { requirePermission } from "@/core/auth/session";
 import { can } from "@/core/rbac/can";
+import { Pager } from "@/components/ui/pager";
 import { formatDate } from "@/lib/format";
+import { parsePage } from "@/lib/pagination";
 import { KINDS, isActive } from "@/modules/workers/rules";
-import { contractorStatuses, listCenters, listWorkers } from "@/modules/workers/service";
+import {
+  contractorStatuses,
+  countWorkers,
+  listCenters,
+  listWorkers,
+  type WorkerFilters,
+} from "@/modules/workers/service";
 
 export const metadata = { title: "Personas" };
 const sel = "border-input bg-background min-h-11 rounded-md border px-3 text-base";
@@ -23,13 +31,11 @@ export default async function PeoplePage({ searchParams }: PageProps<"/tenant/pe
   const one = (k: string) => (typeof sp[k] === "string" ? (sp[k] as string) : undefined);
   const status =
     one("estado") === "retired" ? "retired" : one("estado") === "all" ? undefined : "active";
-  const [people, centers, contractors] = await Promise.all([
-    listWorkers(ctx.tenant.tenantId, {
-      q: one("q"),
-      kind: one("tipo"),
-      centerId: one("sede"),
-      status,
-    }),
+  const pg = parsePage(sp);
+  const filters: WorkerFilters = { q: one("q"), kind: one("tipo"), centerId: one("sede"), status };
+  const [people, total, centers, contractors] = await Promise.all([
+    listWorkers(ctx.tenant.tenantId, { ...filters, limit: pg.limit, offset: pg.offset }),
+    countWorkers(ctx.tenant.tenantId, filters),
     listCenters(ctx.tenant.tenantId),
     contractorStatuses(ctx.tenant.tenantId),
   ]);
@@ -146,6 +152,13 @@ export default async function PeoplePage({ searchParams }: PageProps<"/tenant/pe
             ))}
           </ul>
         )}
+        <Pager
+          base="/personas"
+          params={{ q: one("q"), tipo: one("tipo"), sede: one("sede"), estado: one("estado") }}
+          page={pg.page}
+          total={total}
+          size={pg.size}
+        />
       </Card>
     </div>
   );

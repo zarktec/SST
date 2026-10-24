@@ -1,5 +1,5 @@
 import "server-only";
-import { and, desc, eq } from "drizzle-orm";
+import { and, desc, eq, sql } from "drizzle-orm";
 import { schema, withTenant } from "@/core/db";
 import { sendMail } from "@/core/mail";
 import { emailsForRoles } from "@/core/notify/recipients";
@@ -50,7 +50,10 @@ export async function createReport(tenantId: string, userId: string, input: Repo
 }
 
 /** Revisores ven todos; quien solo puede reportar ve únicamente los propios no anónimos. */
-export async function listReports(tenantId: string, opts: { all: boolean; userId: string }) {
+export async function listReports(
+  tenantId: string,
+  opts: { all: boolean; userId: string; limit?: number; offset?: number },
+) {
   return withTenant(ctxOf(tenantId), (tx) =>
     tx
       .select({ r: unsafeReport, center: workCenter.name })
@@ -61,9 +64,25 @@ export async function listReports(tenantId: string, opts: { all: boolean; userId
           ? eq(unsafeReport.tenantId, tenantId)
           : and(eq(unsafeReport.tenantId, tenantId), eq(unsafeReport.reportedBy, opts.userId)),
       )
-      .orderBy(desc(unsafeReport.createdAt))
+      .orderBy(desc(unsafeReport.createdAt), desc(unsafeReport.id))
+      .limit(opts.limit ?? 1000)
+      .offset(opts.offset ?? 0)
       .then((rows) => rows.map((x) => ({ ...x.r, center: x.center }))),
   );
+}
+
+export async function countReports(tenantId: string, opts: { all: boolean; userId: string }) {
+  const [r] = await withTenant(ctxOf(tenantId), (tx) =>
+    tx
+      .select({ n: sql<number>`count(*)::int` })
+      .from(unsafeReport)
+      .where(
+        opts.all
+          ? eq(unsafeReport.tenantId, tenantId)
+          : and(eq(unsafeReport.tenantId, tenantId), eq(unsafeReport.reportedBy, opts.userId)),
+      ),
+  );
+  return r.n;
 }
 
 /** El revisor convierte el reporte en una acción del módulo CAPA o lo descarta con motivo. */

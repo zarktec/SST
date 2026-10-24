@@ -6,6 +6,7 @@ import { devOutbox } from "@/core/mail";
 import { seedCatalogs } from "@/modules/platform/catalogs/service";
 import {
   capaSummary,
+  countActions,
   createAction,
   getAction,
   listActions,
@@ -125,5 +126,26 @@ describe.skipIf(!hasTestDb)("acciones correctivas, preventivas y de mejora", () 
     const id = await createAction(a, "u", base);
     expect(await getAction(b, id)).toBeNull();
     await expect(moveAction(b, "u", id, "in_progress")).rejects.toThrow(/no encontrada/);
+  });
+});
+
+describe.skipIf(!hasTestDb)("paginación de acciones", () => {
+  it("páginas estables sin repetir ni omitir filas, y conteo total", async () => {
+    const t = await mk();
+    for (let i = 0; i < 12; i++)
+      await createAction(t, "u", {
+        type: "corrective",
+        title: `Acción número ${String(i).padStart(2, "0")}`,
+        responsibleName: "Ana",
+        dueDate: "2030-01-01",
+      });
+    const pages = [
+      await listActions(t, { status: "all", limit: 5, offset: 0 }),
+      await listActions(t, { status: "all", limit: 5, offset: 5 }),
+      await listActions(t, { status: "all", limit: 5, offset: 10 }),
+    ];
+    expect(pages.map((p) => p.length)).toEqual([5, 5, 2]);
+    expect(new Set(pages.flat().map((a) => a.id)).size).toBe(12);
+    expect(await countActions(t, { status: "all" })).toBe(12);
   });
 });

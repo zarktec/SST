@@ -5,7 +5,9 @@ import { requirePermission } from "@/core/auth/session";
 import { can } from "@/core/rbac/can";
 import { listWorkCenters } from "@/modules/company/service";
 import { KINDS, SEVERITIES, STATUS_LABEL } from "@/modules/unsafe-reports/rules";
-import { listReports } from "@/modules/unsafe-reports/service";
+import { countReports, listReports } from "@/modules/unsafe-reports/service";
+import { Pager } from "@/components/ui/pager";
+import { parsePage } from "@/lib/pagination";
 import { ReportForm, ReviewForm } from "./forms";
 
 export const metadata = { title: "Reportar condiciones y actos inseguros" };
@@ -15,13 +17,15 @@ const V: Record<string, "warning" | "success" | "default"> = {
   dismissed: "default",
 };
 
-export default async function ReportsPage() {
+export default async function ReportsPage({ searchParams }: PageProps<"/tenant/reportes">) {
   const ctx = await requirePermission("unsafe_reports", "create");
   const t = ctx.tenant.tenantId;
   const all = can(ctx.permissions, "unsafe_reports", "view");
   const review = can(ctx.permissions, "unsafe_reports", "edit");
-  const [rows, centers] = await Promise.all([
-    listReports(t, { all, userId: ctx.user.id }),
+  const pg = parsePage(await searchParams);
+  const [rows, total, centers] = await Promise.all([
+    listReports(t, { all, userId: ctx.user.id, limit: pg.limit, offset: pg.offset }),
+    countReports(t, { all, userId: ctx.user.id }),
     listWorkCenters(t),
   ]);
   return (
@@ -60,6 +64,7 @@ export default async function ReportsPage() {
             ))}
             {rows.length === 0 && <li className="text-muted-foreground py-2">Sin reportes.</li>}
           </ul>
+          <Pager base="/reportes" page={pg.page} total={total} size={pg.size} />
         </Card>
       )}
     </div>
