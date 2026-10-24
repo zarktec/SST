@@ -98,6 +98,7 @@ export default async function TenantHome() {
             ["/alto-riesgo", "Tareas de alto riesgo", "high_risk"],
             ["/quimicos", "Riesgo químico", "chemicals"],
             ["/pesv", "PESV (seguridad vial)", "pesv"],
+            ["/vigilancia", "Vigilancia epidemiológica y psicosocial", "medical"],
             ["/acciones", "Acciones (CAPA)", "actions"],
             ["/accidentes", "Accidentes e incidentes", "incidents"],
             ["/reportes", "Condiciones y actos inseguros", "unsafe_reports"],

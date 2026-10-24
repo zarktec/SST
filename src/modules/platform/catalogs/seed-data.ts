@@ -288,6 +288,20 @@ export const SEEDS: Seed[] = [
         "Resolución 2646 de 2008",
       ),
       p(
+        "psicosocial.plazo_intervencion_dias",
+        90,
+        "días",
+        "Plazo por defecto de las acciones del plan de intervención psicosocial",
+        "TODO-NORMA: parametrizable",
+      ),
+      p(
+        "psicosocial.alerta_dias",
+        60,
+        "días",
+        "Anticipación de la alerta de la próxima aplicación de la batería",
+        "Parametrizable",
+      ),
+      p(
         "comites.vigia_umbral_trabajadores",
         10,
         "trabajadores",

@@ -30,6 +30,11 @@ export async function resetState() {
   // Onboarding de la empresa demo: vuelve a empezar en cada prueba.
   const demo = "(SELECT id FROM tenant WHERE slug = 'demo')";
   for (const t of [
+    "pve_followup",
+    "pve_case",
+    "pve_activity",
+    "pve_program",
+    "psychosocial_assessment",
     "pesv_crash",
     "pesv_preop",
     "pesv_driver",

@@ -101,6 +101,8 @@ Registro vivo: se agrega al detectarlo y se tacha (o mueve a "Resuelto") al cerr
 
 - [ ] PESV (`/pesv`, módulo opcional por plan): la lista preoperacional (9 ítems) y el plazo de 2 días por falla crítica son provisionales `TODO-NORMA`; las fórmulas oficiales de los indicadores y del reporte anual de autogestión (Res. 40595 de 2022) no están cargadas: hoy se entregan conteos base. Faltan kilometraje recorrido para la tasa de siniestralidad, preoperacional offline y por QR del vehículo, investigación del siniestro vial con el flujo de accidentes, plan de capacitación de conductores y nivel de riesgo del PESV (según el tamaño de la flota).
 
+- [ ] Vigilancia y psicosocial (`/vigilancia`): los programas son registro y seguimiento, no hay criterios de ingreso por tipo de PVE ni protocolos (TODO-NORMA con el experto). Casos y seguimientos usan el permiso `medical` (cifrados, con registro de lectura). Psicosocial: periodicidad 12/24 meses y nivel "muy alto" como anual son `TODO-NORMA` (Res. 2646 de 2008 y 2764 de 2022); falta registrar los resultados por dominio/forma de la batería, los informes del psicólogo (Blob) y los casos individuales que remite la batería al PVE psicosocial.
+
 ## Resuelto
 
 - [x] Enlace repo–Vercel, Neon, SUPER_ADMIN, DNS en Cloudflare.
