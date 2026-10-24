@@ -12,7 +12,7 @@ test("capacitación: sesión con QR, firma desde el celular sin sesión y certif
   await page.getByLabel("Correo electrónico").fill("demo@demo.test");
   await page.getByLabel("Contraseña").fill("DemoClave-2026!");
   await page.getByRole("button", { name: "Ingresar" }).click();
-  await page.waitForURL(`${TENANT}/`);
+  await page.waitForURL(TENANT);
 
   // Persona
   await page.goto(`${TENANT}/personas/nuevo`);

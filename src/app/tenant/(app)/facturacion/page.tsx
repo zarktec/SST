@@ -1,3 +1,4 @@
+import { A } from "@/components/ui/link";
 import { Alert } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardDescription, CardTitle } from "@/components/ui/card";
@@ -213,9 +214,9 @@ export default async function BillingPage() {
       <Card>
         <div className="flex flex-wrap items-center justify-between gap-2">
           <CardTitle>Historial de pagos</CardTitle>
-          <a className="text-primary text-sm underline" href="/facturacion/exportar">
+          <A className="text-primary text-sm underline" href="/facturacion/exportar">
             Exportar a Excel (CSV)
-          </a>
+          </A>
         </div>
         {payments.length === 0 ? (
           <p className="text-muted-foreground mt-2 text-sm">Aún no hay pagos.</p>
@@ -247,9 +248,9 @@ export default async function BillingPage() {
                       {PAY[p.status]}
                     </Badge>
                     {inv?.hasPdf ? (
-                      <a className="text-primary underline" href={`/facturacion/factura/${inv.id}`}>
+                      <A className="text-primary underline" href={`/facturacion/factura/${inv.id}`}>
                         Factura {inv.number}
-                      </a>
+                      </A>
                     ) : inv ? (
                       <span className="text-muted-foreground">Factura en proceso</span>
                     ) : null}

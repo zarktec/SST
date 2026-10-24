@@ -155,13 +155,11 @@ describe.skipIf(!hasTestDb)("comités y elecciones", () => {
         votingClosesOn: "2099-12-31",
       }),
     ).rejects.toThrow(/en curso/);
-    await expect(openVoting(t, "u", e, "demo.localhost:3000")).rejects.toThrow(
-      /al menos 1 candidatos/,
-    );
+    await expect(openVoting(t, "u", e)).rejects.toThrow(/al menos 1 candidatos/);
     for (const w of ids.slice(0, 3)) await addCandidate(t, "u", e, w);
     await expect(addCandidate(t, "u", e, ids[0])).rejects.toThrow(/Ya está inscrito/);
     devOutbox.length = 0;
-    const links = await openVoting(t, "u", e, "demo.localhost:3000");
+    const links = await openVoting(t, "u", e);
     expect(links).toHaveLength(6);
     expect(devOutbox).toHaveLength(6);
     const cands = (await getElection(t, e))!.candidates;
@@ -224,7 +222,7 @@ describe.skipIf(!hasTestDb)("comités y elecciones", () => {
     });
     await addCandidate(t, "u", e, ids[0]);
     await addCandidate(t, "u", e, ids[1]);
-    const links = await openVoting(t, "u", e, "x.localhost");
+    const links = await openVoting(t, "u", e);
     const [c1, c2] = (await getElection(t, e))!.candidates;
     await castVote(t, tokenOf(links, 0), [c1.id]);
     await castVote(t, tokenOf(links, 1), [c2.id]);
@@ -255,7 +253,7 @@ describe.skipIf(!hasTestDb)("comités y elecciones", () => {
     });
     await addCandidate(a, "u", e, ids[0]);
     await addCandidate(a, "u", e, ids[1]);
-    const links = await openVoting(a, "u", e, "x.localhost");
+    const links = await openVoting(a, "u", e);
     const [c1, c2] = (await getElection(a, e))!.candidates;
     expect(await getElection(b, e)).toBeNull();
     await expect(castVote(b, tokenOf(links, 0), [c1.id])).rejects.toThrow(/no es válido/);

@@ -1,7 +1,8 @@
 "use client";
-import Link from "next/link";
+import Link from "@/components/ui/link";
 import { useRouter } from "next/navigation";
 import { useActionState, useEffect, useState, useTransition } from "react";
+import { useTenantPath } from "@/components/layout/base-path";
 import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Field } from "@/components/ui/field";
@@ -223,10 +224,11 @@ export function CloseCommitmentForm({ id }: { id: string }) {
 export function ElectionForm({ kind }: { kind: "copasst" | "vigia" }) {
   const [s, action, pending] = useActionState(createElectionAction, null);
   const router = useRouter();
+  const tp = useTenantPath();
   const created = s?.ok ? s.details?.[0] : undefined;
   useEffect(() => {
-    if (created) router.push(`/comites/elecciones/${created}`);
-  }, [created, router]);
+    if (created) router.push(tp(`/comites/elecciones/${created}`));
+  }, [created, router, tp]);
   return (
     <form action={action} className="space-y-3">
       <input type="hidden" name="kind" value={kind} />

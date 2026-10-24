@@ -11,9 +11,9 @@ export function SignupForm({ plan, root }: { plan?: string; root: string }) {
     return (
       <Alert variant="success">
         {s.message}{" "}
-        {s.host && (
+        {s.url && (
           <span>
-            Tu dirección será <strong>{s.host}</strong>.
+            Tu dirección será <strong>{s.url.replace(/^https?:\/\//, "")}</strong>.
           </span>
         )}
       </Alert>
@@ -38,8 +38,8 @@ export function SignupForm({ plan, root }: { plan?: string; root: string }) {
       <div className="space-y-1">
         <Label htmlFor="slug">Dirección de tu empresa</Label>
         <div className="flex items-center gap-2">
+          <span className="text-muted-foreground text-sm">{root}/</span>
           <Input id="slug" name="slug" required placeholder="miempresa" />
-          <span className="text-muted-foreground text-sm">.{root}</span>
         </div>
       </div>
       <div className="space-y-1">

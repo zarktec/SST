@@ -1,6 +1,7 @@
 "use client";
 import { useRouter } from "next/navigation";
 import { useActionState, useState, useTransition } from "react";
+import { useTenantPath } from "@/components/layout/base-path";
 import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Field } from "@/components/ui/field";
@@ -27,6 +28,7 @@ export function StartButton({ year }: { year: number }) {
   const [msg, setMsg] = useState<{ ok: boolean; message: string } | null>(null);
   const [pending, start] = useTransition();
   const router = useRouter();
+  const tp = useTenantPath();
   return (
     <div className="space-y-2">
       {msg && !msg.ok && <Alert variant="destructive">{msg.message}</Alert>}
@@ -36,7 +38,7 @@ export function StartButton({ year }: { year: number }) {
           start(async () => {
             const r = await startAssessmentAction(year);
             setMsg(r);
-            if (r.ok && r.id) router.push(`/estandares/${r.id}`);
+            if (r.ok && r.id) router.push(tp(`/estandares/${r.id}`));
           })
         }
       >

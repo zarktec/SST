@@ -13,8 +13,14 @@ import {
   renderVerifyEmail,
   type Brand,
 } from "@/core/mail/templates";
-import { authHost, classifyHost, normalizeHost, originFor } from "@/core/tenancy/hosts";
-import { resolveTenantByHost } from "@/core/tenancy/resolve";
+import {
+  authHost,
+  classifyHost,
+  normalizeHost,
+  originFor,
+  tenantSlugFromPath,
+} from "@/core/tenancy/hosts";
+import { resolveTenantByHost, resolveTenantBySlug } from "@/core/tenancy/resolve";
 import { getRuntimeConfig } from "@/integrations/registry/service";
 import { uuidv7 } from "@/lib/uuid";
 import { handoffPlugin } from "./handoff-plugin";
@@ -52,8 +58,21 @@ export async function loadSocialConfig(host: string): Promise<SocialConfig> {
   return out;
 }
 
-async function brandFor(host: string): Promise<Brand> {
-  const t = await resolveTenantByHost(host).catch(() => null);
+/**
+ * Marca del correo: la de la empresa del dominio propio o, en el dominio raíz, la de la empresa cuyo
+ * `/{slug}` va en el `callbackURL` del enlace (todas comparten origen, así que el host no la identifica).
+ */
+async function brandFor(host: string, link?: string): Promise<Brand> {
+  let t = await resolveTenantByHost(host).catch(() => null);
+  if (!t && link) {
+    try {
+      const cb = new URL(link).searchParams.get("callbackURL") ?? "";
+      const slug = tenantSlugFromPath(cb.startsWith("/") ? cb : "");
+      t = slug ? await resolveTenantBySlug(slug).catch(() => null) : null;
+    } catch {
+      /* enlace sin callbackURL válido: marca por defecto */
+    }
+  }
   return t
     ? { name: t.tradeName, primary: t.brand.primary, logoUrl: t.brand.logoLightUrl }
     : DEFAULT_BRAND;
@@ -115,7 +134,7 @@ function build(host: string, social: SocialConfig) {
         sendMail({
           to: user.email,
           subject: "Restablece tu contraseña",
-          html: await renderResetPassword(await brandFor(host), url),
+          html: await renderResetPassword(await brandFor(host, url), url),
         }),
     },
     emailVerification: {
@@ -125,7 +144,7 @@ function build(host: string, social: SocialConfig) {
         sendMail({
           to: user.email,
           subject: "Confirma tu correo",
-          html: await renderVerifyEmail(await brandFor(host), url),
+          html: await renderVerifyEmail(await brandFor(host, url), url),
         }),
     },
     // Solo vincula una cuenta social existente si el proveedor confirma el correo como verificado.
@@ -141,7 +160,7 @@ function build(host: string, social: SocialConfig) {
           sendMail({
             to: email,
             subject: "Tu enlace de acceso",
-            html: await renderMagicLink(await brandFor(host), url),
+            html: await renderMagicLink(await brandFor(host, url), url),
           }),
       }),
       handoffPlugin(),

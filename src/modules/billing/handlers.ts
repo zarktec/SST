@@ -2,8 +2,7 @@ import "server-only";
 import { and, eq } from "drizzle-orm";
 import { schema, systemDb } from "@/core/db";
 import { sendMail } from "@/core/mail";
-import { originFor, rootDomain } from "@/core/tenancy/hosts";
-import { primaryHostForTenant } from "@/core/tenancy/primary-host";
+import { tenantUrl } from "@/core/tenancy/urls";
 import type { SweepHandlers } from "./subscriptions";
 
 const WHEN: Record<number, string> = { 7: "en 7 días", 3: "en 3 días", 1: "mañana", 0: "hoy" };
@@ -35,7 +34,7 @@ export function billingHandlers(overrides: Partial<SweepHandlers> = {}): SweepHa
       await chargeSubscription(sub.tenantId, { reason, provider: getPaymentProvider() });
     },
     async sendTrialReminder(sub, day) {
-      const host = (await primaryHostForTenant(sub.tenantId)) ?? rootDomain();
+      const billingUrl = await tenantUrl(sub.tenantId, "/facturacion");
       const to = await adminEmails(sub.tenantId);
       await Promise.all(
         to.map((email) =>
@@ -45,7 +44,7 @@ export function billingHandlers(overrides: Partial<SweepHandlers> = {}): SweepHa
               day === 0
                 ? "Tu prueba gratuita termina hoy"
                 : `Tu prueba gratuita termina ${WHEN[day]}`,
-            html: `<p>Tu prueba gratuita termina ${WHEN[day]}. Agrega un método de pago en <a href="${originFor(host)}/facturacion">Facturación</a> para continuar sin interrupciones; si no, tu cuenta pasará a solo lectura.</p>`,
+            html: `<p>Tu prueba gratuita termina ${WHEN[day]}. Agrega un método de pago en <a href="${billingUrl}">Facturación</a> para continuar sin interrupciones; si no, tu cuenta pasará a solo lectura.</p>`,
           }),
         ),
       );

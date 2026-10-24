@@ -29,7 +29,7 @@ export function NewTenantForm({
           <Input id="nit" name="nit" inputMode="numeric" />
         </div>
         <div className="space-y-1">
-          <Label htmlFor="slug">Subdominio</Label>
+          <Label htmlFor="slug">Identificador en la dirección</Label>
           <Input
             id="slug"
             name="slug"
@@ -38,7 +38,7 @@ export function NewTenantForm({
             placeholder="mi-empresa"
           />
           <p className="text-muted-foreground text-xs">
-            Quedará como <strong>subdominio</strong>.sst.zark.pro
+            Quedará como sst.zark.pro/<strong>identificador</strong>
           </p>
         </div>
         <div className="space-y-1">

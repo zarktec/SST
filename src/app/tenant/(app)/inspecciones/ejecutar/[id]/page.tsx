@@ -1,4 +1,4 @@
-import Link from "next/link";
+import Link from "@/components/ui/link";
 import { notFound } from "next/navigation";
 import { requirePermission } from "@/core/auth/session";
 import { listWorkCenters } from "@/modules/company/service";

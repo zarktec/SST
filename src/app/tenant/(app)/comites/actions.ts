@@ -1,6 +1,6 @@
 "use server";
 import { revalidatePath } from "next/cache";
-import { requirePermission, currentHost } from "@/core/auth/session";
+import { requirePermission } from "@/core/auth/session";
 import { formValues, zodFieldErrors, type FormState } from "@/lib/form-state";
 import { electionSchema, minutesSchema, type MemberDraft } from "@/modules/committees/rules";
 import {
@@ -144,12 +144,7 @@ export async function openVotingAction(
 ): Promise<FormState & { links?: { name: string; email: string | null; url: string }[] }> {
   const ctx = await requirePermission("committees", "edit");
   try {
-    const links = await openVoting(
-      ctx.tenant.tenantId,
-      ctx.user.id,
-      electionId,
-      await currentHost(),
-    );
+    const links = await openVoting(ctx.tenant.tenantId, ctx.user.id, electionId);
     // Sin revalidar: los enlaces solo se muestran una vez y el componente debe seguir montado hasta que los descarguen.
     return {
       ok: true,

@@ -1,3 +1,4 @@
+import { A } from "@/components/ui/link";
 import { Card, CardDescription, CardTitle } from "@/components/ui/card";
 import { requirePermission } from "@/core/auth/session";
 import { IMPORT_TEMPLATE } from "@/modules/workers/rules";
@@ -13,9 +14,9 @@ export default async function ImportPage() {
       <Card>
         <CardTitle>1. Descarga la plantilla</CardTitle>
         <CardDescription className="mt-1">
-          <a className="text-primary underline" href="/personas/plantilla">
+          <A className="text-primary underline" href="/personas/plantilla">
             plantilla-personas.csv
-          </a>
+          </A>
           . Obligatorias: vinculacion (Trabajador, Aprendiz o Contratista), tipo_documento (CC, CE,
           TI, PEP, pasaporte), documento, nombre y fecha_ingreso (AAAA-MM-DD o DD/MM/AAAA). La sede
           se escribe con el mismo nombre registrado.

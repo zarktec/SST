@@ -1,12 +1,12 @@
-import Link from "next/link";
+import Link, { A } from "@/components/ui/link";
 import QRCode from "qrcode";
 import { notFound } from "next/navigation";
 import { Alert } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardTitle } from "@/components/ui/card";
-import { currentHost, requirePermission } from "@/core/auth/session";
+import { requirePermission } from "@/core/auth/session";
 import { can } from "@/core/rbac/can";
-import { originFor } from "@/core/tenancy/hosts";
+import { tenantUrl } from "@/core/tenancy/urls";
 import { formatDate, formatDateTime } from "@/lib/format";
 import { getSession } from "@/modules/training/service";
 import { listWorkers } from "@/modules/workers/service";
@@ -25,7 +25,7 @@ export default async function SessionPage({
   let qr: string | null = null;
   let url: string | null = null;
   if (s.status === "open" && s.attendanceToken) {
-    url = `${originFor(await currentHost())}/asistencia/${s.attendanceToken}`;
+    url = await tenantUrl(ctx.tenant.tenantId, `/asistencia/${s.attendanceToken}`);
     qr = await QRCode.toDataURL(url, { margin: 1, width: 320 });
   }
   const have = new Set(attendees.map((a) => a.workerId));
@@ -97,12 +97,12 @@ export default async function SessionPage({
                     <Badge variant="success">Aprobó</Badge>
                   )}
                   {a.passed !== false && (
-                    <a
+                    <A
                       className="text-primary underline"
                       href={`/capacitacion/certificado/${a.id}`}
                     >
                       Certificado
-                    </a>
+                    </A>
                   )}
                 </span>
               </li>

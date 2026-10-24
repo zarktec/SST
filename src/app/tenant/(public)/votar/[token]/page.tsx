@@ -1,5 +1,4 @@
-import { currentHost } from "@/core/auth/session";
-import { resolveTenantByHost } from "@/core/tenancy/resolve";
+import { currentTenant } from "@/core/auth/session";
 import { ballotByToken } from "@/modules/committees/service";
 import { VoteForm } from "./vote-form";
 
@@ -7,7 +6,7 @@ export const metadata = { title: "Votación", robots: { index: false } };
 
 export default async function VotePage({ params }: PageProps<"/tenant/votar/[token]">) {
   const { token } = await params;
-  const tenant = await resolveTenantByHost(await currentHost());
+  const tenant = await currentTenant();
   const info =
     tenant && /^[0-9a-f]{48}$/.test(token) ? await ballotByToken(tenant.tenantId, token) : null;
   return (

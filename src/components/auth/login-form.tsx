@@ -1,6 +1,7 @@
 "use client";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { useTenantPath } from "@/components/layout/base-path";
 import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Input, Label } from "@/components/ui/input";
@@ -31,6 +32,7 @@ export function LoginForm({
   twoFactorPath?: string;
 }) {
   const router = useRouter();
+  const tp = useTenantPath();
   const [mode, setMode] = useState<"password" | "magic">("password");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -56,7 +58,7 @@ export function LoginForm({
         const res = await authClient.signIn.email({ email, password, callbackURL });
         if (res.error) fail(res.error.code, undefined, res.error.status);
         else if ((res.data as { twoFactorRedirect?: boolean } | null)?.twoFactorRedirect) {
-          router.push(`${twoFactorPath}?callbackURL=${encodeURIComponent(callbackURL)}`);
+          router.push(`${tp(twoFactorPath)}?callbackURL=${encodeURIComponent(callbackURL)}`);
         } else window.location.assign(callbackURL);
       }
     } finally {

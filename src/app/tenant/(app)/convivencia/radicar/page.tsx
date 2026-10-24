@@ -1,3 +1,4 @@
+import { A } from "@/components/ui/link";
 import { Card, CardDescription, CardTitle } from "@/components/ui/card";
 import { requireTenantMember } from "@/core/auth/session";
 import { withTenant } from "@/core/db";
@@ -33,9 +34,9 @@ export default async function SubmitPage() {
           />
         </div>
         <p className="mt-3 text-sm">
-          <a href="/acoso-sexual/radicar" className="text-primary underline">
+          <A href="/acoso-sexual/radicar" className="text-primary underline">
             Reportar acoso sexual o violencia de género
-          </a>
+          </A>
         </p>
       </Card>
     </div>

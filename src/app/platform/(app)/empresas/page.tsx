@@ -49,7 +49,7 @@ export default async function TenantsPage({ searchParams }: PageProps<"/platform
         <Input
           name="q"
           defaultValue={q}
-          placeholder="Buscar por nombre, NIT o subdominio"
+          placeholder="Buscar por nombre, NIT o identificador"
           aria-label="Buscar"
         />
         <select

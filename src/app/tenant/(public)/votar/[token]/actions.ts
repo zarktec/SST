@@ -1,13 +1,12 @@
 "use server";
-import { currentHost } from "@/core/auth/session";
-import { resolveTenantByHost } from "@/core/tenancy/resolve";
+import { currentTenant } from "@/core/auth/session";
 import { CommitteeError, castVote } from "@/modules/committees/service";
 
 export async function castVoteAction(
   token: string,
   candidateIds: string[],
 ): Promise<{ ok: boolean; message: string }> {
-  const tenant = await resolveTenantByHost(await currentHost());
+  const tenant = await currentTenant();
   if (!tenant) return { ok: false, message: "Empresa no encontrada." };
   try {
     await castVote(tenant.tenantId, token, candidateIds);

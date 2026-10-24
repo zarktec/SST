@@ -9,7 +9,7 @@ test("tablero de indicadores: meta de la empresa y análisis del periodo", async
   await page.getByLabel("Correo electrónico").fill("demo@demo.test");
   await page.getByLabel("Contraseña").fill("DemoClave-2026!");
   await page.getByRole("button", { name: "Ingresar" }).click();
-  await page.waitForURL(`${TENANT}/`);
+  await page.waitForURL(TENANT);
   await page.goto(`${TENANT}/indicadores`);
   await page.waitForLoadState("load");
   await expect(page.getByRole("heading", { name: "Frecuencia de accidentalidad" })).toBeVisible();

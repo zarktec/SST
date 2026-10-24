@@ -1,6 +1,7 @@
 "use client";
 import { useRouter } from "next/navigation";
 import { useActionState, useState, useTransition } from "react";
+import { useTenantPath } from "@/components/layout/base-path";
 import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Field } from "@/components/ui/field";
@@ -303,6 +304,7 @@ export function CompleteButton({ disabled }: { disabled: boolean }) {
   const [pending, start] = useTransition();
   const [msg, setMsg] = useState<FormState>(null);
   const router = useRouter();
+  const tp = useTenantPath();
   return (
     <div className="space-y-2">
       {msg && !msg.ok && <Alert variant="destructive">{msg.message}</Alert>}
@@ -312,7 +314,7 @@ export function CompleteButton({ disabled }: { disabled: boolean }) {
           start(async () => {
             const r = await completeOnboardingAction();
             setMsg(r);
-            if (r?.ok) router.push("/");
+            if (r?.ok) router.push(tp("/"));
           })
         }
       >

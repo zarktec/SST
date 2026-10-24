@@ -93,11 +93,6 @@ export async function seed() {
       await seedTenantRoles(tx, demo.id);
       await tx.insert(schema.tenantBranding).values({ tenantId: demo.id });
     });
-    const root = process.env.NEXT_PUBLIC_ROOT_DOMAIN ?? "localhost:3000";
-    await db
-      .insert(schema.tenantDomain)
-      .values({ tenantId: demo.id, host: `demo.${root}`, kind: "subdomain", status: "verified" })
-      .onConflictDoNothing();
     // Usuario demo (solo fuera de producción): administrador de la empresa demo.
     {
       const id = uuidv7();

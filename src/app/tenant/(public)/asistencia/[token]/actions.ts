@@ -1,7 +1,6 @@
 "use server";
 import { headers } from "next/headers";
-import { currentHost } from "@/core/auth/session";
-import { resolveTenantByHost } from "@/core/tenancy/resolve";
+import { currentTenant } from "@/core/auth/session";
 import { TrainingError, signAttendanceByToken } from "@/modules/training/service";
 
 export type AttendanceResult = {
@@ -33,7 +32,7 @@ export async function signAttendanceAction(input: {
 }): Promise<AttendanceResult> {
   const h = await headers();
   const ip = h.get("x-forwarded-for")?.split(",")[0]?.trim() ?? null;
-  const tenant = await resolveTenantByHost(await currentHost());
+  const tenant = await currentTenant();
   if (!tenant) return { ok: false, message: "Empresa no encontrada." };
   if (tooMany(`${ip}:${input.token}`))
     return {

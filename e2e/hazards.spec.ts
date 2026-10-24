@@ -9,7 +9,7 @@ test("matriz de peligros: crear, valorar automáticamente y aprobar", async ({ p
   await page.getByLabel("Correo electrónico").fill("demo@demo.test");
   await page.getByLabel("Contraseña").fill("DemoClave-2026!");
   await page.getByRole("button", { name: "Ingresar" }).click();
-  await page.waitForURL(`${TENANT}/`);
+  await page.waitForURL(TENANT);
   await page.goto(`${TENANT}/peligros`);
   await expect(page.getByRole("heading", { name: /Matriz de peligros/ })).toBeVisible();
   await page.waitForLoadState("load");

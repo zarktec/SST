@@ -1,6 +1,7 @@
 "use client";
 import { useRouter } from "next/navigation";
 import { useActionState, useCallback, useEffect, useState, useTransition } from "react";
+import { useBasePath, useTenantPath } from "@/components/layout/base-path";
 import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Field } from "@/components/ui/field";
@@ -116,20 +117,21 @@ export const ImportTemplate = ({ code }: { code: string }) => (
  */
 export function SyncStatus({ warm = [] }: { warm?: string[] }) {
   const router = useRouter();
+  const base = useBasePath();
   const [items, setItems] = useState<QueuedInspection[]>([]);
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState("");
   const refresh = useCallback(
     () =>
-      listQueue()
+      listQueue(base)
         .then(setItems)
         .catch(() => undefined),
-    [],
+    [base],
   );
   const sync = useCallback(async () => {
     setBusy(true);
     try {
-      const r = await flushQueue();
+      const r = await flushQueue(base);
       if (r.sent) {
         setMsg(`${r.sent} inspección(es) sincronizada(s).`);
         router.refresh();
@@ -138,7 +140,7 @@ export function SyncStatus({ warm = [] }: { warm?: string[] }) {
       setBusy(false);
       refresh();
     }
-  }, [refresh, router]);
+  }, [base, refresh, router]);
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect -- sincroniza con IndexedDB al montar
     sync();
@@ -151,7 +153,9 @@ export function SyncStatus({ warm = [] }: { warm?: string[] }) {
     (async () => {
       for (const url of warm) {
         try {
-          const html = await (await fetch(url, { headers: { "x-sst-prefetch": "1" } })).text();
+          const html = await (
+            await fetch(`${base}${url}`, { headers: { "x-sst-prefetch": "1" } })
+          ).text();
           const assets = new Set(html.match(/\/_next\/static\/[^"'\\\s)]+\.(?:js|css)/g) ?? []);
           await Promise.all([...assets].map((a) => fetch(a).catch(() => undefined)));
         } catch {
@@ -159,7 +163,7 @@ export function SyncStatus({ warm = [] }: { warm?: string[] }) {
         }
       }
     })();
-  }, [warm]);
+  }, [base, warm]);
   const pending = items.filter((i) => !i.error);
   const rejected = items.filter((i) => i.error);
   if (!items.length && !msg) return null;
@@ -204,6 +208,8 @@ export function Runner({
   centers: Opt[];
 }) {
   const router = useRouter();
+  const tp = useTenantPath();
+  const base = useBasePath();
   const [answers, setAnswers] = useState<Record<string, Answer>>({});
   const [place, setPlace] = useState("");
   const [center, setCenter] = useState("");
@@ -235,15 +241,20 @@ export function Runner({
       results,
     };
     setBusy(true);
-    const r = await send(payload);
+    const r = await send(payload, base);
     if (r.result === "sent") {
       setMsg({ ok: true, text: "Inspección enviada." });
-      router.push("/inspecciones");
+      router.push(tp("/inspecciones"));
       router.refresh();
     } else if (r.result === "rejected") {
       setMsg({ ok: false, text: r.message ?? "El servidor rechazó la inspección." });
     } else {
-      await enqueue({ offlineId: payload.offlineId, payload, queuedAt: new Date().toISOString() });
+      await enqueue({
+        offlineId: payload.offlineId,
+        base,
+        payload,
+        queuedAt: new Date().toISOString(),
+      });
       setMsg({
         ok: true,
         text: "Sin conexión: la inspección quedó guardada en este dispositivo y se enviará al reconectar.",

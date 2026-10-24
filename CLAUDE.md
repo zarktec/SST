@@ -12,7 +12,7 @@ Lee también `AGENTS.md`: esta versión de Next.js (16) difiere de lo habitual; 
 ## Convenciones
 
 - TypeScript `strict`. Identificadores en inglés; UI y términos legales en español (`copasst`, `ccl`, `furat`).
-- `proxy.ts` (no `middleware.ts`): Next 16 renombró middleware a proxy y corre en Node.
+- `proxy.ts` (no `middleware.ts`): Next 16 renombró middleware a proxy y corre en Node. Enruta por host y, en el dominio raíz, por el primer segmento de la ruta (`/{slug}/…` → `src/app/tenant/…`); fija `x-tenant-id`/`x-tenant-base` (y borra los que mande el cliente). Todo enlace de la app de empresa debe llevar la base: usa `Link`/`A` de `@/components/ui/link`, `useTenantPath()` en cliente y `await tp("/ruta")` en `redirect()` de servidor; URLs absolutas con `tenantUrl()` (`src/core/tenancy/urls.ts`). El slug no puede coincidir con una ruta de marketing: agrega toda carpeta nueva de `src/app/site` a `RESERVED_SLUGS` (lo verifica `hosts.test.ts`). Las empresas comparten origen en el dominio raíz: nada del cliente (IndexedDB, caché del service worker) debe mezclar empresas (ver `base` en `src/lib/offline-queue.ts`).
 - IDs UUID v7. Dinero en `bigint` centavos. Fechas UTC; mostrar en `America/Bogota`.
 - Borrado lógico (`deleted_at`) en registros de negocio; registros ♻ nunca se borran físicamente.
 - Cada regla normativa cita su norma fuente en un comentario. Si hay duda: parametrizable + `TODO-NORMA`.
@@ -31,7 +31,7 @@ Lee también `AGENTS.md`: esta versión de Next.js (16) difiere de lo habitual; 
 
 ## Decisiones tomadas por el dueño del producto
 
-- Dominio: `sst.zark.pro` (subdominios por empresa, `admin.`, `auth.`). Neon en EE. UU.
+- Dominio: `sst.zark.pro`. Cada empresa vive en `sst.zark.pro/{slug}` (**sin subdominios por empresa**) y puede conectar su dominio propio (`mi-empresa.com`, con el panel en la raíz, desde `/dominio`); `admin.` y `auth.` se mantienen. Neon en EE. UU.
 - Precio/IVA (con %) y duración del Free Trial son configurables en el panel; Free Trial sin restricciones.
 - Acceso de usuarios: correo (+ contraseña) o magic link. Personas naturales y jurídicas se facturan.
 - Datos sensibles: acceso de soporte/SUPER ADMIN solo con autorización del tenant.
@@ -61,9 +61,11 @@ Ver sección "Estado de fases" al final; actualizar al cerrar cada fase. Pendien
 
 - Fase 4: **completa** (pendiente de tu revisión; ver `docs/PENDIENTES.md`, las cifras normativas son provisionales). 4.1 CAPA (`/acciones`, escalamiento por mora, verificación de eficacia, cron diario) y 4.2 accidentes e incidentes (`/accidentes`: plazo ARL/EPS en días hábiles, investigación con equipo/5 porqués, plan de acción en CAPA, remisión a la ARL, lecciones, datos FURAT, enfermedad laboral) hechos. 4.3 reporte de actos/condiciones inseguras (`/reportes`, anónimo, geolocalización, conversión a CAPA) hecho. 4.4 inspecciones (`/inspecciones`: plantillas propias, cola offline en IndexedDB con envío idempotente por `offlineId` a `/api/inspecciones/sync`, pantallas de ejecución cacheadas por el service worker, hallazgos → CAPA) hecho. 4.5 indicadores (`/indicadores`: fórmulas del catálogo calculadas con datos reales, tendencia, meta por empresa y análisis por periodo) hecho.
 
+- Cambio de arquitectura (empresa por ruta, no por subdominio): hecho. `sst.zark.pro/{slug}` (login en `/{slug}/login`), dominio propio opcional por empresa (`/dominio`, panel en la raíz), sesión de un solo origen en el dominio raíz (el handoff por `auth.` queda para Google/Microsoft y dominios propios, con `slug` para el dominio raíz). Pruebas: `src/proxy.test.ts`, `hosts.test.ts`, `flow.test.ts`, E2E con `TENANT = http://localhost:3000/demo`.
+
 ## Despliegue (Vercel)
 
-- Proyecto Vercel `sst` (equipo ZarK, `prj_kpoOB6LCtrFYpXrk1s6oXhU1aQfm`), Next.js, Node 22, región iad1. Dominios agregados: `sst.zark.pro`, `admin.`, `auth.` y `*.sst.zark.pro`.
+- Proyecto Vercel `sst` (equipo ZarK, `prj_kpoOB6LCtrFYpXrk1s6oXhU1aQfm`), Next.js, Node 22, región iad1. Dominios agregados: `sst.zark.pro`, `admin.`, `auth.` (el wildcard `*.sst.zark.pro` ya no se usa: las empresas van por ruta; los dominios propios se agregan por API).
 - Variables de infraestructura ya cargadas (production/preview): `NEXT_PUBLIC_ROOT_DOMAIN`, `ENCRYPTION_MASTER_KEY`, `BLIND_INDEX_KEY`, `AUTH_SECRET`, `CRON_SECRET`, `MAIL_FROM`.
 - Neon ya instalado (DATABASE_URL y DATABASE_URL_UNPOOLED, sensibles: no se pueden leer fuera de Vercel). Build de Vercel = `pnpm vercel-build`: en producción migra + seed idempotente (SUPER ADMIN, integraciones; sin empresa demo) antes de `next build`; preview no toca la BD.
-- Pendiente: enlazar el repo zarktec/sst al proyecto (Settings → Git; la API no permite enlazar un proyecto existente), `RESEND_API_KEY`, `BLOB_READ_WRITE_TOKEN`, `SUPER_ADMIN_EMAIL/PASSWORD` y DNS en Cloudflare (wildcard requiere delegar `sst.zark.pro` a los nameservers de Vercel).
+- Pendiente: enlazar el repo zarktec/sst al proyecto (Settings → Git; la API no permite enlazar un proyecto existente), `RESEND_API_KEY`, `BLOB_READ_WRITE_TOKEN`, `SUPER_ADMIN_EMAIL/PASSWORD` y DNS de `sst.zark.pro`, `admin.` y `auth.` en Cloudflare (sin wildcard: ya no se necesita).

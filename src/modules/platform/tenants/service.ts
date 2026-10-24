@@ -26,7 +26,7 @@ export const createTenantSchema = z.object({
     .toLowerCase()
     .refine(
       isValidSlug,
-      "Subdominio inválido (3-63 caracteres: letras, números y guion; no puede ser una palabra reservada)",
+      "Identificador inválido (3-63 caracteres: letras, números y guion; no puede ser una palabra reservada)",
     ),
   legalName: z.string().trim().min(2).max(160),
   tradeName: z.string().trim().min(2).max(80),
@@ -68,13 +68,14 @@ export async function isSlugAvailable(slug: string): Promise<boolean> {
 }
 
 /**
- * Crea una empresa con su suscripción de prueba (o el plan indicado): roles, marca, subdominio,
- * administrador (membresía o invitación) y registro del dominio en Vercel.
+ * Crea una empresa con su suscripción de prueba (o el plan indicado): roles, marca y administrador
+ * (membresía o invitación). La empresa vive en `{dominio raíz}/{slug}`; el dominio propio se conecta después
+ * (`requestCustomDomain`).
  */
 export async function createTenantWithTrial(
   input: CreateTenantInput,
   actorId: string,
-  opts: { domains?: DomainProvider; now?: Date } = {},
+  opts: { now?: Date } = {},
 ) {
   const data = createTenantSchema.parse(input);
   const now = opts.now ?? new Date();
@@ -84,7 +85,6 @@ export async function createTenantWithTrial(
       data.planId ? "plan_not_found" : "no_trial_plan",
       data.planId ? "Plan no encontrado" : "No hay un plan de prueba gratuita configurado",
     );
-  const host = `${data.slug}.${rootDomain()}`;
 
   const created = await withPlatform(
     { actorId, action: "tenant.create", reason: data.slug },
@@ -93,7 +93,7 @@ export async function createTenantWithTrial(
         .select({ id: tenant.id })
         .from(tenant)
         .where(eq(tenant.slug, data.slug));
-      if (exists.length) throw new TenantError("slug_taken", "Ese subdominio ya está en uso");
+      if (exists.length) throw new TenantError("slug_taken", "Ese identificador ya está en uso");
       const [t] = await tx
         .insert(tenant)
         .values({
@@ -105,9 +105,6 @@ export async function createTenantWithTrial(
         .returning();
       await seedTenantRoles(tx, t.id);
       await tx.insert(tenantBranding).values({ tenantId: t.id });
-      await tx
-        .insert(tenantDomain)
-        .values({ tenantId: t.id, host, kind: "subdomain", status: "pending" });
 
       const price = p.isTrial
         ? null
@@ -152,33 +149,18 @@ export async function createTenantWithTrial(
     },
   );
 
-  // Fuera de la transacción: llamadas externas (Vercel y correo). Un fallo aquí no deshace la empresa.
-  const state = await (opts.domains ?? domainProvider()).add(host).catch((e): DomainState => ({
-    host,
-    verified: false,
-    configured: false,
-    instructions: [],
-    error: e instanceof Error ? e.message : "Error de Vercel",
-  }));
-  await systemDb()
-    .update(tenantDomain)
-    .set({
-      status: domainStatus(state),
-      lastError: state.error ?? null,
-      lastCheckedAt: now,
-      dnsRecords: state.instructions,
-    })
-    .where(eq(tenantDomain.host, host));
+  const url = `${originFor(rootDomain())}/${data.slug}`;
   invalidateTenantHostCache();
 
+  // Fuera de la transacción: el correo. Un fallo aquí no deshace la empresa.
   if ("email" in data.owner) {
     await sendMail({
       to: data.owner.email,
       subject: `Te invitaron a administrar ${data.tradeName} en SST`,
-      html: `<p>Hola,</p><p>Te invitaron a administrar <strong>${data.tradeName}</strong>. Ingresa en <a href="${originFor(host)}/login">${originFor(host)}/login</a> con este correo (te enviaremos un enlace de acceso).</p>`,
+      html: `<p>Hola,</p><p>Te invitaron a administrar <strong>${data.tradeName}</strong>. Ingresa en <a href="${url}/login">${url}/login</a> con este correo (te enviaremos un enlace de acceso).</p>`,
     }).catch(() => undefined);
   }
-  return { tenantId: created.id, host, domainStatus: domainStatus(state) };
+  return { tenantId: created.id, slug: data.slug, url };
 }
 
 export type TenantListRow = {
@@ -327,12 +309,33 @@ export async function requestCustomDomain(
   return state;
 }
 
-/** Verificación periódica: estados pendiente / verificado / error. Se usa en el cron y a demanda. */
-export async function syncDomains(domains: DomainProvider = domainProvider(), now = new Date()) {
+/** Dominios de una empresa (para su pantalla de "Dominio propio"). */
+export async function listTenantDomains(tenantId: string) {
+  return systemDb()
+    .select()
+    .from(tenantDomain)
+    .where(eq(tenantDomain.tenantId, tenantId))
+    .orderBy(tenantDomain.createdAt);
+}
+
+/**
+ * Verificación periódica: estados pendiente / verificado / error. Se usa en el cron (todas las empresas)
+ * y a demanda (`tenantId`: solo los dominios de esa empresa).
+ */
+export async function syncDomains(
+  domains: DomainProvider = domainProvider(),
+  now = new Date(),
+  tenantId?: string,
+) {
   const pending = await systemDb()
     .select()
     .from(tenantDomain)
-    .where(or(eq(tenantDomain.status, "pending"), eq(tenantDomain.status, "error")));
+    .where(
+      and(
+        or(eq(tenantDomain.status, "pending"), eq(tenantDomain.status, "error")),
+        tenantId ? eq(tenantDomain.tenantId, tenantId) : undefined,
+      ),
+    );
   let changed = 0;
   for (const d of pending) {
     const state = await domains.check(d.host).catch((e): DomainState => ({

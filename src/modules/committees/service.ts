@@ -3,7 +3,7 @@ import { and, asc, desc, eq, inArray, isNull, ne } from "drizzle-orm";
 import { schema, withTenant, type Tx } from "@/core/db";
 import { assertWritable } from "@/core/plans/limits";
 import { sendMail } from "@/core/mail";
-import { originFor } from "@/core/tenancy/hosts";
+import { tenantUrl } from "@/core/tenancy/urls";
 import { todayYmd } from "@/lib/dates";
 import { getParameter } from "@/modules/platform/catalogs/service";
 import {
@@ -329,12 +329,7 @@ export async function addCandidate(
  * Abre la votación: genera un token individual por trabajador activo (se devuelve una sola vez; en base queda su hash).
  * Los que tienen correo reciben su enlace por email; para el resto se imprime/entrega desde el listado devuelto.
  */
-export async function openVoting(
-  tenantId: string,
-  userId: string,
-  electionId: string,
-  host: string,
-) {
+export async function openVoting(tenantId: string, userId: string, electionId: string) {
   await assertWritable(tenantId);
   const issued = await withTenant(ctxOf(tenantId, userId), async (tx) => {
     const [e] = await tx
@@ -371,10 +366,11 @@ export async function openVoting(
       .where(eq(election.id, electionId));
     return out;
   });
+  const voteBase = await tenantUrl(tenantId, "/votar/");
   const links = issued.map((v) => ({
     name: v.name,
     email: v.email,
-    url: `${originFor(host)}/votar/${v.token}`,
+    url: `${voteBase}${v.token}`,
   }));
   await Promise.all(
     links

@@ -9,7 +9,7 @@ test("acciones CAPA: crear, ejecutar con evidencia y verificar eficacia", async 
   await page.getByLabel("Correo electrónico").fill("demo@demo.test");
   await page.getByLabel("Contraseña").fill("DemoClave-2026!");
   await page.getByRole("button", { name: "Ingresar" }).click();
-  await page.waitForURL(`${TENANT}/`);
+  await page.waitForURL(TENANT);
   await page.goto(`${TENANT}/acciones`);
   await page.waitForLoadState("load");
   await page.getByLabel("Acción", { exact: true }).fill("Reparar la baranda de la escalera");

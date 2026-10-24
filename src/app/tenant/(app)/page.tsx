@@ -1,4 +1,4 @@
-import Link from "next/link";
+import Link from "@/components/ui/link";
 import { Alert } from "@/components/ui/alert";
 import { Card, CardDescription, CardTitle } from "@/components/ui/card";
 import { requireTenantMember } from "@/core/auth/session";
@@ -133,9 +133,15 @@ export default async function TenantHome() {
         </Link>
       </p>
       {ctx.roleKey === "ADMIN_EMPRESA" && (
-        <Link href="/facturacion" className="text-primary text-sm underline">
-          Ir a Facturación (plan, pagos y facturas)
-        </Link>
+        <p className="text-sm">
+          <Link href="/facturacion" className="text-primary inline-block min-h-11 py-2 underline">
+            Ir a Facturación (plan, pagos y facturas)
+          </Link>
+          {" · "}
+          <Link href="/dominio" className="text-primary inline-block min-h-11 py-2 underline">
+            Dominio propio
+          </Link>
+        </p>
       )}
     </div>
   );

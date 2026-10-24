@@ -9,7 +9,7 @@ test("matriz legal: evaluar una norma", async ({ page }) => {
   await page.getByLabel("Correo electrónico").fill("demo@demo.test");
   await page.getByLabel("Contraseña").fill("DemoClave-2026!");
   await page.getByRole("button", { name: "Ingresar" }).click();
-  await page.waitForURL(`${TENANT}/`);
+  await page.waitForURL(TENANT);
   await expect(page.getByText(/sin evaluar en tu matriz legal/)).toBeVisible();
   await page.goto(`${TENANT}/matriz-legal`);
   await expect(page.getByRole("heading", { name: "Matriz legal" })).toBeVisible();
