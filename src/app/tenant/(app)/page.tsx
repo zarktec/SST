@@ -94,6 +94,7 @@ export default async function TenantHome() {
             ["/epp", "EPP", "ppe"],
             ["/comites", "Comités", "committees"],
             ["/medicina", "Medicina del trabajo", "medical"],
+            ["/emergencias", "Emergencias", "emergencies"],
             ["/acciones", "Acciones (CAPA)", "actions"],
             ["/accidentes", "Accidentes e incidentes", "incidents"],
             ["/reportes", "Condiciones y actos inseguros", "unsafe_reports"],

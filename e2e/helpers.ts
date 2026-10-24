@@ -30,6 +30,11 @@ export async function resetState() {
   // Onboarding de la empresa demo: vuelve a empezar en cada prueba.
   const demo = "(SELECT id FROM tenant WHERE slug = 'demo')";
   for (const t of [
+    "emergency_asset_inspection",
+    "emergency_asset",
+    "drill",
+    "brigade_member",
+    "emergency_plan",
     "indicator_note",
     "indicator_target",
     "inspection",
@@ -87,7 +92,7 @@ export async function resetState() {
     `INSERT INTO role_permission (id, tenant_id, role_id, module, action, scope)
      SELECT gen_random_uuid(), r.tenant_id, r.id, m.module, a.action::permission_action, 'all'
      FROM role r CROSS JOIN (VALUES ('create'),('edit'),('approve')) AS a(action)
-     CROSS JOIN (VALUES ('standards'),('legal_matrix'),('hazard_matrix'),('annual_plan'),('training'),('ppe'),('committees'),('medical'),('actions'),('incidents'),('unsafe_reports'),('inspections'),('indicators')) AS m(module)
+     CROSS JOIN (VALUES ('standards'),('legal_matrix'),('hazard_matrix'),('annual_plan'),('training'),('ppe'),('committees'),('medical'),('actions'),('incidents'),('unsafe_reports'),('inspections'),('indicators'),('emergencies'),('high_risk'),('chemicals'),('pesv'),('audits'),('management_review')) AS m(module)
      WHERE r.system_key = 'ADMIN_EMPRESA' AND r.tenant_id IN ${demo}
      ON CONFLICT DO NOTHING`,
   );
