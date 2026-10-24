@@ -61,6 +61,12 @@ export function AppShell({
 
   return (
     <div className="min-h-dvh md:grid md:grid-cols-[16rem_1fr]">
+      <a
+        href="#contenido"
+        className="bg-background text-foreground focus:ring-ring sr-only z-50 rounded-md px-4 py-3 focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:ring-2"
+      >
+        Saltar al contenido
+      </a>
       <aside className="bg-card hidden border-r md:flex md:flex-col">
         <div className="flex items-center gap-3 p-4">
           {logoUrl ? (
@@ -101,7 +107,13 @@ export function AppShell({
           <ThemeToggle />
         </header>
         {banner}
-        <main className="mx-auto w-full max-w-5xl flex-1 p-4 sm:p-6">{children}</main>
+        <main
+          id="contenido"
+          tabIndex={-1}
+          className="mx-auto w-full max-w-5xl flex-1 p-4 outline-none sm:p-6"
+        >
+          {children}
+        </main>
       </div>
 
       <nav

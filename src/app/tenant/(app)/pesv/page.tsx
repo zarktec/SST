@@ -110,33 +110,33 @@ export default async function PesvPage() {
       <h1 className="text-2xl font-bold">Plan Estratégico de Seguridad Vial (PESV)</h1>
       <Card>
         <CardTitle>Datos {year} para el reporte anual de autogestión</CardTitle>
-        <dl className="mt-2 grid gap-2 text-sm sm:grid-cols-2">
-          <div>
+        <ul className="mt-2 grid gap-2 text-sm sm:grid-cols-2">
+          <li>
             Vehículos con SOAT y revisión vigentes:{" "}
             <strong>
               {stats.vehiclesDocsOk} de {stats.vehicles}
             </strong>
-          </div>
-          <div>
+          </li>
+          <li>
             Conductores con licencia vigente:{" "}
             <strong>
               {stats.driversLicenseOk} de {stats.drivers}
             </strong>
-          </div>
-          <div>
+          </li>
+          <li>
             Vehículos con preoperacional en 30 días:{" "}
             <strong>
               {stats.preopVehiclesLast30} de {stats.vehicles}
             </strong>
-          </div>
-          <div>
+          </li>
+          <li>
             Siniestros viales: <strong>{stats.crashes}</strong> · lesionados {stats.injured} ·
             muertos {stats.fatalities}
-          </div>
-          <div>
+          </li>
+          <li>
             Siniestros por vehículo: <strong>{stats.crashesPerVehicle ?? "—"}</strong>
-          </div>
-        </dl>
+          </li>
+        </ul>
         <p className="text-muted-foreground mt-2 text-xs">
           Conteos base: las fórmulas oficiales de los indicadores del PESV están pendientes de
           validación con el experto.

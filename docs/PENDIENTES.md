@@ -123,6 +123,7 @@ Registro vivo: se agrega al detectarlo y se tacha (o mueve a "Resuelto") al cerr
 ## Fase 7 (se agrega a medida que avanza)
 
 - [x] Seguridad: CSP con nonce por solicitud (sin `unsafe-inline`/`unsafe-eval` en scripts), encabezados, límite de intentos compartido entre instancias (asistencia, votación, registro), `pnpm audit` sin vulnerabilidades (overrides de `zod` y `esbuild` transitivos). Pendiente: Sentry (`SENTRY_DSN`) para errores en producción; escaneo de dependencias en CI de forma periódica; prueba de penetración externa antes de producción.
+- [x] Accesibilidad: axe-core (WCAG 2.1 A/AA) sin violaciones en la landing, registro, login y 28 pantallas de la empresa (escritorio y 375 px), objetivos táctiles de 44 px en botones y campos, enlace "Saltar al contenido" y foco visible. Pendiente: pantallas del panel SUPER ADMIN (requieren sesión con 2FA), estados con datos densos (tablas grandes), prueba con lector de pantalla real (NVDA/VoiceOver) y contraste de marcas blancas extremas (hoy se valida AA al guardar los colores).
 - [ ] CSP: `style-src` conserva `'unsafe-inline'` (atributos `style` de React y variables de marca blanca). Para endurecerlo habría que mover los estilos a clases y generar la hoja de marca con nonce.
 
 ## Resuelto
