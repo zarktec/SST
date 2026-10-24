@@ -103,6 +103,9 @@ Registro vivo: se agrega al detectarlo y se tacha (o mueve a "Resuelto") al cerr
 
 - [ ] Vigilancia y psicosocial (`/vigilancia`): los programas son registro y seguimiento, no hay criterios de ingreso por tipo de PVE ni protocolos (TODO-NORMA con el experto). Casos y seguimientos usan el permiso `medical` (cifrados, con registro de lectura). Psicosocial: periodicidad 12/24 meses y nivel "muy alto" como anual son `TODO-NORMA` (Res. 2646 de 2008 y 2764 de 2022); falta registrar los resultados por dominio/forma de la batería, los informes del psicólogo (Blob) y los casos individuales que remite la batería al PVE psicosocial.
 
+- [ ] Auditoría interna (`/auditorias`) y revisión por la dirección (`/revision-direccion`): las entradas de la revisión (accidentalidad, indicadores, auditorías, acciones, autoevaluación, plan anual + 3 campos manuales) son una lectura provisional del art. 2.2.4.6.31 del Decreto 1072 `TODO-NORMA`: falta confirmar la lista exacta con el experto e incluir la política y los objetivos cuando exista el módulo de política (Fase 6, gestión documental). Sin PDF de informe/acta firmada (Fase 6). Las listas de verificación no vienen de un catálogo oficial: texto libre o criterios de la última autoevaluación. Hay que garantizar que la alta dirección tenga el permiso `management_review:approve` (rol ALTA_DIRECCION).
+- [ ] Notificaciones: ninguna alerta de la Fase 5 (vencimientos de equipos, certificados, SOAT, licencias, simulacro anual, seguimiento de casos, batería psicosocial, auditoría atrasada) envía correo todavía; hoy son alertas en pantalla. Se resuelve con el servicio de notificaciones de la Fase 6.
+
 ## Resuelto
 
 - [x] Enlace repo–Vercel, Neon, SUPER_ADMIN, DNS en Cloudflare.

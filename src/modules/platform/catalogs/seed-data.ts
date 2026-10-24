@@ -302,6 +302,20 @@ export const SEEDS: Seed[] = [
         "Parametrizable",
       ),
       p(
+        "auditoria.plazo_accion_dias",
+        30,
+        "días",
+        "Plazo por defecto de las acciones que generan los hallazgos de auditoría",
+        "TODO-NORMA: parametrizable",
+      ),
+      p(
+        "revision_direccion.plazo_decision_dias",
+        60,
+        "días",
+        "Plazo por defecto de las acciones que salen de las decisiones de la revisión por la dirección",
+        "TODO-NORMA: parametrizable",
+      ),
+      p(
         "comites.vigia_umbral_trabajadores",
         10,
         "trabajadores",

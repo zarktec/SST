@@ -99,6 +99,8 @@ export default async function TenantHome() {
             ["/quimicos", "Riesgo químico", "chemicals"],
             ["/pesv", "PESV (seguridad vial)", "pesv"],
             ["/vigilancia", "Vigilancia epidemiológica y psicosocial", "medical"],
+            ["/auditorias", "Auditoría interna", "audits"],
+            ["/revision-direccion", "Revisión por la dirección", "management_review"],
             ["/acciones", "Acciones (CAPA)", "actions"],
             ["/accidentes", "Accidentes e incidentes", "incidents"],
             ["/reportes", "Condiciones y actos inseguros", "unsafe_reports"],
