@@ -96,6 +96,7 @@ export default async function TenantHome() {
             ["/medicina", "Medicina del trabajo", "medical"],
             ["/emergencias", "Emergencias", "emergencies"],
             ["/alto-riesgo", "Tareas de alto riesgo", "high_risk"],
+            ["/quimicos", "Riesgo químico", "chemicals"],
             ["/acciones", "Acciones (CAPA)", "actions"],
             ["/accidentes", "Accidentes e incidentes", "incidents"],
             ["/reportes", "Condiciones y actos inseguros", "unsafe_reports"],

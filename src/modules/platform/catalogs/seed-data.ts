@@ -253,6 +253,13 @@ export const SEEDS: Seed[] = [
         "Parametrizable",
       ),
       p(
+        "quimicos.revision_fds_anios",
+        5,
+        "años",
+        "Periodicidad de revisión de la ficha de datos de seguridad (FDS)",
+        "TODO-NORMA: SGA / Decreto 1496 de 2018 (validar periodicidad)",
+      ),
+      p(
         "psicosocial.periodicidad_riesgo_alto_meses",
         12,
         "meses",

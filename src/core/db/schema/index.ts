@@ -23,3 +23,4 @@ export * from "./inspections";
 export * from "./indicators";
 export * from "./emergencies";
 export * from "./high-risk";
+export * from "./chemicals";

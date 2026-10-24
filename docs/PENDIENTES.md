@@ -97,6 +97,8 @@ Registro vivo: se agrega al detectarlo y se tacha (o mueve a "Resuelto") al cerr
 
 - [ ] Alto riesgo (`/alto-riesgo`): listas de verificación predeterminadas, duración máxima (8 h) y vigencia del certificado de alturas (12 meses, `alturas.vigencia_certificado_meses`) son provisionales `TODO-NORMA` (Res. 4272 de 2021: validar niveles de certificación, reentrenamiento y requisitos del coordinador). Sin firma de cierre ni de los ejecutores; sin plan de rescate/ATS como documentos adjuntos (Blob). Los permisos solo se programan el mismo día (no turnos que crucen la medianoche). Un solo usuario no puede solicitar y autorizar: la empresa necesita al menos dos con permiso `high_risk`.
 
+- [ ] Riesgo químico (`/quimicos`): la matriz de incompatibilidades por pictograma (4 pares) y la revisión de la FDS cada 5 años son provisionales `TODO-NORMA`; la compatibilidad real depende de la sección 7 de cada FDS y de la clase química (ácidos vs. bases, etc.). No se adjuntan FDS ni fotos de etiquetas (Blob). Falta generador de etiquetas SGA y control de cantidades máximas almacenadas.
+
 ## Resuelto
 
 - [x] Enlace repo–Vercel, Neon, SUPER_ADMIN, DNS en Cloudflare.
