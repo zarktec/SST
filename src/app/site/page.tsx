@@ -16,6 +16,9 @@ export default function Landing() {
         <Link href="/precios">
           <Button variant="outline">Ver planes y precios</Button>
         </Link>
+        <Link href="/login">
+          <Button variant="outline">Ingresar</Button>
+        </Link>
       </div>
     </main>
   );
