@@ -9,6 +9,7 @@ import { billingHandlers } from "@/modules/billing/handlers";
 import { getInvoicingProvider } from "@/integrations/invoicing";
 import { reconcileInvoices } from "@/modules/billing/invoicing";
 import { runEscalationAll } from "@/modules/capa/service";
+import { syncNotificationsAll } from "@/modules/notifications/service";
 import { registerBillingHooks } from "@/modules/billing/hooks";
 
 export const maxDuration = 300;
@@ -47,6 +48,7 @@ export async function GET(req: Request) {
   const retries = await guard("reintentos", () => retryDueCharges(getPaymentProvider()), []);
   const invoices = await guard("facturas", () => reconcileInvoices(getInvoicingProvider()), []);
   const escalated = await guard("acciones", () => runEscalationAll(), 0);
+  const newAlerts = await guard("notificaciones", () => syncNotificationsAll(), 0);
   const domains = await guard("dominios", () => syncDomains(), { checked: 0, changed: 0 });
   const alerts = await guard("integraciones", () => integrationAlerts(), []);
   return NextResponse.json({
@@ -59,6 +61,7 @@ export async function GET(req: Request) {
     retries: retries.length,
     invoices: invoices.length,
     escalatedActions: escalated,
+    newNotifications: newAlerts,
     domains,
     alerts: alerts.length,
     errors,

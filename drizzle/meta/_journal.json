@@ -407,6 +407,20 @@
       "when": 1792855364098,
       "tag": "0057_audits_rls",
       "breakpoints": true
+    },
+    {
+      "idx": 58,
+      "version": "7",
+      "when": 1792856547945,
+      "tag": "0058_notifications",
+      "breakpoints": true
+    },
+    {
+      "idx": 59,
+      "version": "7",
+      "when": 1792856548945,
+      "tag": "0059_notifications_rls",
+      "breakpoints": true
     }
   ]
 }

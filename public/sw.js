@@ -78,3 +78,30 @@ self.addEventListener("fetch", (e) => {
 self.addEventListener("message", (e) => {
   if (e.data === "clear-pages") e.waitUntil(caches.delete(PAGES));
 });
+
+// Notificaciones push (Fase 6.1): el servidor envía { title, body, url } con el resumen de las alertas nuevas.
+self.addEventListener("push", (e) => {
+  let data = { title: "SST", body: "", url: "/notificaciones" };
+  try {
+    data = { ...data, ...e.data.json() };
+  } catch {
+    /* sin carga útil: se muestra el aviso genérico */
+  }
+  e.waitUntil(
+    self.registration.showNotification(data.title, {
+      body: data.body,
+      icon: "/icons/icon-192.png",
+      data: { url: data.url },
+    }),
+  );
+});
+self.addEventListener("notificationclick", (e) => {
+  e.notification.close();
+  const url = e.notification.data?.url || "/notificaciones";
+  e.waitUntil(
+    self.clients.matchAll({ type: "window", includeUncontrolled: true }).then((list) => {
+      const open = list.find((c) => c.url.startsWith(url));
+      return open ? open.focus() : self.clients.openWindow(url);
+    }),
+  );
+});

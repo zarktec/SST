@@ -106,6 +106,10 @@ Registro vivo: se agrega al detectarlo y se tacha (o mueve a "Resuelto") al cerr
 - [ ] Auditoría interna (`/auditorias`) y revisión por la dirección (`/revision-direccion`): las entradas de la revisión (accidentalidad, indicadores, auditorías, acciones, autoevaluación, plan anual + 3 campos manuales) son una lectura provisional del art. 2.2.4.6.31 del Decreto 1072 `TODO-NORMA`: falta confirmar la lista exacta con el experto e incluir la política y los objetivos cuando exista el módulo de política (Fase 6, gestión documental). Sin PDF de informe/acta firmada (Fase 6). Las listas de verificación no vienen de un catálogo oficial: texto libre o criterios de la última autoevaluación. Hay que garantizar que la alta dirección tenga el permiso `management_review:approve` (rol ALTA_DIRECCION).
 - [ ] Notificaciones: ninguna alerta de la Fase 5 (vencimientos de equipos, certificados, SOAT, licencias, simulacro anual, seguimiento de casos, batería psicosocial, auditoría atrasada) envía correo todavía; hoy son alertas en pantalla. Se resuelve con el servicio de notificaciones de la Fase 6.
 
+## Fase 6 (se agrega a medida que avanza)
+
+- [ ] Notificaciones (`/notificaciones`, `/calendario`): el barrido diario las genera a partir de ~35 alertas de los módulos de las Fases 4 y 5 (más evaluaciones médicas); faltan las de capacitación, EPP, comités (renovación), contratistas (seguridad social), autoevaluación y plan anual. Correo: solo al responsable SG-SST y administrador, de lo nuevo (crítico/atención) + resumen semanal los lunes; falta preferencias por usuario. **Push**: requiere `VAPID_PUBLIC_KEY`/`VAPID_PRIVATE_KEY` (`npx web-push generate-vapid-keys`) en Vercel; sin ellas el interruptor no aparece. El cron corre una vez al día (11:00 UTC): para avisos más oportunos, pasar a la cola (Inngest). Calendario: descarga .ics; falta suscripción por URL con token (Google Calendar la actualiza solo) y la agenda por sede.
+
 ## Resuelto
 
 - [x] Enlace repo–Vercel, Neon, SUPER_ADMIN, DNS en Cloudflare.

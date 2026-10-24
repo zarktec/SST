@@ -8,6 +8,8 @@ import { unevaluatedCount } from "@/modules/legal/service";
 import { assessmentReminderFor } from "@/modules/assessment/service";
 import { getOnboardingState, openAlerts } from "@/modules/company/service";
 import { ResolveAlertButton } from "./onboarding/forms";
+import { permissionList } from "@/core/rbac/can";
+import { unreadCount } from "@/modules/notifications/service";
 
 export const metadata = { title: "Inicio" };
 
@@ -26,6 +28,9 @@ export default async function TenantHome() {
     openAlerts(ctx.tenant.tenantId),
   ]);
   const pending = canSetup && !state.tenant.onboardingCompletedAt;
+  const unread = await unreadCount(ctx.tenant.tenantId, ctx.user.id, permissionList(perms)).catch(
+    () => 0,
+  );
   return (
     <div className="space-y-4">
       <h1 className="text-2xl font-bold">Hola, {ctx.user.name.split(" ")[0]}</h1>
@@ -71,6 +76,14 @@ export default async function TenantHome() {
             Continuar con el onboarding
           </Link>
         </Card>
+      )}
+      {unread > 0 && (
+        <Alert variant="warning">
+          Tienes {unread} alerta(s) sin leer.{" "}
+          <Link href="/notificaciones" className="underline">
+            Ver alertas
+          </Link>
+        </Alert>
       )}
       <Card>
         <CardTitle>Bienvenido a {ctx.tenant.tradeName}</CardTitle>
@@ -120,6 +133,14 @@ export default async function TenantHome() {
         </ul>
       </Card>
       <p className="text-sm">
+        <Link href="/notificaciones" className="text-primary inline-block min-h-11 py-2 underline">
+          Alertas
+        </Link>
+        {" · "}
+        <Link href="/calendario" className="text-primary inline-block min-h-11 py-2 underline">
+          Calendario de obligaciones
+        </Link>
+        {" · "}
         <Link
           href="/convivencia/radicar"
           className="text-primary inline-block min-h-11 py-2 underline"

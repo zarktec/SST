@@ -24,5 +24,7 @@ export default defineConfig({
     url: "http://localhost:3000/offline",
     reuseExistingServer: true,
     timeout: 60_000,
+    // El barrido diario (cron) se invoca en pruebas con este secreto.
+    env: { CRON_SECRET: "e2e-cron-secret" },
   },
 });
