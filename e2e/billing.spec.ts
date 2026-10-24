@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { TENANT, resetState } from "./helpers";
+import { TENANT, openModal, resetState } from "./helpers";
 
 test.beforeEach(resetState);
 
@@ -41,19 +41,20 @@ test("el administrador de la empresa ve Facturación y guarda sus datos fiscales
   await expect(page.getByRole("heading", { name: "Facturación", exact: true })).toBeVisible();
   await page.waitForLoadState("load");
   await expect(page.getByRole("heading", { name: "Mi plan" })).toBeVisible();
-  await page.getByLabel("Número de documento (sin puntos ni DV)").fill("900123456");
-  await page.getByLabel("Dígito de verificación (NIT)").fill("1");
-  await page.getByLabel("Razón social o nombre completo").fill("Empresa Demo SAS");
-  await page.getByLabel("Dirección", { exact: true }).fill("Calle 1 # 2-3");
-  await page.getByLabel("Municipio (código DANE de 5 dígitos)").fill("11001");
-  await page.getByLabel("Teléfono").fill("3001234567");
-  await page.getByLabel("Correo para recibir la factura electrónica").fill("fact@demo.test");
-  await page.getByLabel(/O-13/).check();
-  await page.getByRole("button", { name: "Guardar datos de facturación" }).click();
+  const dlg = await openModal(page, "Editar datos de facturación");
+  await dlg.getByLabel("Número de documento (sin puntos ni DV)").fill("900123456");
+  await dlg.getByLabel("Dígito de verificación (NIT)").fill("1");
+  await dlg.getByLabel("Razón social o nombre completo").fill("Empresa Demo SAS");
+  await dlg.getByLabel("Dirección", { exact: true }).fill("Calle 1 # 2-3");
+  await dlg.getByLabel("Municipio (código DANE de 5 dígitos)").fill("11001");
+  await dlg.getByLabel("Teléfono").fill("3001234567");
+  await dlg.getByLabel("Correo para recibir la factura electrónica").fill("fact@demo.test");
+  await dlg.getByLabel(/O-13/).check();
+  await dlg.getByRole("button", { name: "Guardar datos de facturación" }).click();
   await expect(
-    page.getByText(/Dígito de verificación incorrecto \(para este NIT es 8\)/),
+    dlg.getByText(/Dígito de verificación incorrecto \(para este NIT es 8\)/),
   ).toBeVisible();
-  await page.getByLabel("Dígito de verificación (NIT)").fill("8");
-  await page.getByRole("button", { name: "Guardar datos de facturación" }).click();
+  await dlg.getByLabel("Dígito de verificación (NIT)").fill("8");
+  await dlg.getByRole("button", { name: "Guardar datos de facturación" }).click();
   await expect(page.getByText("Datos de facturación guardados.")).toBeVisible();
 });

@@ -147,9 +147,10 @@ export default async function ElectionPage({
               <CardTitle>Conformar el comité</CardTitle>
               <div className="mt-3">
                 <FormModal
-                  title="Inscribir candidato"
-                  trigger="Inscribir candidato"
+                  title="Conformar el comité"
+                  trigger="Conformar el comité con el resultado"
                   triggerVariant="default"
+                  size="lg"
                 >
                   <ApplyForm
                     electionId={e.id}

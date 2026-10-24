@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { TENANT, resetState } from "./helpers";
+import { TENANT, openModal, resetState } from "./helpers";
 
 test.beforeEach(resetState);
 
@@ -14,25 +14,26 @@ test("emergencias: equipo, plan y simulacro con mejoras que crean acciones", asy
   await page.waitForLoadState("load");
   await expect(page.getByText(/Aún no hay simulacros realizados/)).toBeVisible();
 
-  await page.locator("summary", { hasText: "Agregar equipo" }).click();
-  await page.locator("#na-code").fill("EXT-01");
-  await page.locator("#na-location").fill("Pasillo principal");
-  await page.locator("#na-expiresOn").fill("2020-01-01");
-  await page.getByRole("button", { name: "Agregar equipo" }).click();
+  let dlg = await openModal(page, "Agregar equipo");
+  await dlg.locator("#na-code").fill("EXT-01");
+  await dlg.locator("#na-location").fill("Pasillo principal");
+  await dlg.locator("#na-expiresOn").fill("2020-01-01");
+  await dlg.getByRole("button", { name: "Agregar equipo" }).click();
   await expect(page.getByText("Extintor EXT-01")).toBeVisible();
   await expect(page.getByText(/Vencido/).first()).toBeVisible();
 
-  await page.locator("summary", { hasText: "Crear o actualizar un plan" }).click();
-  await page.locator("#pl-vulnerabilityAnalysis").fill("Edificio de dos pisos con una sola salida");
-  await page.getByRole("button", { name: "Guardar plan" }).click();
+  dlg = await openModal(page, "Crear o actualizar un plan");
+  await dlg.locator("#pl-vulnerabilityAnalysis").fill("Edificio de dos pisos con una sola salida");
+  await dlg.getByRole("button", { name: "Guardar plan" }).click();
   await expect(page.getByText("Edificio de dos pisos con una sola salida")).toBeVisible();
 
-  await page.locator("#nd-scenario").fill("Evacuación por incendio");
-  await page.getByRole("button", { name: "Programar", exact: true }).click();
-  await page.locator("summary", { hasText: "Registrar resultado" }).click();
-  await page.locator('[id^="dr-"][id$="-evaluation"]').fill("Evacuación completa en cinco minutos");
-  await page.locator('[id^="dr-"][id$="-improvements"]').fill("Señalizar la ruta de evacuación B");
-  await page.getByRole("button", { name: "Registrar simulacro" }).click();
+  dlg = await openModal(page, "Programar simulacro");
+  await dlg.locator("#nd-scenario").fill("Evacuación por incendio");
+  await dlg.getByRole("button", { name: "Programar", exact: true }).click();
+  dlg = await openModal(page, "Registrar resultado");
+  await dlg.locator('[id^="dr-"][id$="-evaluation"]').fill("Evacuación completa en cinco minutos");
+  await dlg.locator('[id^="dr-"][id$="-improvements"]').fill("Señalizar la ruta de evacuación B");
+  await dlg.getByRole("button", { name: "Registrar simulacro" }).click();
   await expect(page.getByText("Realizado")).toBeVisible();
   await expect(page.getByText(/Aún no hay simulacros realizados/)).toHaveCount(0);
 

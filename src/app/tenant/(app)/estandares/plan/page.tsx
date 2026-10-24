@@ -1,3 +1,4 @@
+import { formatDate } from "@/lib/format";
 import Link from "@/components/ui/link";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
@@ -49,14 +50,19 @@ export default async function ImprovementPlan() {
               <Badge variant="warning">Abierta</Badge>
             )}
           </div>
-          {canEdit ? (
-            <FormModal title="Editar" trigger="Editar">
-              <ImprovementForm it={i} />
-            </FormModal>
-          ) : (
-            <p className="text-sm">
-              {i.itemCode} · {i.description}
-            </p>
+          <p className="text-sm">
+            <span className="font-semibold">{i.itemCode}</span> · {i.description}
+          </p>
+          <p className="text-muted-foreground mt-1 text-xs">
+            {i.responsibleName ? `Responsable: ${i.responsibleName}` : "Sin responsable"}
+            {i.dueDate ? ` · vence ${formatDate(i.dueDate)}` : ""}
+          </p>
+          {canEdit && (
+            <div className="mt-2">
+              <FormModal title="Editar acción de mejoramiento" trigger="Editar">
+                <ImprovementForm it={i} />
+              </FormModal>
+            </div>
           )}
         </Card>
       ))}

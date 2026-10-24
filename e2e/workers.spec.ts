@@ -1,5 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
-import { TENANT, resetState } from "./helpers";
+import { TENANT, openModal, resetState } from "./helpers";
 
 test.beforeEach(resetState);
 
@@ -14,35 +14,37 @@ async function login(page: Page) {
 
 test("registrar, buscar, cargar masivamente y retirar personas", async ({ page }) => {
   await login(page);
-  await page.goto(`${TENANT}/personas/nuevo`);
-  await expect(page.getByRole("heading", { name: "Registrar persona" })).toBeVisible();
+  await page.goto(`${TENANT}/personas`);
   await page.waitForLoadState("load");
-  await page.getByLabel("Número de documento").fill("1032456789");
-  await page.getByLabel("Nombre completo").fill("Ana Pérez");
-  await page.getByLabel("Cargo").fill("Operaria");
-  await page.getByLabel("Fecha de ingreso").fill("2024-03-01");
-  await page.getByRole("button", { name: "Registrar" }).click();
+  let dlg = await openModal(page, "Registrar");
+  await dlg.getByLabel("Número de documento").fill("1032456789");
+  await dlg.getByLabel("Nombre completo").fill("Ana Pérez");
+  await dlg.getByLabel("Cargo").fill("Operaria");
+  await dlg.getByLabel("Fecha de ingreso").fill("2024-03-01");
+  await dlg.getByRole("button", { name: "Registrar" }).click();
   await expect(page.getByText("Persona registrada.")).toBeVisible();
   // Duplicado
-  await page.getByLabel("Número de documento").fill("1032456789");
-  await page.getByLabel("Nombre completo").fill("Otra Ana");
-  await page.getByLabel("Fecha de ingreso").fill("2024-03-01");
-  await page.getByRole("button", { name: "Registrar" }).click();
-  await expect(page.getByText("Ya existe una persona con ese documento")).toBeVisible();
+  dlg = await openModal(page, "Registrar");
+  await dlg.getByLabel("Número de documento").fill("1032456789");
+  await dlg.getByLabel("Nombre completo").fill("Otra Ana");
+  await dlg.getByLabel("Fecha de ingreso").fill("2024-03-01");
+  await dlg.getByRole("button", { name: "Registrar" }).click();
+  await expect(dlg.getByText("Ya existe una persona con ese documento")).toBeVisible();
+  await dlg.getByRole("button", { name: "Cerrar" }).click();
 
-  await page.goto(`${TENANT}/personas/importar`);
-  await page.waitForLoadState("load");
+  dlg = await openModal(page, "Carga masiva");
   const csv = [
     "vinculacion,tipo_documento,documento,nombre,fecha_ingreso",
     "Contratista,CC,2222222222,Luis Contratista,2024-02-01",
     "Empleado,CC,abc,Malo,2024-02-01",
   ].join("\n");
-  await page
+  await dlg
     .getByLabel(/Archivo CSV/)
     .setInputFiles({ name: "p.csv", mimeType: "text/csv", buffer: Buffer.from(csv) });
-  await page.getByRole("button", { name: "Importar" }).click();
-  await expect(page.getByText("Importadas: 1. Omitidas: 0. Con error: 1.")).toBeVisible();
-  await expect(page.getByText(/Fila 3/)).toBeVisible();
+  await dlg.getByRole("button", { name: "Importar" }).click();
+  await expect(dlg.getByText("Importadas: 1. Omitidas: 0. Con error: 1.")).toBeVisible();
+  await expect(dlg.getByText(/Fila 3/)).toBeVisible();
+  await dlg.getByRole("button", { name: "Cerrar" }).click();
 
   await page.goto(`${TENANT}/personas?q=1032456789`);
   await expect(page.getByRole("link", { name: /Ana Pérez/ })).toBeVisible();
@@ -50,13 +52,15 @@ test("registrar, buscar, cargar masivamente y retirar personas", async ({ page }
   await expect(page.getByText("Seguridad social de contratistas")).toBeVisible();
   await page.getByRole("link", { name: /Luis Contratista/ }).click();
   await page.waitForLoadState("load");
-  await page.getByRole("button", { name: "Registrar verificación" }).click();
+  dlg = await openModal(page, "Verificar seguridad social");
+  await dlg.getByRole("button", { name: "Registrar verificación" }).click();
   await expect(page.getByText("Verificación registrada.")).toBeVisible();
 
   await page.goto(`${TENANT}/personas?q=Ana`);
   await page.getByRole("link", { name: /Ana Pérez/ }).click();
   await page.waitForLoadState("load");
-  await page.getByLabel("Registrar retiro con fecha").fill("2025-01-31");
-  await page.getByRole("button", { name: "Registrar retiro" }).click();
+  dlg = await openModal(page, "Registrar retiro");
+  await dlg.getByLabel("Registrar retiro con fecha").fill("2025-01-31");
+  await dlg.getByRole("button", { name: "Registrar retiro" }).click();
   await expect(page.getByText("Retiro registrado.")).toBeVisible();
 });

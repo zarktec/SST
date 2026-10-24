@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { TENANT, resetState } from "./helpers";
+import { TENANT, openModal, resetState } from "./helpers";
 
 test.beforeEach(resetState);
 
@@ -17,8 +17,9 @@ test("usuarios: invitar, revocar y proteger al único administrador", async ({ p
   // El propio administrador no puede desactivarse ni cambiarse el rol desde la pantalla.
   await expect(page.getByRole("button", { name: "Desactivar" })).toHaveCount(0);
 
-  await page.getByLabel("Correo", { exact: true }).fill("nuevo@demo.test");
-  await page.getByRole("button", { name: "Enviar invitación" }).click();
+  const dlg = await openModal(page, "Invitar persona");
+  await dlg.getByLabel("Correo", { exact: true }).fill("nuevo@demo.test");
+  await dlg.getByRole("button", { name: "Enviar invitación" }).click();
   await expect(page.getByText("Invitación enviada.")).toBeVisible();
   const pending = page.getByRole("listitem").filter({ hasText: "nuevo@demo.test" });
   await expect(pending).toBeVisible();

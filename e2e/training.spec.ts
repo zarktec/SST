@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { TENANT, resetState } from "./helpers";
+import { TENANT, resetState, openModal } from "./helpers";
 
 test.beforeEach(resetState);
 
@@ -15,33 +15,36 @@ test("capacitación: sesión con QR, firma desde el celular sin sesión y certif
   await page.waitForURL(TENANT);
 
   // Persona
-  await page.goto(`${TENANT}/personas/nuevo`);
+  await page.goto(`${TENANT}/personas`);
   await page.waitForLoadState("load");
-  await page.getByLabel("Número de documento").fill("1032456789");
-  await page.getByLabel("Nombre completo").fill("Ana Pérez");
-  await page.getByLabel("Fecha de ingreso").fill("2024-03-01");
-  await page.getByRole("button", { name: "Registrar" }).click();
+  const personDlg = await openModal(page, "Registrar");
+  await personDlg.getByLabel("Número de documento").fill("1032456789");
+  await personDlg.getByLabel("Nombre completo").fill("Ana Pérez");
+  await personDlg.getByLabel("Fecha de ingreso").fill("2024-03-01");
+  await personDlg.getByRole("button", { name: "Registrar" }).click();
   await expect(page.getByText("Persona registrada.")).toBeVisible();
 
   // Curso con evaluación
   await page.goto(`${TENANT}/capacitacion/cursos`);
   await page.waitForLoadState("load");
-  await page.getByLabel("Nombre del curso").fill("Inducción SST");
-  await page.getByLabel(/Puntaje mínimo/).fill("70");
-  await page.getByRole("button", { name: "Crear curso" }).click();
+  let dlg = await openModal(page, "Nuevo curso");
+  await dlg.getByLabel("Nombre del curso").fill("Inducción SST");
+  await dlg.getByLabel(/Puntaje mínimo/).fill("70");
+  await dlg.getByRole("button", { name: "Crear curso" }).click();
   await expect(page.getByText("Curso guardado.")).toBeVisible();
-  await page.getByText("Editar").click();
-  await page
+  dlg = await openModal(page, "Editar");
+  await dlg
     .getByLabel(/Evaluación \(una pregunta/)
     .fill("¿Qué es un EPP?\n* Elemento de protección personal\nUn juego");
-  await page.getByRole("button", { name: "Guardar evaluación" }).click();
+  await dlg.getByRole("button", { name: "Guardar evaluación" }).click();
   await expect(page.getByText("Evaluación guardada (1 preguntas).")).toBeVisible();
 
   // Sesión
   await page.goto(`${TENANT}/capacitacion`);
   await page.waitForLoadState("load");
-  await page.getByLabel("Fecha").fill(new Date().toISOString().slice(0, 10));
-  await page.getByRole("button", { name: "Programar sesión" }).click();
+  dlg = await openModal(page, "Programar sesión");
+  await dlg.getByLabel("Fecha").fill(new Date().toISOString().slice(0, 10));
+  await dlg.getByRole("button", { name: "Programar sesión" }).click();
   await expect(page.getByText("Sesión programada.")).toBeVisible();
   await page
     .getByRole("link", { name: /Inducción SST/ })

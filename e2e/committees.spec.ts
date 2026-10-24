@@ -1,7 +1,7 @@
 import { expect, test } from "@playwright/test";
 import { readFileSync } from "node:fs";
 import { Pool } from "pg";
-import { TENANT, resetState } from "./helpers";
+import { TENANT, resetState, openModal } from "./helpers";
 
 test.beforeEach(async () => {
   await resetState();
@@ -22,35 +22,35 @@ test("elección electrónica del COPASST: candidatos, voto secreto con enlace pe
   await page.waitForURL(TENANT);
 
   // Personal por carga masiva
-  await page.goto(`${TENANT}/personas/importar`);
+  await page.goto(`${TENANT}/personas`);
   await page.waitForLoadState("load");
+  const importDlg = await openModal(page, "Carga masiva");
   const csv = [
     "vinculacion,tipo_documento,documento,nombre,fecha_ingreso",
     ...["Ana", "Beto", "Carla", "Diego", "Elena", "Fabio"].map(
       (n, i) => `Empleado,CC,${2000000000 + i},${n} Prueba,2024-01-01`,
     ),
   ].join("\n");
-  await page
+  await importDlg
     .getByLabel(/Archivo CSV/)
     .setInputFiles({ name: "p.csv", mimeType: "text/csv", buffer: Buffer.from(csv) });
-  await page.getByRole("button", { name: "Importar" }).click();
+  await importDlg.getByRole("button", { name: "Importar" }).click();
   await expect(page.getByText("Importadas: 6.")).toBeVisible();
 
   // Convocatoria
   await page.goto(`${TENANT}/comites`);
   await page.waitForLoadState("load");
-  await page.getByLabel("Cierre de la votación").fill("2099-12-31");
-  await page.getByRole("button", { name: "Convocar elección" }).click();
+  const electionDlg = await openModal(page, "Convocar elección");
+  await electionDlg.getByLabel("Cierre de la votación").fill("2099-12-31");
+  await electionDlg.getByRole("button", { name: "Convocar elección" }).click();
   await page.waitForURL(/\/comites\/elecciones\//);
   await page.waitForLoadState("load");
 
   // Candidatos
-  await page.getByText("Inscribir candidato").click();
-  await page.getByRole("button", { name: "Inscribir a Ana Prueba" }).click();
+  let dlg = await openModal(page, "Inscribir candidato");
+  await dlg.getByRole("button", { name: "Inscribir a Ana Prueba" }).click();
   await expect(page.getByRole("heading", { name: "Candidatos (1)" })).toBeVisible();
-  const beto = page.getByRole("button", { name: "Inscribir a Beto Prueba" });
-  if (!(await beto.isVisible())) await page.getByText("Inscribir candidato").click();
-  await beto.click();
+  await dlg.getByRole("button", { name: "Inscribir a Beto Prueba" }).click();
   await expect(page.getByRole("heading", { name: "Candidatos (2)" })).toBeVisible();
   await page.reload();
   await page.waitForLoadState("load");
@@ -99,7 +99,8 @@ test("elección electrónica del COPASST: candidatos, voto secreto con enlace pe
   await expect(page.getByText("Ana Prueba · 2 votos")).toBeVisible();
 
   // Conformación con representante del empleador
-  await page.getByLabel("Principal del empleador: Elena Prueba").check();
-  await page.getByRole("button", { name: "Conformar el comité con el resultado" }).click();
+  dlg = await openModal(page, "Conformar el comité con el resultado");
+  await dlg.getByLabel("Principal del empleador: Elena Prueba").check();
+  await dlg.getByRole("button", { name: "Conformar el comité con el resultado" }).click();
   await expect(page.getByText("El comité ya fue conformado con este resultado.")).toBeVisible();
 });

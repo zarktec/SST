@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { TENANT, resetState } from "./helpers";
+import { TENANT, openModal, resetState } from "./helpers";
 
 test.beforeEach(resetState);
 
@@ -16,10 +16,11 @@ test("inventario químico: alerta de almacenamiento incompatible y revisión de 
   await page.waitForLoadState("load");
 
   const add = async (name: string, picto: string) => {
-    await page.locator("#ns-name").fill(name);
-    await page.locator("#ns-location").fill("Bodega A");
-    await page.locator(`#ns-p_${picto}`).check();
-    await page.getByRole("button", { name: "Agregar sustancia" }).click();
+    const dlg = await openModal(page, "Agregar sustancia");
+    await dlg.locator("#ns-name").fill(name);
+    await dlg.locator("#ns-location").fill("Bodega A");
+    await dlg.locator(`#ns-p_${picto}`).check();
+    await dlg.getByRole("button", { name: "Agregar sustancia" }).click();
     await expect(page.getByText(name, { exact: true })).toBeVisible();
   };
   await add("Acetona", "GHS02");
@@ -28,7 +29,7 @@ test("inventario químico: alerta de almacenamiento incompatible y revisión de 
   await expect(page.getByText(/Inflamable con Comburente/)).toBeVisible();
   await expect(page.getByText("Sin ficha de datos de seguridad (FDS)").first()).toBeVisible();
 
-  await page.locator("summary", { hasText: "Editar o retirar" }).first().click();
-  await page.getByRole("button", { name: "Registrar revisión" }).first().click();
+  const dlg = await openModal(page, "Editar o retirar");
+  await dlg.getByRole("button", { name: "Registrar revisión" }).click();
   await expect(page.getByText("Sin ficha de datos de seguridad (FDS)")).toHaveCount(1);
 });

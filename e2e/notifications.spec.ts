@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { TENANT, resetState } from "./helpers";
+import { TENANT, openModal, resetState } from "./helpers";
 
 test.beforeEach(resetState);
 
@@ -15,10 +15,11 @@ test("alertas: una acción vencida genera la alerta, se marca leída y aparece e
 
   await page.goto(`${TENANT}/acciones`);
   await page.waitForLoadState("load");
-  await page.getByLabel("Acción", { exact: true }).fill("Reparar la baranda de la escalera");
-  await page.getByLabel("Responsable").fill("Luis Gómez");
-  await page.getByLabel("Fecha límite").fill("2020-01-01");
-  await page.getByRole("button", { name: "Crear acción" }).click();
+  const dlg = await openModal(page, "Nueva acción");
+  await dlg.getByLabel("Acción", { exact: true }).fill("Reparar la baranda de la escalera");
+  await dlg.getByLabel("Responsable").fill("Luis Gómez");
+  await dlg.getByLabel("Fecha límite").fill("2020-01-01");
+  await dlg.getByRole("button", { name: "Crear acción" }).click();
   await expect(page.getByText("Acción creada.")).toBeVisible();
 
   // El barrido diario (cron) crea las notificaciones; aquí se invoca con el secreto del cron.

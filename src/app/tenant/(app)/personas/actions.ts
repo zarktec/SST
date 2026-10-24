@@ -89,6 +89,7 @@ export async function importWorkersAction(_p: FormState, f: FormData): Promise<F
       ok: r.imported > 0 || r.errors.length === 0,
       message: `Importadas: ${r.imported}. Omitidas: ${r.skipped.length}. Con error: ${r.errors.length}.`,
       details: [...r.skipped, ...r.errors].map((e) => `Fila ${e.row}: ${e.message}`),
+      keepOpen: r.skipped.length + r.errors.length > 0,
     };
   } catch (e) {
     return fail(e, f);

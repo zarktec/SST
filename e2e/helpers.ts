@@ -245,3 +245,14 @@ export async function seedStandardsCatalog() {
     await pool.end();
   }
 }
+
+/** Abre el modal de un formulario (botón disparador) y devuelve el diálogo para acotar los campos. */
+export async function openModal(page: Page, trigger: string | RegExp, nth = 0) {
+  await page
+    .getByRole("button", { name: trigger, exact: typeof trigger === "string" })
+    .nth(nth)
+    .click();
+  const dialog = page.getByRole("dialog");
+  await expect(dialog).toBeVisible();
+  return dialog;
+}

@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { TENANT, resetState } from "./helpers";
+import { TENANT, openModal, resetState } from "./helpers";
 
 test.beforeEach(resetState);
 
@@ -12,16 +12,18 @@ test("reporte anónimo desde el celular y conversión a acción por el revisor",
   await page.waitForURL(TENANT);
   await page.goto(`${TENANT}/reportes`);
   await page.waitForLoadState("load");
-  await page.getByLabel("Descripción").fill("Extintor sin carga en el pasillo");
-  await page.getByLabel("Lugar (opcional)").fill("Pasillo 3");
-  await page.getByLabel(/Enviar de forma anónima/).check();
-  await page.getByRole("button", { name: "Enviar reporte" }).click();
+  let dlg = await openModal(page, "Reportar acto o condición insegura");
+  await dlg.getByLabel("Descripción").fill("Extintor sin carga en el pasillo");
+  await dlg.getByLabel("Lugar (opcional)").fill("Pasillo 3");
+  await dlg.getByLabel(/Enviar de forma anónima/).check();
+  await dlg.getByRole("button", { name: "Enviar reporte" }).click();
   await expect(page.getByText("Extintor sin carga en el pasillo")).toBeVisible();
   await expect(page.getByText(/· anónimo/)).toBeVisible();
-  await page.getByLabel("Acción", { exact: true }).fill("Recargar el extintor del pasillo 3");
-  await page.getByLabel("Responsable").fill("Luis Gómez");
-  await page.getByLabel("Fecha límite").fill("2030-01-01");
-  await page.getByRole("button", { name: "Registrar revisión" }).click();
+  dlg = await openModal(page, "Revisar");
+  await dlg.getByLabel("Acción", { exact: true }).fill("Recargar el extintor del pasillo 3");
+  await dlg.getByLabel("Responsable").fill("Luis Gómez");
+  await dlg.getByLabel("Fecha límite").fill("2030-01-01");
+  await dlg.getByRole("button", { name: "Registrar revisión" }).click();
   await expect(page.getByRole("link", { name: "Ver la acción" })).toBeVisible();
   await expect(page.getByText("Con acción")).toBeVisible();
 });

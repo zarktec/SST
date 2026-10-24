@@ -40,7 +40,8 @@ test("usuario de la empresa entra al panel y ve la navegación adecuada al viewp
   await page.getByRole("button", { name: "Ingresar" }).click();
   await expect(page.getByRole("heading", { name: "Hola, Ana" })).toBeVisible();
   await noHorizontalScroll(page);
-  const navs = page.getByRole("navigation", { name: "Principal" });
+  // Escritorio: barra lateral "Principal"; móvil: barra inferior "Acceso rápido".
+  const navs = page.getByRole("navigation", { name: /^(Principal|Acceso rápido)$/ });
   const visible = [];
   for (const n of await navs.all()) if (await n.isVisible()) visible.push(n);
   expect(visible).toHaveLength(1);

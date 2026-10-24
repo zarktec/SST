@@ -15,8 +15,8 @@ export function useActionState(
   const close = useModalClose();
   const state = result[0];
   useEffect(() => {
-    // Fuera de un modal el formulario ya muestra su propio mensaje: solo dentro se avisa y se cierra.
-    if (state?.ok && close) {
+    // Fuera de un modal el formulario ya muestra su propio mensaje: solo dentro se avisa y se cierra (salvo `keepOpen`, como el reporte de una carga masiva).
+    if (state?.ok && !state.keepOpen && close) {
       toast(state.message);
       close();
     }

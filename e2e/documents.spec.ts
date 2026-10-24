@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 import { Pool } from "pg";
-import { TENANT, resetState } from "./helpers";
+import { TENANT, openModal, resetState } from "./helpers";
 
 test.beforeEach(resetState);
 
@@ -17,13 +17,14 @@ test("documentos: política en borrador, aprobación por otra persona con firma 
   await page.waitForLoadState("load");
   await expect(page.getByText(/Aún no hay una política de SST aprobada/)).toBeVisible();
 
-  await page.locator("#nd-code").fill("POL-001");
-  await page.locator("#nd-title").fill("Política de seguridad y salud en el trabajo");
-  await page.locator("#nd-kind").selectOption("policy");
-  await page
+  let dlg = await openModal(page, "Crear documento");
+  await dlg.locator("#nd-code").fill("POL-001");
+  await dlg.locator("#nd-title").fill("Política de seguridad y salud en el trabajo");
+  await dlg.locator("#nd-kind").selectOption("policy");
+  await dlg
     .locator("#nd-body")
     .fill("La empresa se compromete a proteger la seguridad y la salud de todos sus trabajadores.");
-  await page.getByRole("button", { name: "Crear documento" }).click();
+  await dlg.getByRole("button", { name: "Crear documento" }).click();
   await expect(page.getByText("Borrador v1")).toBeVisible();
   // Quien redacta no puede aprobar su propio documento.
   await expect(
@@ -37,8 +38,9 @@ test("documentos: política en borrador, aprobación por otra persona con firma 
   );
   await pool.end();
   await page.reload();
-  await page.locator("summary", { hasText: "Aprobar el borrador v1" }).click();
-  const canvas = page.getByLabel("Área para firmar");
+  dlg = await openModal(page, "Aprobar el borrador");
+  await page.waitForTimeout(300); // animación de entrada del modal
+  const canvas = dlg.getByLabel("Área para firmar");
   await canvas.scrollIntoViewIfNeeded();
   const box = (await canvas.boundingBox())!;
   await page.mouse.move(box.x + 20, box.y + 40);
@@ -46,14 +48,14 @@ test("documentos: política en borrador, aprobación por otra persona con firma 
   for (let i = 1; i <= 12; i++)
     await page.mouse.move(box.x + 20 + i * 12, box.y + 40 + (i % 3) * 25);
   await page.mouse.up();
-  await page.getByRole("button", { name: "Aprobar con mi firma" }).click();
+  await dlg.getByRole("button", { name: "Aprobar con mi firma" }).click();
   await expect(page.getByText(/v1 · vigente desde/)).toBeVisible();
   await expect(page.getByText(/Aún no hay una política de SST aprobada/)).toHaveCount(0);
 
-  await page.locator("summary", { hasText: "Crear una nueva versión" }).click();
-  await page
+  dlg = await openModal(page, "Crear una nueva versión");
+  await dlg
     .locator('[id^="dr-"][id$="-body"]')
     .fill("Texto actualizado de la política de seguridad y salud en el trabajo.");
-  await page.getByRole("button", { name: "Crear nueva versión" }).click();
+  await dlg.getByRole("button", { name: "Crear nueva versión" }).click();
   await expect(page.getByText("Borrador v2")).toBeVisible();
 });

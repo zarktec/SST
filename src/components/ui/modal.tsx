@@ -44,7 +44,6 @@ export function FormModal({
   useEffect(() => {
     const d = ref.current;
     if (!d) return;
-    if (open && !d.open) d.showModal();
     if (!open && d.open) d.close();
   }, [open]);
 
@@ -54,7 +53,11 @@ export function FormModal({
         variant={triggerVariant}
         size={triggerSize}
         className={triggerClassName}
-        onClick={() => setOpen(true)}
+        onClick={() => {
+          // El diálogo se muestra antes de montar el contenido: los campos que miden su tamaño (la firma) lo ven ya visible.
+          ref.current?.showModal();
+          setOpen(true);
+        }}
         aria-haspopup="dialog"
       >
         {trigger}

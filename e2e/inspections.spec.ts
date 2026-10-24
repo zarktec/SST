@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { TENANT, resetState } from "./helpers";
+import { TENANT, openModal, resetState } from "./helpers";
 
 test.beforeEach(resetState);
 
@@ -15,12 +15,13 @@ async function login(page: import("@playwright/test").Page) {
 async function createTemplate(page: import("@playwright/test").Page) {
   await page.goto(`${TENANT}/inspecciones`);
   await page.waitForLoadState("load");
-  await page.getByLabel("Nombre", { exact: true }).fill("Inspección locativa");
-  await page.getByLabel("Categoría").fill("Locativa");
-  await page
+  const dlg = await openModal(page, "Nueva plantilla");
+  await dlg.getByLabel("Nombre", { exact: true }).fill("Inspección locativa");
+  await dlg.getByLabel("Categoría").fill("Locativa");
+  await dlg
     .getByLabel(/Ítems \(uno por línea/)
     .fill("* Pisos secos y sin obstáculos\nSalidas de emergencia libres");
-  await page.getByRole("button", { name: "Guardar plantilla" }).click();
+  await dlg.getByRole("button", { name: "Guardar plantilla" }).click();
   await expect(page.getByRole("link", { name: /Inspección locativa/ })).toBeVisible();
 }
 
