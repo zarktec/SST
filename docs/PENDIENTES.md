@@ -120,6 +120,11 @@ Registro vivo: se agrega al detectarlo y se tacha (o mueve a "Resuelto") al cerr
 - [ ] Búsqueda global (`/buscar`): palabra clave en 8 módulos con filtro por permisos, sin salud ni quejas ni documentos de identidad (cifrados). Faltan los filtros guardados, búsqueda por sede y de capacitación/EPP/contratistas.
 - [ ] Multi-sede: el filtro por sede/centro de trabajo no está en todos los módulos (hoy solo donde la sede es un dato del registro).
 
+## Fase 7 (se agrega a medida que avanza)
+
+- [x] Seguridad: CSP con nonce por solicitud (sin `unsafe-inline`/`unsafe-eval` en scripts), encabezados, límite de intentos compartido entre instancias (asistencia, votación, registro), `pnpm audit` sin vulnerabilidades (overrides de `zod` y `esbuild` transitivos). Pendiente: Sentry (`SENTRY_DSN`) para errores en producción; escaneo de dependencias en CI de forma periódica; prueba de penetración externa antes de producción.
+- [ ] CSP: `style-src` conserva `'unsafe-inline'` (atributos `style` de React y variables de marca blanca). Para endurecerlo habría que mover los estilos a clases y generar la hoja de marca con nonce.
+
 ## Resuelto
 
 - [x] Enlace repo–Vercel, Neon, SUPER_ADMIN, DNS en Cloudflare.

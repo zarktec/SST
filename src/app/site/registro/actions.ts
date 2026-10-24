@@ -1,6 +1,8 @@
 "use server";
 import { and, eq, gt, sql } from "drizzle-orm";
+import { headers } from "next/headers";
 import { schema, systemDb, withPlatform } from "@/core/db";
+import { tooManyAttempts } from "@/core/security/rate-limit";
 import { getPlanByKey } from "@/modules/platform/plans/service";
 import {
   TenantError,
@@ -16,6 +18,10 @@ export type SignupState = { ok: boolean; message: string; host?: string } | null
  */
 export async function signupAction(_p: SignupState, f: FormData): Promise<SignupState> {
   if (String(f.get("website") ?? "")) return { ok: true, message: "Revisa tu correo." }; // honeypot
+  // Freno por IP: 5 registros por hora desde una misma dirección.
+  const ip = (await headers()).get("x-forwarded-for")?.split(",")[0]?.trim() ?? "";
+  if (await tooManyAttempts(`signup:${ip}`, 5, 3600))
+    return { ok: false, message: "Demasiados intentos desde tu conexión. Intenta más tarde." };
   const parsed = createTenantSchema.safeParse({
     slug: f.get("slug"),
     legalName: f.get("legalName"),

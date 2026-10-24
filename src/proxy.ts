@@ -1,5 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { classifyHost } from "@/core/tenancy/hosts";
+import { buildCsp, newNonce } from "@/core/security/csp";
+import { classifyHost, protocolFor } from "@/core/tenancy/hosts";
 import { resolveTenantByHost } from "@/core/tenancy/resolve";
 
 /**
@@ -16,8 +17,29 @@ export async function proxy(req: NextRequest) {
   if (INTERNAL.some((p) => pathname === p || pathname.startsWith(`${p}/`))) {
     return new NextResponse("Not found", { status: 404 });
   }
+
+  // CSP con nonce por solicitud: el nonce viaja en los encabezados de la solicitud (el layout raíz lo lee para sus scripts en
+  // línea y Next lo aplica a los suyos) y la política en la respuesta.
+  const nonce = newNonce();
+  const csp = buildCsp({
+    nonce,
+    dev: process.env.NODE_ENV === "development",
+    https: protocolFor(host) === "https",
+  });
+  const headers = new Headers(req.headers);
+  // Encabezados internos: nunca se confía en los que envía el cliente.
+  headers.delete("x-tenant-id");
+  headers.delete("x-tenant-slug");
+  headers.set("x-nonce", nonce);
+  headers.set("content-security-policy", csp);
+  const secure = <T extends NextResponse>(res: T): T => {
+    res.headers.set("Content-Security-Policy", csp);
+    return res;
+  };
+
   // Rutas de API, assets de la PWA y offline son comunes a todos los hosts.
-  if (pathname.startsWith("/api/") || pathname === "/offline") return NextResponse.next();
+  if (pathname.startsWith("/api/") || pathname === "/offline")
+    return secure(NextResponse.next({ request: { headers } }));
 
   const h = classifyHost(host);
   const prefix =
@@ -29,23 +51,18 @@ export async function proxy(req: NextRequest) {
           ? "/central"
           : "/tenant";
 
+  const url = req.nextUrl.clone();
+  url.pathname = `${prefix}${pathname === "/" ? "" : pathname}`;
   if (h.kind === "subdomain" || h.kind === "custom") {
     const tenant = await resolveTenantByHost(host);
     if (!tenant)
       return new NextResponse("Esta empresa no existe o su dominio no está verificado.", {
         status: 404,
       });
-    const headers = new Headers(req.headers);
     headers.set("x-tenant-id", tenant.tenantId);
     headers.set("x-tenant-slug", tenant.slug);
-    const url = req.nextUrl.clone();
-    url.pathname = `${prefix}${pathname === "/" ? "" : pathname}`;
-    return NextResponse.rewrite(url, { request: { headers } });
   }
-
-  const url = req.nextUrl.clone();
-  url.pathname = `${prefix}${pathname === "/" ? "" : pathname}`;
-  return NextResponse.rewrite(url);
+  return secure(NextResponse.rewrite(url, { request: { headers } }));
 }
 
 export const config = {

@@ -1,6 +1,7 @@
 "use server";
 import { headers } from "next/headers";
 import { currentHost } from "@/core/auth/session";
+import { tooManyAttempts } from "@/core/security/rate-limit";
 import { resolveTenantByHost } from "@/core/tenancy/resolve";
 import { TrainingError, signAttendanceByToken } from "@/modules/training/service";
 
@@ -10,20 +11,6 @@ export type AttendanceResult = {
   passed?: boolean;
   score?: number | null;
 };
-
-/** Freno por IP y sesión (en memoria, por instancia): frena la adivinanza de documentos desde un mismo dispositivo. */
-const attempts = new Map<string, { n: number; reset: number }>();
-const MAX_ATTEMPTS = 8;
-function tooMany(key: string): boolean {
-  const now = Date.now();
-  const cur = attempts.get(key);
-  if (!cur || cur.reset < now) {
-    attempts.set(key, { n: 1, reset: now + 10 * 60_000 });
-    return false;
-  }
-  cur.n++;
-  return cur.n > MAX_ATTEMPTS;
-}
 
 export async function signAttendanceAction(input: {
   token: string;
@@ -35,7 +22,8 @@ export async function signAttendanceAction(input: {
   const ip = h.get("x-forwarded-for")?.split(",")[0]?.trim() ?? null;
   const tenant = await resolveTenantByHost(await currentHost());
   if (!tenant) return { ok: false, message: "Empresa no encontrada." };
-  if (tooMany(`${ip}:${input.token}`))
+  // Freno compartido entre instancias: frena la adivinanza de documentos desde un mismo dispositivo (8 intentos / 10 min).
+  if (await tooManyAttempts(`attendance:${ip}:${input.token}`, 8, 600))
     return {
       ok: false,
       message: "Demasiados intentos. Espera unos minutos o pide ayuda al capacitador.",
