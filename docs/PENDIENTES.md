@@ -130,7 +130,7 @@ Registro vivo: se agrega al detectarlo y se tacha (o mueve a "Resuelto") al cerr
 - [x] Cola offline: carrera entre la sincronización de la pantalla anterior y la recarga de la lista (la lista podía quedar vieja tras reconectar). Ahora la pantalla nueva se refresca una vez si detecta una sincronización reciente.
 - [ ] CSP: `style-src` conserva `'unsafe-inline'` (atributos `style` de React y variables de marca blanca). Para endurecerlo habría que mover los estilos a clases y generar la hoja de marca con nonce.
 - [x] Documentación: `README.md`, `docs/OPERACION.md` (variables, despliegue, restauración PITR, lista previa a producción) y `docs/GUIA_USUARIO.md`.
-- [x] Gestión de usuarios de la empresa (`/usuarios`): invitar por correo con rol, revocar, cambiar rol, desactivar/activar; siempre queda un administrador activo; auditado. Pendiente: prueba E2E de la pantalla; editor de permisos por rol personalizado; acceso temporal para auditores externos.
+- [x] Gestión de usuarios de la empresa (`/usuarios`): invitar por correo con rol, revocar, cambiar rol, desactivar/activar; siempre queda un administrador activo; auditado. Pendiente: editor de permisos por rol personalizado; acceso temporal para auditores externos.
 
 ## Resuelto
 
