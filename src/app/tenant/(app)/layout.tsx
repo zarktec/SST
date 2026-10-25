@@ -5,6 +5,8 @@ import { requireTenantMember } from "@/core/auth/session";
 import { withTenant } from "@/core/db";
 import { can, loadPermissions, permissionList } from "@/core/rbac/can";
 import { tp } from "@/core/tenancy/base-path";
+import { TENANT_ARTICLES } from "@/modules/help/content";
+import { routeMap } from "@/modules/help/types";
 import { unreadCount } from "@/modules/notifications/service";
 
 export default async function TenantAppLayout({ children }: LayoutProps<"/tenant">) {
@@ -45,6 +47,7 @@ export default async function TenantAppLayout({ children }: LayoutProps<"/tenant
       searchAction={await tp("/buscar")}
       alertsHref="/notificaciones"
       unread={unread}
+      helpMap={routeMap(TENANT_ARTICLES)}
       banner={
         ctx.readOnly ? (
           <Alert variant="warning" className="rounded-none border-x-0">

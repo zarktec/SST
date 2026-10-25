@@ -7,14 +7,14 @@ informes regulatorios y portal del trabajador. Facturación con Wompi y Siigo.
 
 ## Documentación
 
-| Documento                                                          | Para quién                       |
-| ------------------------------------------------------------------ | -------------------------------- |
-| [`docs/PRODUCT_SPEC.md`](docs/PRODUCT_SPEC.md)                     | Qué se construye y por qué       |
-| [`docs/ARQUITECTURA_PROPUESTA.md`](docs/ARQUITECTURA_PROPUESTA.md) | Arquitectura aprobada            |
-| [`docs/GUIA_USUARIO.md`](docs/GUIA_USUARIO.md)                     | Usuarios de las empresas         |
-| [`docs/OPERACION.md`](docs/OPERACION.md)                           | Quien despliega y opera          |
-| [`docs/PENDIENTES.md`](docs/PENDIENTES.md)                         | Decisiones abiertas y pendientes |
-| [`CLAUDE.md`](CLAUDE.md)                                           | Convenciones y estado por fase   |
+| Documento                                                          | Para quién                                           |
+| ------------------------------------------------------------------ | ---------------------------------------------------- |
+| [`docs/PRODUCT_SPEC.md`](docs/PRODUCT_SPEC.md)                     | Qué se construye y por qué                           |
+| [`docs/ARQUITECTURA_PROPUESTA.md`](docs/ARQUITECTURA_PROPUESTA.md) | Arquitectura aprobada                                |
+| [`docs/GUIA_USUARIO.md`](docs/GUIA_USUARIO.md)                     | Guía de usuario (vive dentro de la app, en `/ayuda`) |
+| [`docs/OPERACION.md`](docs/OPERACION.md)                           | Quien despliega y opera                              |
+| [`docs/PENDIENTES.md`](docs/PENDIENTES.md)                         | Decisiones abiertas y pendientes                     |
+| [`CLAUDE.md`](CLAUDE.md)                                           | Convenciones y estado por fase                       |
 
 ## Inicio rápido (desarrollo)
 

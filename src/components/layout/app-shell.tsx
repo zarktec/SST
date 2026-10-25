@@ -3,9 +3,11 @@ import {
   Activity,
   BarChart3,
   Bell,
+  BookOpen,
   Building2,
   CalendarCheck,
   CalendarDays,
+  CircleHelp,
   Car,
   ClipboardCheck,
   Construction,
@@ -96,6 +98,8 @@ const ICONS: Record<
   FolderOpen,
   Lock,
   CalendarDays,
+  BookOpen,
+  CircleHelp,
 };
 
 export function NavIcon({ name, className }: { name: IconName; className?: string }) {
@@ -117,6 +121,7 @@ export function AppShell({
   searchAction,
   alertsHref,
   unread = 0,
+  helpMap,
   children,
   banner,
 }: {
@@ -130,6 +135,8 @@ export function AppShell({
   searchAction?: string;
   alertsHref?: string;
   unread?: number;
+  /** Primera ruta de cada módulo → artículo de ayuda; si se pasa, la barra superior muestra el botón de ayuda. */
+  helpMap?: Record<string, string>;
   children: React.ReactNode;
   banner?: React.ReactNode;
 }) {
@@ -145,6 +152,17 @@ export function AppShell({
     if (menu && !d.open) d.showModal();
     if (!menu && d.open) d.close();
   }, [menu]);
+
+  const helpSlug = helpMap?.[pathname.split("/")[1] ?? ""];
+  const help = helpMap && (
+    <Link
+      href={helpSlug ? `/ayuda/${helpSlug}` : "/ayuda"}
+      aria-label={helpSlug ? "Ayuda sobre esta pantalla" : "Centro de ayuda"}
+      className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-md hover:bg-[var(--shell-hover)]"
+    >
+      <CircleHelp className="size-5" aria-hidden />
+    </Link>
+  );
 
   const bell = alertsHref && (
     <Link
@@ -250,6 +268,7 @@ export function AppShell({
           <span className="md:hidden">{brand}</span>
           <div className="hidden flex-1 md:block">{search}</div>
           <div className="ml-auto flex items-center gap-1">
+            {help}
             {bell}
             <ThemeToggle className="hover:bg-[var(--shell-hover)]" />
           </div>

@@ -36,7 +36,9 @@ export type IconName =
   | "ListChecks"
   | "FolderOpen"
   | "Lock"
-  | "CalendarDays";
+  | "CalendarDays"
+  | "BookOpen"
+  | "CircleHelp";
 
 export type NavItem = { href: string; label: string; icon: IconName };
 export type NavGroup = { label: string; items: NavItem[] };
@@ -263,6 +265,7 @@ export const MODULE_GROUPS: { label: string; items: ModuleLink[] }[] = [
         icon: "CalendarDays",
         hint: "Obligaciones y fechas",
       },
+      { href: "/ayuda", label: "Ayuda", icon: "BookOpen", hint: "Cómo usar cada módulo" },
     ],
   },
 ];
