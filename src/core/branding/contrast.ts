@@ -72,13 +72,20 @@ export type BrandCheck = {
 };
 
 export const LIGHT_BG = "#ffffff";
-export const DARK_BG = "#060b1a";
+export const DARK_BG = "#0a0a0a";
 
 /** Identidad ZarK: valores por defecto de toda empresa que no define su propia marca. */
 export const ZARK_BRAND: BrandInput = {
   primary: "#001953",
   secondary: "#001953",
   accent: "#ff5800",
+};
+
+/** Paleta que tenía el tema oscuro antes de la identidad ZarK: el tema oscuro de una empresa sin marca propia la conserva. */
+export const DARK_DEFAULT_BRAND: BrandInput = {
+  primary: "#0f766e",
+  secondary: "#1e293b",
+  accent: "#f59e0b",
 };
 
 /** Verificación AA de la paleta de la empresa (se guarda en tenant_branding.contrast_report). */
@@ -112,27 +119,38 @@ export function brandCssVars(brand: BrandInput): {
   light: Record<string, string>;
   dark: Record<string, string>;
 } {
-  const vars = (bg: string): Record<string, string> => {
-    // Un primario oscuro (p. ej. el azul de ZarK) no se ve sobre fondo oscuro: ahí se usa el acento, o el primario aclarado.
-    const primary =
-      bg === DARK_BG && contrastRatio(brand.primary, bg) < AA_LARGE
-        ? contrastRatio(brand.accent, bg) >= AA_LARGE
-          ? brand.accent
-          : suggestAccessible(brand.primary, bg, AA_LARGE)
-        : brand.primary;
-    return {
-      "--primary": primary,
-      "--primary-foreground": readableOn(primary),
-      "--secondary": brand.secondary,
-      "--secondary-foreground": readableOn(brand.secondary),
-      "--accent": brand.accent,
-      "--accent-foreground": readableOn(brand.accent),
-      // Para texto/enlaces con color de marca: garantiza AA contra el fondo del tema.
-      "--brand-text": suggestAccessible(brand.primary, bg),
-      "--ring": brand.accent,
-    };
+  const isZark = (Object.keys(ZARK_BRAND) as (keyof BrandInput)[]).every(
+    (k) => brand[k].toLowerCase() === ZARK_BRAND[k],
+  );
+  const vars = (
+    bg: string,
+    b: BrandInput,
+    nav: { bg: string; fg: string },
+  ): Record<string, string> => ({
+    "--primary": b.primary,
+    "--primary-foreground": readableOn(b.primary),
+    "--secondary": b.secondary,
+    "--secondary-foreground": readableOn(b.secondary),
+    "--accent": b.accent,
+    "--accent-foreground": readableOn(b.accent),
+    // Para texto/enlaces con color de marca: garantiza AA contra el fondo del tema.
+    "--brand-text": suggestAccessible(b.primary, bg),
+    // Ítem activo del menú lateral.
+    "--nav-active-bg": nav.bg,
+    "--nav-active-fg": nav.fg,
+  });
+  // Tema claro: ítem activo con el acento (aclarado/oscurecido lo mínimo para que el texto blanco cumpla AA) y foco con el acento.
+  const light = {
+    ...vars(LIGHT_BG, brand, { bg: suggestAccessible(brand.accent, "#ffffff"), fg: "#ffffff" }),
+    "--ring": brand.accent,
   };
-  return { light: vars(LIGHT_BG), dark: vars(DARK_BG) };
+  // Tema oscuro: una empresa sin marca propia (la de ZarK) conserva la paleta oscura de siempre.
+  const darkBrand = isZark ? DARK_DEFAULT_BRAND : brand;
+  const dark = {
+    ...vars(DARK_BG, darkBrand, { bg: darkBrand.primary, fg: readableOn(darkBrand.primary) }),
+    "--ring": darkBrand.primary,
+  };
+  return { light, dark };
 }
 
 /** `<style>` con las variables de marca de una empresa (se inyecta en el layout del tenant). */

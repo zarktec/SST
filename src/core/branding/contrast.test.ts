@@ -60,20 +60,23 @@ describe("variables CSS", () => {
     expect(contrastRatio(light["--brand-text"], "#ffffff")).toBeGreaterThanOrEqual(4.5);
     expect(contrastRatio(dark["--brand-text"], "#0a0a0a")).toBeGreaterThanOrEqual(4.5);
   });
-  it("la paleta de ZarK cumple AA y en tema oscuro el primario pasa al acento (el azul no se vería)", () => {
+  it("la paleta de ZarK cumple AA en claro; en oscuro se conserva la paleta de siempre", () => {
     expect(ZARK_BRAND).toEqual({ primary: "#001953", secondary: "#001953", accent: "#ff5800" });
     const { light, dark } = brandCssVars(ZARK_BRAND);
-    // Botón azul con texto blanco; acento naranja con texto oscuro.
+    // Botón azul con texto blanco; ítem activo del menú: texto blanco sobre el acento (oscurecido lo mínimo).
     expect(contrastRatio(light["--primary"], light["--primary-foreground"])).toBeGreaterThanOrEqual(
       4.5,
     );
-    expect(contrastRatio(light["--accent"], light["--accent-foreground"])).toBeGreaterThanOrEqual(
-      4.5,
-    );
-    expect(dark["--primary"]).toBe("#ff5800");
-    expect(contrastRatio(dark["--primary"], dark["--primary-foreground"])).toBeGreaterThanOrEqual(
-      4.5,
-    );
+    expect(light["--nav-active-fg"]).toBe("#ffffff");
+    expect(contrastRatio(light["--nav-active-bg"], "#ffffff")).toBeGreaterThanOrEqual(4.5);
+    // Tema oscuro: como antes de la identidad ZarK (verde azulado y pizarra), no el azul/naranja.
+    expect(dark["--primary"]).toBe("#0f766e");
+    expect(dark["--secondary"]).toBe("#1e293b");
+    expect(dark["--nav-active-bg"]).toBe("#0f766e");
+  });
+  it("una empresa con marca propia la usa también en oscuro", () => {
+    const { dark } = brandCssVars({ primary: "#7c3aed", secondary: "#111827", accent: "#f59e0b" });
+    expect(dark["--primary"]).toBe("#7c3aed");
   });
   it("rechaza colores inválidos (no se inyecta CSS arbitrario)", () => {
     expect(() =>

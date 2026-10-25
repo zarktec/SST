@@ -150,13 +150,13 @@ export function AppShell({
     <Link
       href={alertsHref}
       aria-label={unread > 0 ? `Alertas, ${unread} sin leer` : "Alertas"}
-      className="relative inline-flex min-h-11 min-w-11 items-center justify-center rounded-md hover:bg-white/10"
+      className="relative inline-flex min-h-11 min-w-11 items-center justify-center rounded-md hover:bg-[var(--shell-hover)]"
     >
       <Bell className="size-5" aria-hidden />
       {unread > 0 && (
         <span
           aria-hidden
-          className="bg-accent text-accent-foreground absolute top-1.5 right-1.5 grid min-w-4 place-items-center rounded-full px-1 text-[10px] leading-4 font-bold"
+          className="absolute top-1.5 right-1.5 grid min-w-4 place-items-center rounded-full bg-[var(--nav-active-bg)] px-1 text-[10px] leading-4 font-bold text-[var(--nav-active-fg)]"
         >
           {unread > 9 ? "9+" : unread}
         </span>
@@ -176,10 +176,7 @@ export function AppShell({
           <span className="truncate font-semibold">{brandName}</span>
         </>
       ) : (
-        <span className="flex min-w-0 flex-col gap-1">
-          <BrandLogo variant="white" height={30} />
-          <span className="truncate text-xs font-medium opacity-80">{brandName}</span>
-        </span>
+        <BrandLogo variant="white" height={34} />
       )}
     </span>
   );
@@ -201,8 +198,8 @@ export function AppShell({
             className={cn(
               "flex min-h-11 items-center gap-3 rounded-lg px-3 text-sm font-medium transition-colors",
               isActive(item.href)
-                ? "bg-accent text-accent-foreground shadow-sm"
-                : "opacity-90 hover:bg-white/10 hover:opacity-100",
+                ? "bg-[var(--nav-active-bg)] text-[var(--nav-active-fg)] shadow-sm"
+                : "opacity-90 hover:bg-[var(--shell-hover)] hover:opacity-100",
             )}
           >
             <NavIcon name={item.icon} />
@@ -223,7 +220,7 @@ export function AppShell({
         name="q"
         aria-label="Buscar"
         placeholder="Buscar personas, documentos, acciones…"
-        className="min-h-11 w-full rounded-lg border border-white/20 bg-white pr-3 pl-9 text-base text-[#111] placeholder:text-[#4b5568] md:text-sm"
+        className="dark:border-input dark:bg-background dark:text-foreground dark:placeholder:text-muted-foreground min-h-11 w-full rounded-lg border border-white/20 bg-white pr-3 pl-9 text-base text-[#111] placeholder:text-[#4b5568] md:text-sm"
       />
     </form>
   );
@@ -237,24 +234,24 @@ export function AppShell({
         Saltar al contenido
       </a>
 
-      <aside className="bg-secondary text-secondary-foreground hidden md:sticky md:top-0 md:flex md:h-dvh md:flex-col">
-        <div className="border-b border-white/10 p-4">{brand}</div>
-        <nav aria-label="Principal" className="flex-1 space-y-1 overflow-y-auto p-3">
+      <aside className="hidden bg-[var(--shell-bg)] text-[var(--shell-fg)] md:sticky md:top-0 md:flex md:h-dvh md:flex-col dark:border-r dark:border-[var(--shell-line)]">
+        <div className="border-b border-[var(--shell-line)] p-4">{brand}</div>
+        <nav aria-label="Principal" className="sidebar-scroll flex-1 space-y-1 overflow-y-auto p-3">
           {navList()}
         </nav>
-        <div className="flex items-center justify-between border-t border-white/10 p-3">
+        <div className="flex items-center justify-between border-t border-[var(--shell-line)] p-3">
           <span className="truncate text-xs opacity-70">{userLabel}</span>
-          <ThemeToggle className="hover:bg-white/10" />
+          <ThemeToggle className="hover:bg-[var(--shell-hover)]" />
         </div>
       </aside>
 
       <div className="bg-muted/40 flex min-h-dvh flex-col pb-20 md:pb-0">
-        <header className="bg-secondary text-secondary-foreground sticky top-0 z-10 flex items-center gap-2 px-4 py-2 shadow-sm">
+        <header className="sticky top-0 z-10 flex items-center gap-2 bg-[var(--shell-bg)] px-4 py-2 text-[var(--shell-fg)] shadow-sm dark:border-b dark:border-[var(--shell-line)]">
           <span className="md:hidden">{brand}</span>
           <div className="hidden flex-1 md:block">{search}</div>
           <div className="ml-auto flex items-center gap-1">
             {bell}
-            <ThemeToggle className="hover:bg-white/10" />
+            <ThemeToggle className="hover:bg-[var(--shell-hover)]" />
           </div>
         </header>
         {banner}
@@ -303,22 +300,22 @@ export function AppShell({
         aria-label="Menú"
         onClose={() => setMenu(false)}
         onClick={(e) => e.target === sheet.current && setMenu(false)}
-        className="bg-secondary text-secondary-foreground m-0 mt-auto h-[88dvh] max-h-[88dvh] w-full max-w-none rounded-t-2xl border-0 p-0 shadow-2xl backdrop:bg-black/50 md:hidden"
+        className="m-0 mt-auto h-[88dvh] max-h-[88dvh] w-full max-w-none rounded-t-2xl border-0 bg-[var(--shell-bg)] p-0 text-[var(--shell-fg)] shadow-2xl backdrop:bg-black/50 md:hidden"
       >
         {menu && (
           <div className="flex h-full flex-col">
-            <div className="flex items-center justify-between gap-2 border-b border-white/10 p-3 pl-4">
+            <div className="flex items-center justify-between gap-2 border-b border-[var(--shell-line)] p-3 pl-4">
               {brand}
               <button
                 type="button"
                 onClick={() => setMenu(false)}
                 aria-label="Cerrar menú"
-                className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-md hover:bg-white/10"
+                className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-md hover:bg-[var(--shell-hover)]"
               >
                 <X className="size-5" aria-hidden />
               </button>
             </div>
-            <div className="space-y-3 overflow-y-auto p-3">
+            <div className="sidebar-scroll space-y-3 overflow-y-auto p-3">
               {search}
               <nav aria-label="Todos los módulos" className="space-y-1">
                 {navList(() => setMenu(false))}
