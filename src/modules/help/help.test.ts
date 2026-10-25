@@ -4,6 +4,7 @@ import { describe, expect, it } from "vitest";
 import { MODULE_GROUPS } from "@/components/layout/nav-config";
 import { PERMISSION_MODULES } from "@/core/rbac/roles";
 import { PLATFORM_ARTICLES, PLATFORM_GROUPS, TENANT_ARTICLES, TENANT_GROUPS } from "./content";
+import { formatDuration, videoSlugs } from "./videos";
 import { normalize, routeMap, searchArticles, textOf, type Article } from "./types";
 
 const root = process.cwd();
@@ -78,5 +79,23 @@ describe("ayuda: búsqueda", () => {
   it("el texto buscable incluye los pasos", () => {
     const a = TENANT_ARTICLES.find((x) => x.slug === "personas")!;
     expect(normalize(textOf(a))).toContain("carga masiva");
+  });
+});
+
+describe("ayuda: videos", () => {
+  const all = [...TENANT_ARTICLES, ...PLATFORM_ARTICLES].map((a) => a.slug);
+  it("cada video pertenece a una guía y tiene todos sus archivos", () => {
+    for (const slug of videoSlugs()) {
+      expect(all, slug).toContain(slug);
+      for (const ext of ["mp4", "webm", "vtt", "jpg"])
+        expect(
+          existsSync(join(root, "public/help/videos", `${slug}.${ext}`)),
+          `${slug}.${ext}`,
+        ).toBe(true);
+    }
+  });
+  it("da formato mm:ss a la duración", () => {
+    expect(formatDuration(75)).toBe("1:15");
+    expect(formatDuration(9)).toBe("0:09");
   });
 });

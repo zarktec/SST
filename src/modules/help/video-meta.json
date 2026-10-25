@@ -1,0 +1,78 @@
+{
+  "acoso-sexual": {
+    "title": "Reportar acoso sexual o violencia de género",
+    "seconds": 16
+  },
+  "capacitacion": {
+    "title": "Capacitación: cursos, sesiones con QR y certificados",
+    "seconds": 44
+  },
+  "comites": {
+    "title": "Comités: elección electrónica del COPASST",
+    "seconds": 40
+  },
+  "convivencia": {
+    "title": "Convivencia laboral: radicar una queja confidencial",
+    "seconds": 18
+  },
+  "dominio": {
+    "title": "Conectar tu dominio propio",
+    "seconds": 17
+  },
+  "epp": {
+    "title": "EPP: catálogo, inventario y entregas con firma",
+    "seconds": 37
+  },
+  "estandares": {
+    "title": "Autoevaluación de estándares mínimos",
+    "seconds": 31
+  },
+  "facturacion": {
+    "title": "Facturación: plan, datos fiscales y pagos",
+    "seconds": 38
+  },
+  "informes": {
+    "title": "Informes y exportaciones",
+    "seconds": 14
+  },
+  "matriz-legal": {
+    "title": "Matriz legal: evaluar el cumplimiento de las normas",
+    "seconds": 25
+  },
+  "notificaciones": {
+    "title": "Alertas y calendario de obligaciones",
+    "seconds": 23
+  },
+  "onboarding": {
+    "title": "Configurar tu SG-SST: empresa, sedes, responsable y marca",
+    "seconds": 57
+  },
+  "peligros": {
+    "title": "Matriz de peligros y valoración de riesgos (GTC 45)",
+    "seconds": 48
+  },
+  "personas": {
+    "title": "Registrar personas y cargar muchas con un archivo",
+    "seconds": 39
+  },
+  "plan-anual": {
+    "title": "Plan anual de trabajo",
+    "seconds": 40
+  },
+  "portal": {
+    "title": "Mi portal: lo que te corresponde como trabajador",
+    "seconds": 15
+  },
+  "primeros-pasos": {
+    "title": "Primeros pasos: ingresar y recorrer la plataforma",
+    "seconds": 35
+  },
+  "privacidad": {
+    "title": "Autorizar el tratamiento de datos y ejercer tus derechos",
+    "seconds": 25
+  },
+  "usuarios": {
+    "title": "Invitar personas y asignar roles",
+    "seconds": 25
+  }
+}

@@ -1,11 +1,13 @@
-import { ArrowLeft, ArrowRight, Search } from "lucide-react";
+import { ArrowLeft, ArrowRight, Play, Search } from "lucide-react";
 import { NavIcon } from "@/components/layout/app-shell";
 import { buttonVariants } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import Link from "@/components/ui/link";
 import { cn } from "@/lib/utils";
 import { searchArticles, type Article } from "@/modules/help/types";
-import { BlockView } from "./article-view";
+import { videoOf } from "@/modules/help/videos";
+import { ArticleVideo, BlockView } from "./article-view";
+import { formatDuration } from "@/modules/help/videos";
 
 /** Índice del centro de ayuda: buscador (formulario GET, funciona sin JavaScript) y guías agrupadas por tema. */
 export function HelpIndex({
@@ -35,6 +37,12 @@ export function HelpIndex({
         <span className="min-w-0">
           <span className="block text-sm font-semibold">{a.title}</span>
           <span className="text-muted-foreground block text-xs leading-snug">{a.summary}</span>
+          {videoOf(a.slug) && (
+            <span className="text-brand-text mt-1 inline-flex items-center gap-1 text-xs font-medium">
+              <Play className="size-3" aria-hidden /> Video ·{" "}
+              {formatDuration(videoOf(a.slug)!.seconds)}
+            </span>
+          )}
           {!canOpen(a) && (
             <span className="text-muted-foreground mt-1 block text-xs italic">
               Tu rol no tiene acceso a esta pantalla
@@ -163,6 +171,7 @@ export function HelpArticle({
           </div>
         )}
       </header>
+      <ArticleVideo slug={article.slug} />
       <Card className="space-y-5">
         {article.blocks.map((b, k) => (
           <BlockView key={k} block={b} />

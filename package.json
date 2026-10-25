@@ -16,7 +16,8 @@
     "db:migrate": "tsx scripts/migrate.ts",
     "db:seed": "tsx --conditions=react-server scripts/seed.ts",
     "prepare": "husky",
-    "vercel-build": "tsx scripts/vercel-build.ts"
+    "vercel-build": "tsx scripts/vercel-build.ts",
+    "help:videos": "tsx help-videos/run.ts"
   },
   "dependencies": {
     "@neondatabase/serverless": "^1.2.0",

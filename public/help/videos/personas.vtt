@@ -1,0 +1,22 @@
+WEBVTT
+
+00:00:01.111 --> 00:00:03.119
+En Personas registras a trabajadores, aprendices y contratistas
+
+00:00:03.119 --> 00:00:13.693
+1. Pulsa «Registrar» y completa la ficha
+
+00:00:13.693 --> 00:00:17.446
+2. Guarda: el documento queda cifrado y solo verás los últimos 4 dígitos
+
+00:00:17.446 --> 00:00:20.490
+3. Para registrar muchas personas, usa «Carga masiva» con un archivo CSV
+
+00:00:20.490 --> 00:00:26.249
+Descarga la plantilla, llénala en Excel, guárdala como CSV y súbela
+
+00:00:26.249 --> 00:00:31.606
+El reporte indica cuántas filas se importaron y cuáles tienen error, con su número de fila
+
+00:00:31.606 --> 00:00:37.348
+Abre una persona para editarla, registrar su retiro o verificar su seguridad social

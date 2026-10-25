@@ -2,6 +2,7 @@ import { Info, Lightbulb, TriangleAlert } from "lucide-react";
 import { Fragment } from "react";
 import { cn } from "@/lib/utils";
 import type { Block } from "@/modules/help/types";
+import { formatDuration, videoOf } from "@/modules/help/videos";
 
 /** `**negrita**` → <strong>. Solo ese formato: el contenido es del código, pero no se interpreta HTML. */
 export function Inline({ text }: { text: string }) {
@@ -95,4 +96,32 @@ export function BlockView({ block }: { block: Block }) {
       );
     }
   }
+}
+
+/** Video de la guía: MP4 con respaldo WebM, subtítulos en español y póster; no descarga nada hasta darle play. */
+export function ArticleVideo({ slug }: { slug: string }) {
+  const v = videoOf(slug);
+  if (!v) return null;
+  const base = `/help/videos/${slug}`;
+  return (
+    <figure className="space-y-2">
+      <video
+        controls
+        preload="none"
+        playsInline
+        poster={`${base}.jpg`}
+        aria-label={`Video: ${v.title}`}
+        className="bg-muted aspect-video w-full rounded-xl border shadow-sm"
+      >
+        <source src={`${base}.mp4`} type="video/mp4" />
+        <source src={`${base}.webm`} type="video/webm" />
+        <track kind="captions" src={`${base}.vtt`} srcLang="es" label="Español" default />
+        Tu navegador no reproduce video. Sigue los pasos escritos de esta guía.
+      </video>
+      <figcaption className="text-muted-foreground text-xs">
+        Video · {v.title} · {formatDuration(v.seconds)}. Los subtítulos explican cada paso; los
+        pasos también están escritos abajo.
+      </figcaption>
+    </figure>
+  );
 }
