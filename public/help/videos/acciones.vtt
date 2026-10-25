@@ -1,0 +1,19 @@
+WEBVTT
+
+00:00:01.130 --> 00:00:03.538
+Aquí le haces seguimiento a todo lo que hay que corregir o mejorar
+
+00:00:03.538 --> 00:00:16.140
+1. Crea la acción con responsable y fecha límite
+
+00:00:16.140 --> 00:00:20.884
+Si la fecha pasa sin cerrarse, aparece la mora y se escala
+
+00:00:20.884 --> 00:00:32.507
+2. Cuando se ejecute, cambia el estado y deja la evidencia del cierre
+
+00:00:32.507 --> 00:00:40.166
+3. Pasado un tiempo, verifica que la acción sí resolvió el problema
+
+00:00:40.166 --> 00:00:42.973
+La acción queda cerrada como eficaz, con todo el historial

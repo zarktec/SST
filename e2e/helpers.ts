@@ -144,7 +144,7 @@ export async function resetState() {
       await client.query(
         `DELETE FROM ${t} WHERE tenant_id IN (SELECT id FROM tenant WHERE slug = 'demo')`,
       );
-    const sub = "(SELECT id FROM tenant WHERE slug LIKE 'e2e-%')";
+    const sub = "(SELECT id FROM tenant WHERE slug LIKE 'e2e-%' OR slug LIKE 'demo-%')";
     for (const t of [
       "subscription_event",
       "subscription",
@@ -159,7 +159,7 @@ export async function resetState() {
     ]) {
       await client.query(`DELETE FROM ${t} WHERE tenant_id IN ${sub}`);
     }
-    await client.query("DELETE FROM tenant WHERE slug LIKE 'e2e-%'");
+    await client.query("DELETE FROM tenant WHERE slug LIKE 'e2e-%' OR slug LIKE 'demo-%'");
     // Catálogo vacío usado por las pruebas E2E (las versiones publicadas son inmutables: se borra con triggers desactivados).
     await client.query(
       "DELETE FROM catalog_item WHERE version_id IN (SELECT id FROM catalog_version WHERE catalog = 'hazard_catalog')",
@@ -173,10 +173,10 @@ export async function resetState() {
     client.release();
   }
   await pool.query(
-    "DELETE FROM plan_price WHERE plan_id IN (SELECT id FROM plan WHERE key LIKE 'e2e-%')",
+    "DELETE FROM plan_price WHERE plan_id IN (SELECT id FROM plan WHERE key LIKE 'e2e-%' OR key LIKE 'demo-%')",
   );
-  await pool.query("DELETE FROM plan WHERE key LIKE 'e2e-%'");
-  await pool.query("DELETE FROM coupon WHERE code LIKE 'E2E%'");
+  await pool.query("DELETE FROM plan WHERE key LIKE 'e2e-%' OR key LIKE 'demo-%'");
+  await pool.query("DELETE FROM coupon WHERE code LIKE 'E2E%' OR code LIKE 'DEMO%'");
   await pool.end();
 }
 

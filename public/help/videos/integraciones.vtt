@@ -1,0 +1,13 @@
+WEBVTT
+
+00:00:01.090 --> 00:00:07.757
+Cada integración se configura aquí, en ambiente de pruebas o producción
+
+00:00:07.757 --> 00:00:13.852
+Las llaves secretas se guardan cifradas
+
+00:00:13.852 --> 00:00:17.056
+Después solo verás una versión enmascarada: nunca se vuelve a mostrar
+
+00:00:17.056 --> 00:00:19.863
+«Probar conexión» verifica las credenciales antes de activar

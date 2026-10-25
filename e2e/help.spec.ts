@@ -66,3 +66,23 @@ test("ayuda del panel de administración", async ({ page }) => {
   await page.getByRole("link", { name: "Ayuda sobre esta pantalla" }).click();
   await expect(page).toHaveURL(`${ADMIN}/ayuda/empresas`);
 });
+
+test("las guías con video lo muestran con subtítulos y los archivos se sirven", async ({
+  page,
+  request,
+}) => {
+  await login(page);
+  await page.goto(`${TENANT}/ayuda`);
+  await expect(page.getByText(/Video · \d+:\d{2}/).first()).toBeVisible();
+  await page.goto(`${TENANT}/ayuda/personas`);
+  const video = page.locator("video");
+  await expect(video).toBeVisible();
+  await expect(video.locator("track[kind='captions']")).toHaveCount(1);
+  const poster = await video.getAttribute("poster");
+  expect((await request.get(`http://localhost:3000${poster}`)).ok()).toBe(true);
+  const vtt = await request.get("http://localhost:3000/help/videos/personas.vtt");
+  expect(await vtt.text()).toContain("WEBVTT");
+  // Una guía sin video no muestra reproductor.
+  await page.goto(`${TENANT}/ayuda/glosario`);
+  await expect(page.locator("video")).toHaveCount(0);
+});

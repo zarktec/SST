@@ -1,0 +1,16 @@
+WEBVTT
+
+00:00:01.079 --> 00:00:12.104
+1. Crea un plan con su precio mensual y anual
+
+00:00:12.104 --> 00:00:16.306
+La vista previa calcula el IVA y el total mientras escribes
+
+00:00:16.306 --> 00:00:22.021
+Si el precio ya incluye IVA, el sistema separa el neto del impuesto
+
+00:00:22.021 --> 00:00:29.848
+2. Para cambiar un precio, usa «Editar plan»
+
+00:00:29.848 --> 00:00:32.655
+Los cambios aplican a las próximas renovaciones

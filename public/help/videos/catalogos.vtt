@@ -1,0 +1,16 @@
+WEBVTT
+
+00:00:01.114 --> 00:00:04.980
+Los catálogos normativos tienen versiones: las publicadas no se editan
+
+00:00:04.980 --> 00:00:09.085
+1. Crea un borrador de la nueva versión
+
+00:00:09.085 --> 00:00:13.399
+2. Importa los elementos desde un archivo CSV
+
+00:00:13.399 --> 00:00:20.233
+3. Para publicar, indica desde cuándo vale y su norma fuente
+
+00:00:20.233 --> 00:00:23.041
+La versión publicada queda inmutable y con su historial
