@@ -1,3 +1,4 @@
+import { ZARK_BRAND } from "@/core/branding/contrast";
 import { and, eq, isNull } from "drizzle-orm";
 import { schema, systemDb } from "@/core/db";
 import { classifyHost, normalizeHost } from "./hosts";
@@ -49,9 +50,9 @@ async function loadTenant(tenantId: string): Promise<ResolvedTenant | null> {
     tradeName: t.tradeName,
     status: t.status,
     brand: {
-      primary: b?.primary ?? "#0f766e",
-      secondary: b?.secondary ?? "#1e293b",
-      accent: b?.accent ?? "#f59e0b",
+      primary: b?.primary ?? ZARK_BRAND.primary,
+      secondary: b?.secondary ?? ZARK_BRAND.secondary,
+      accent: b?.accent ?? ZARK_BRAND.accent,
       logoLightUrl: b?.logoLightUrl ?? null,
       logoDarkUrl: b?.logoDarkUrl ?? null,
       faviconUrl: b?.faviconUrl ?? null,

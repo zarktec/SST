@@ -21,7 +21,7 @@ export async function GET(req: Request) {
       orientation: "portrait",
       lang: "es-CO",
       background_color: "#ffffff",
-      theme_color: tenant?.brand.primary ?? "#0f766e",
+      theme_color: tenant?.brand.primary ?? "#001953",
       icons: [
         { src: "/icons/icon-192.png", sizes: "192x192", type: "image/png" },
         { src: "/icons/icon-512.png", sizes: "512x512", type: "image/png" },

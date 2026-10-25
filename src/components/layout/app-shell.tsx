@@ -44,6 +44,7 @@ import {
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import Link from "@/components/ui/link";
+import { BrandLogo } from "@/components/ui/brand-logo";
 import { Toaster } from "@/components/ui/toast";
 import { stripBase } from "@/core/tenancy/hosts";
 import { cn } from "@/lib/utils";
@@ -149,13 +150,13 @@ export function AppShell({
     <Link
       href={alertsHref}
       aria-label={unread > 0 ? `Alertas, ${unread} sin leer` : "Alertas"}
-      className="hover:bg-muted relative inline-flex min-h-11 min-w-11 items-center justify-center rounded-md"
+      className="relative inline-flex min-h-11 min-w-11 items-center justify-center rounded-md hover:bg-white/10"
     >
       <Bell className="size-5" aria-hidden />
       {unread > 0 && (
         <span
           aria-hidden
-          className="bg-destructive absolute top-1.5 right-1.5 grid min-w-4 place-items-center rounded-full px-1 text-[10px] leading-4 font-bold text-white"
+          className="bg-accent text-accent-foreground absolute top-1.5 right-1.5 grid min-w-4 place-items-center rounded-full px-1 text-[10px] leading-4 font-bold"
         >
           {unread > 9 ? "9+" : unread}
         </span>
@@ -163,17 +164,23 @@ export function AppShell({
     </Link>
   );
 
+  // Logo de la empresa si lo cargó (sobre una pastilla blanca, pues suelen ser para fondo claro); si no, el de ZarK con el nombre.
   const brand = (
     <span className="flex min-w-0 items-center gap-3">
       {logoUrl ? (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img src={logoUrl} alt="" className="size-8 rounded" />
+        <>
+          <span className="grid shrink-0 place-items-center rounded-md bg-white p-1">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={logoUrl} alt="" className="size-8 rounded object-contain" />
+          </span>
+          <span className="truncate font-semibold">{brandName}</span>
+        </>
       ) : (
-        <span className="bg-primary text-primary-foreground grid size-8 shrink-0 place-items-center rounded-lg font-bold">
-          {brandName.charAt(0)}
+        <span className="flex min-w-0 flex-col gap-1">
+          <BrandLogo variant="white" height={30} />
+          <span className="truncate text-xs font-medium opacity-80">{brandName}</span>
         </span>
       )}
-      <span className="truncate font-semibold">{brandName}</span>
     </span>
   );
 
@@ -181,7 +188,7 @@ export function AppShell({
     groups.map((g) => (
       <div key={g.label} className="space-y-1">
         {g.label && (
-          <p className="text-muted-foreground px-3 pt-3 pb-1 text-[11px] font-semibold tracking-wider uppercase">
+          <p className="px-3 pt-4 pb-1 text-[11px] font-semibold tracking-wider uppercase opacity-60">
             {g.label}
           </p>
         )}
@@ -194,8 +201,8 @@ export function AppShell({
             className={cn(
               "flex min-h-11 items-center gap-3 rounded-lg px-3 text-sm font-medium transition-colors",
               isActive(item.href)
-                ? "bg-primary text-primary-foreground shadow-sm"
-                : "text-foreground/80 hover:bg-muted hover:text-foreground",
+                ? "bg-accent text-accent-foreground shadow-sm"
+                : "opacity-90 hover:bg-white/10 hover:opacity-100",
             )}
           >
             <NavIcon name={item.icon} />
@@ -208,7 +215,7 @@ export function AppShell({
   const search = searchAction && (
     <form action={searchAction} role="search" className="relative w-full max-w-md">
       <Search
-        className="text-muted-foreground pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2"
+        className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-[#4b5568]"
         aria-hidden
       />
       <input
@@ -216,7 +223,7 @@ export function AppShell({
         name="q"
         aria-label="Buscar"
         placeholder="Buscar personas, documentos, acciones…"
-        className="border-input bg-background min-h-11 w-full rounded-lg border pr-3 pl-9 text-base md:text-sm"
+        className="min-h-11 w-full rounded-lg border border-white/20 bg-white pr-3 pl-9 text-base text-[#111] placeholder:text-[#4b5568] md:text-sm"
       />
     </form>
   );
@@ -230,26 +237,24 @@ export function AppShell({
         Saltar al contenido
       </a>
 
-      <aside className="bg-card hidden border-r md:sticky md:top-0 md:flex md:h-dvh md:flex-col">
-        <div className="border-b p-4">{brand}</div>
+      <aside className="bg-secondary text-secondary-foreground hidden md:sticky md:top-0 md:flex md:h-dvh md:flex-col">
+        <div className="border-b border-white/10 p-4">{brand}</div>
         <nav aria-label="Principal" className="flex-1 space-y-1 overflow-y-auto p-3">
           {navList()}
         </nav>
-        <div className="flex items-center justify-between border-t p-3">
-          <span className="text-muted-foreground truncate text-xs">{userLabel}</span>
-          <ThemeToggle />
+        <div className="flex items-center justify-between border-t border-white/10 p-3">
+          <span className="truncate text-xs opacity-70">{userLabel}</span>
+          <ThemeToggle className="hover:bg-white/10" />
         </div>
       </aside>
 
       <div className="bg-muted/40 flex min-h-dvh flex-col pb-20 md:pb-0">
-        <header className="bg-background/90 sticky top-0 z-10 flex items-center gap-2 border-b px-4 py-2 backdrop-blur">
+        <header className="bg-secondary text-secondary-foreground sticky top-0 z-10 flex items-center gap-2 px-4 py-2 shadow-sm">
           <span className="md:hidden">{brand}</span>
           <div className="hidden flex-1 md:block">{search}</div>
           <div className="ml-auto flex items-center gap-1">
             {bell}
-            <span className="md:hidden">
-              <ThemeToggle />
-            </span>
+            <ThemeToggle className="hover:bg-white/10" />
           </div>
         </header>
         {banner}
@@ -273,7 +278,9 @@ export function AppShell({
             aria-current={isActive(item.href) ? "page" : undefined}
             className={cn(
               "flex min-h-14 flex-col items-center justify-center gap-0.5 text-[11px] font-medium",
-              isActive(item.href) ? "text-brand-text" : "text-muted-foreground",
+              isActive(item.href)
+                ? "text-brand-text border-accent border-t-2 font-semibold"
+                : "text-muted-foreground border-t-2 border-transparent",
             )}
           >
             <NavIcon name={item.icon} />
@@ -296,17 +303,17 @@ export function AppShell({
         aria-label="Menú"
         onClose={() => setMenu(false)}
         onClick={(e) => e.target === sheet.current && setMenu(false)}
-        className="bg-card text-card-foreground m-0 mt-auto h-[88dvh] max-h-[88dvh] w-full max-w-none rounded-t-2xl border p-0 shadow-2xl backdrop:bg-black/50 md:hidden"
+        className="bg-secondary text-secondary-foreground m-0 mt-auto h-[88dvh] max-h-[88dvh] w-full max-w-none rounded-t-2xl border-0 p-0 shadow-2xl backdrop:bg-black/50 md:hidden"
       >
         {menu && (
           <div className="flex h-full flex-col">
-            <div className="flex items-center justify-between gap-2 border-b p-3 pl-4">
+            <div className="flex items-center justify-between gap-2 border-b border-white/10 p-3 pl-4">
               {brand}
               <button
                 type="button"
                 onClick={() => setMenu(false)}
                 aria-label="Cerrar menú"
-                className="hover:bg-muted inline-flex min-h-11 min-w-11 items-center justify-center rounded-md"
+                className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-md hover:bg-white/10"
               >
                 <X className="size-5" aria-hidden />
               </button>
@@ -316,7 +323,7 @@ export function AppShell({
               <nav aria-label="Todos los módulos" className="space-y-1">
                 {navList(() => setMenu(false))}
               </nav>
-              <p className="text-muted-foreground px-3 pb-4 text-xs">{userLabel}</p>
+              <p className="px-3 pb-4 text-xs opacity-70">{userLabel}</p>
             </div>
           </div>
         )}

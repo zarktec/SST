@@ -12,7 +12,7 @@ import {
 } from "@react-email/components";
 
 export type Brand = { name: string; primary: string; logoUrl?: string | null };
-export const DEFAULT_BRAND: Brand = { name: "SST", primary: "#0f766e" };
+export const DEFAULT_BRAND: Brand = { name: "SST", primary: "#001953" };
 
 function Shell({
   brand,

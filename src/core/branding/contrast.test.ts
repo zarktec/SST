@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  ZARK_BRAND,
   brandCssVars,
   brandStyleSheet,
   checkBrand,
@@ -58,6 +59,21 @@ describe("variables CSS", () => {
     expect(light["--primary"]).toBe("#0f766e");
     expect(contrastRatio(light["--brand-text"], "#ffffff")).toBeGreaterThanOrEqual(4.5);
     expect(contrastRatio(dark["--brand-text"], "#0a0a0a")).toBeGreaterThanOrEqual(4.5);
+  });
+  it("la paleta de ZarK cumple AA y en tema oscuro el primario pasa al acento (el azul no se vería)", () => {
+    expect(ZARK_BRAND).toEqual({ primary: "#001953", secondary: "#001953", accent: "#ff5800" });
+    const { light, dark } = brandCssVars(ZARK_BRAND);
+    // Botón azul con texto blanco; acento naranja con texto oscuro.
+    expect(contrastRatio(light["--primary"], light["--primary-foreground"])).toBeGreaterThanOrEqual(
+      4.5,
+    );
+    expect(contrastRatio(light["--accent"], light["--accent-foreground"])).toBeGreaterThanOrEqual(
+      4.5,
+    );
+    expect(dark["--primary"]).toBe("#ff5800");
+    expect(contrastRatio(dark["--primary"], dark["--primary-foreground"])).toBeGreaterThanOrEqual(
+      4.5,
+    );
   });
   it("rechaza colores inválidos (no se inyecta CSS arbitrario)", () => {
     expect(() =>

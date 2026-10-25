@@ -10,45 +10,52 @@
   --foreground: #171717;
   --card: #ffffff;
   --card-foreground: #171717;
-  --muted: #f4f4f5;
-  --muted-foreground: #52525b;
-  --border: #e4e4e7;
-  --input: #d4d4d8;
+  --muted: #f1f4fa;
+  --muted-foreground: #4b5568;
+  --border: #e2e7f0;
+  --input: #cbd3e1;
   --destructive: #b91c1c;
-  --primary: #0f766e;
+  /* Identidad ZarK: azul #001953 y naranja #ff5800 (las empresas pueden sobrescribirlos con su marca). */
+  --primary: #001953;
   --primary-foreground: #ffffff;
-  --secondary: #1e293b;
+  --secondary: #001953;
   --secondary-foreground: #ffffff;
-  --accent: #f59e0b;
+  --accent: #ff5800;
   --accent-foreground: #111111;
-  --brand-text: #0f766e;
-  --ring: #0f766e;
+  --brand-text: #001953;
+  --ring: #ff5800;
   --radius: 0.75rem;
 }
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --background: #0a0a0a;
+    --background: #060b1a;
     --foreground: #ededed;
-    --card: #141414;
+    --card: #0b1226;
     --card-foreground: #ededed;
-    --muted: #1c1c1f;
-    --muted-foreground: #a1a1aa;
-    --border: #27272a;
-    --input: #3f3f46;
+    --muted: #121a30;
+    --muted-foreground: #a3aec6;
+    --border: #1f2a47;
+    --input: #34415f;
     --destructive: #f87171;
+    --primary: #ff5800;
+    --primary-foreground: #111111;
+    --brand-text: #ff8a4d;
   }
 }
 :root[data-theme="dark"] {
-  --background: #0a0a0a;
+  --background: #060b1a;
   --foreground: #ededed;
-  --card: #141414;
+  --card: #0b1226;
   --card-foreground: #ededed;
-  --muted: #1c1c1f;
-  --muted-foreground: #a1a1aa;
-  --border: #27272a;
-  --input: #3f3f46;
+  --muted: #121a30;
+  --muted-foreground: #a3aec6;
+  --border: #1f2a47;
+  --input: #34415f;
   --destructive: #f87171;
+  --primary: #ff5800;
+  --primary-foreground: #111111;
+  --brand-text: #ff8a4d;
 }
 
 @theme inline {

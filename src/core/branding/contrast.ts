@@ -72,7 +72,14 @@ export type BrandCheck = {
 };
 
 export const LIGHT_BG = "#ffffff";
-export const DARK_BG = "#0a0a0a";
+export const DARK_BG = "#060b1a";
+
+/** Identidad ZarK: valores por defecto de toda empresa que no define su propia marca. */
+export const ZARK_BRAND: BrandInput = {
+  primary: "#001953",
+  secondary: "#001953",
+  accent: "#ff5800",
+};
 
 /** Verificación AA de la paleta de la empresa (se guarda en tenant_branding.contrast_report). */
 export function checkBrand(brand: BrandInput): BrandCheck[] {
@@ -105,17 +112,26 @@ export function brandCssVars(brand: BrandInput): {
   light: Record<string, string>;
   dark: Record<string, string>;
 } {
-  const vars = (bg: string): Record<string, string> => ({
-    "--primary": brand.primary,
-    "--primary-foreground": readableOn(brand.primary),
-    "--secondary": brand.secondary,
-    "--secondary-foreground": readableOn(brand.secondary),
-    "--accent": brand.accent,
-    "--accent-foreground": readableOn(brand.accent),
-    // Para texto/enlaces con color de marca: garantiza AA contra el fondo del tema.
-    "--brand-text": suggestAccessible(brand.primary, bg),
-    "--ring": brand.primary,
-  });
+  const vars = (bg: string): Record<string, string> => {
+    // Un primario oscuro (p. ej. el azul de ZarK) no se ve sobre fondo oscuro: ahí se usa el acento, o el primario aclarado.
+    const primary =
+      bg === DARK_BG && contrastRatio(brand.primary, bg) < AA_LARGE
+        ? contrastRatio(brand.accent, bg) >= AA_LARGE
+          ? brand.accent
+          : suggestAccessible(brand.primary, bg, AA_LARGE)
+        : brand.primary;
+    return {
+      "--primary": primary,
+      "--primary-foreground": readableOn(primary),
+      "--secondary": brand.secondary,
+      "--secondary-foreground": readableOn(brand.secondary),
+      "--accent": brand.accent,
+      "--accent-foreground": readableOn(brand.accent),
+      // Para texto/enlaces con color de marca: garantiza AA contra el fondo del tema.
+      "--brand-text": suggestAccessible(brand.primary, bg),
+      "--ring": brand.accent,
+    };
+  };
   return { light: vars(LIGHT_BG), dark: vars(DARK_BG) };
 }
 

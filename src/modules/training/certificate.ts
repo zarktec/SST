@@ -14,7 +14,7 @@ export type CertificateInput = {
 };
 
 const hexToRgb = (hex: string) => {
-  const n = /^#[0-9a-fA-F]{6}$/.test(hex) ? hex : "#0f766e";
+  const n = /^#[0-9a-fA-F]{6}$/.test(hex) ? hex : "#001953";
   return rgb(
     parseInt(n.slice(1, 3), 16) / 255,
     parseInt(n.slice(3, 5), 16) / 255,

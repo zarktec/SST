@@ -1,3 +1,4 @@
+import { BrandLogo } from "@/components/ui/brand-logo";
 import { Card, CardDescription, CardTitle } from "@/components/ui/card";
 
 /** Contenedor centrado para pantallas de acceso. */
@@ -22,11 +23,15 @@ export function AuthCard({
             // eslint-disable-next-line @next/next/no-img-element
             <img src={logoUrl} alt={brandName} className="h-12" />
           ) : (
-            <span className="bg-primary text-primary-foreground grid size-12 place-items-center rounded-lg text-xl font-bold">
-              {brandName.charAt(0)}
-            </span>
+            <BrandLogo variant="auto" height={44} />
           )}
-          <p className="text-muted-foreground text-sm">{brandName}</p>
+          <p className="text-muted-foreground text-sm">
+            {logoUrl
+              ? brandName
+              : brandName === "SST"
+                ? "Seguridad y Salud en el Trabajo"
+                : brandName}
+          </p>
         </div>
         <Card>
           <CardTitle>{title}</CardTitle>

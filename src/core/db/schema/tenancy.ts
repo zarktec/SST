@@ -80,9 +80,9 @@ export const tenantBranding = pgTable("tenant_branding", {
   logoLightUrl: text(),
   logoDarkUrl: text(),
   faviconUrl: text(),
-  primary: text().notNull().default("#0f766e"),
-  secondary: text().notNull().default("#1e293b"),
-  accent: text().notNull().default("#f59e0b"),
+  primary: text().notNull().default("#001953"),
+  secondary: text().notNull().default("#001953"),
+  accent: text().notNull().default("#ff5800"),
   contrastReport: jsonb().$type<Record<string, { ratio: number; passesAA: boolean }>>(),
   updatedAt: updatedAt(),
 });
