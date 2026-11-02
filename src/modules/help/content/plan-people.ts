@@ -452,4 +452,68 @@ export const PLAN_PEOPLE: Article[] = [
       },
     ],
   },
+  {
+    slug: "desempeno",
+    title: "Evaluación de desempeño 360",
+    group: "Personas",
+    icon: "ListChecks",
+    summary:
+      "Evalúa el desempeño de cada persona con la mirada de la alta dirección, el jefe inmediato y los compañeros (formato F-RH-45).",
+    module: "performance",
+    route: "/desempeno",
+    who: "Administrador de la empresa y alta dirección crean los ciclos; todas las personas responden lo que se les asigna y ven su propio resultado.",
+    keywords: [
+      "360",
+      "desempeño",
+      "evaluación",
+      "competencias",
+      "jefe inmediato",
+      "anónima",
+      "anonimato",
+      "F-RH-45",
+    ],
+    related: ["personas"],
+    blocks: [
+      {
+        t: "p",
+        text: "Cada **ciclo** reúne a las personas a evaluar y a quienes las evalúan en tres niveles: **Alta dirección**, **Jefe inmediato** e **Igual**. Se califican **10 competencias** de 1 a 5 (comunicación, liderazgo, motivación, seguridad y salud en el trabajo, capacitación y desarrollo, actitud y colaboración, solución de problemas, ambiente de trabajo, capacidad personal, costos y productividad).",
+      },
+      {
+        t: "steps",
+        title: "Crear y administrar un ciclo",
+        items: [
+          "Ve a **Menú → Evaluación 360**. En **Anonimato** decide si los ciclos **nuevos** serán anónimos y pulsa **Guardar**.",
+          "Pulsa **Nuevo ciclo**, escribe el **nombre** y la **fecha límite** y pulsa **Crear ciclo**.",
+          "Abre el ciclo y pulsa **Agregar persona** para elegir a quién se evalúa.",
+          "En cada persona pulsa **Asignar evaluador**: elige el **nivel** y **quién evalúa**. Puedes asignar varios iguales. Quien evalúa necesita **correo en su ficha** de Personas, porque así se vincula con su usuario.",
+          "Cuando el plazo termine, pulsa **Cerrar ciclo**. Se calculan los resultados y cada persona evaluada ve el suyo.",
+        ],
+      },
+      {
+        t: "steps",
+        title: "Responder una evaluación",
+        items: [
+          "En **Evaluación 360** verás **Mis evaluaciones por responder**. Pulsa **Responder**.",
+          "En cada competencia elige la descripción que mejor corresponda (de 5 a 1). Todas son obligatorias; el comentario es opcional.",
+          "Pulsa **Enviar evaluación**. Una vez enviada **no se puede cambiar**.",
+        ],
+      },
+      {
+        t: "list",
+        title: "Cómo se calcula el resultado",
+        items: [
+          "Primero se promedian las respuestas de cada nivel (varios iguales cuentan como un solo nivel).",
+          "Luego se promedian los niveles que sí respondieron, **con el mismo peso**. Un nivel sin respuestas no baja el promedio.",
+        ],
+      },
+      {
+        t: "warn",
+        text: "**Anónimo o identificado:** cada ciclo conserva el valor con que se creó. En un ciclo **anónimo** la respuesta no guarda quién la envió: quien administra ve quién ya respondió (para recordárselo), pero no qué respondió. Ojo: si un nivel tiene una sola persona (por ejemplo, un único jefe inmediato), su nivel la identifica aunque no aparezca su nombre.",
+      },
+      {
+        t: "note",
+        text: "Este módulo depende de tu plan. Si no ves la pantalla o aparece un aviso de que no está incluido, pídele al administrador de la plataforma que lo habilite en tu plan.",
+      },
+    ],
+  },
 ];

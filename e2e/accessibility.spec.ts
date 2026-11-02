@@ -27,6 +27,7 @@ const APP = [
   "/alto-riesgo",
   "/quimicos",
   "/pesv",
+  "/desempeno",
   "/vigilancia",
   "/vigilancia/psicosocial",
   "/auditorias",

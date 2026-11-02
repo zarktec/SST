@@ -24,6 +24,7 @@ export * from "./indicators";
 export * from "./emergencies";
 export * from "./high-risk";
 export * from "./chemicals";
+export * from "./performance";
 export * from "./pesv";
 export * from "./pve";
 export * from "./audits";

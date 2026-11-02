@@ -90,6 +90,13 @@ export const MODULE_GROUPS: { label: string; items: ModuleLink[] }[] = [
         hint: "Trabajadores y contratistas",
       },
       {
+        href: "/desempeno",
+        label: "Evaluación 360",
+        icon: "ListChecks",
+        module: "performance",
+        hint: "Desempeño por competencias",
+      },
+      {
         href: "/capacitacion",
         label: "Capacitación",
         icon: "GraduationCap",

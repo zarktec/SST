@@ -31,6 +31,11 @@ export async function resetState() {
   // Onboarding de la empresa demo: vuelve a empezar en cada prueba.
   const demo = "(SELECT id FROM tenant WHERE slug = 'demo')";
   for (const t of [
+    "perf_response",
+    "perf_assignment",
+    "perf_subject",
+    "perf_cycle",
+    "perf_settings",
     "data_request",
     "data_consent",
     "document_ack",

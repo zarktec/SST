@@ -1,6 +1,7 @@
 /**
  * Módulos habilitables por plan (feature flags). Los planes guardan una lista de estas claves.
- * `pesv` y `verificacion_identidad` son opcionales por plan (spec 6.3 y decisión del dueño: AUCO es un complemento de pago).
+ * `pesv`, `verificacion_identidad` y `evaluacion_360` son opcionales por plan (spec 6.3 y decisión del dueño: AUCO es un complemento de pago;
+ * la evaluación 360 va incluida en todos los planes y el SUPER ADMIN decide cuáles la tienen).
  */
 export const PLAN_MODULES = [
   { key: "planear", label: "Planear (política, estándares, matrices, plan anual)" },
@@ -12,6 +13,7 @@ export const PLAN_MODULES = [
   { key: "portal_trabajador", label: "Portal del trabajador" },
   { key: "pesv", label: "PESV (plan estratégico de seguridad vial)" },
   { key: "verificacion_identidad", label: "Verificación de identidad (AUCO)" },
+  { key: "evaluacion_360", label: "Evaluación de desempeño 360" },
 ] as const;
 
 export type PlanModuleKey = (typeof PLAN_MODULES)[number]["key"];

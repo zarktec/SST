@@ -143,6 +143,14 @@ Registro vivo: se agrega al detectarlo y se tacha (o mueve a "Resuelto") al cerr
 - [ ] Triggers repetidos por fila ("Editar") sin contexto para lectores de pantalla: agregar `aria-label` con el nombre del registro.
 - [ ] Onboarding y "conformar comité" siguen como páginas: evaluar convertirlos en pasos dentro de modal.
 
+## Evaluación de desempeño 360
+
+- [x] Módulo `/desempeno` (formato F-RH-45 de la empresa): ciclos con personas evaluadas y evaluadores por nivel (alta dirección, jefe inmediato, igual), 10 competencias de 1 a 5, tabulador por nivel y total, cierre del ciclo y resultado visible para la persona evaluada. Anonimato configurable por empresa (por defecto **anónimo**; cada ciclo conserva el valor con que se creó). Módulo de plan `evaluacion_360`, incluido en todos los planes; el SUPER ADMIN lo quita o pone en **Planes**.
+- [ ] **Fórmula del tabulador:** la hoja «TABULADOR 360» del Excel no trae la ponderación entre niveles (celdas vacías). Hoy los niveles que respondieron pesan igual (`tabulate`, `src/modules/performance/rules.ts`). Confirmar con RR. HH. si hay pesos distintos y parametrizarlos.
+- [ ] Competencias fijas en código (copia por ciclo): falta que la empresa edite el catálogo (competencias, descripciones) y los pesos.
+- [ ] Anonimato: es de autoría. La respuesta no guarda quién la envió, usa id aleatorio y la fecha del ciclo, pero el administrador ve quién ya respondió; y un nivel con una sola persona (un único jefe) la identifica por su nivel. Evaluar un mínimo de respuestas por nivel antes de mostrar resultados.
+- [ ] Faltan: autoevaluación, informe PDF/Excel con gráfica, histórico por persona, plan de desarrollo (conectar competencias bajas con CAPA/capacitación), aviso al evaluador pendiente (las alertas son por empresa, no por persona) y recordatorio por correo. Los evaluadores se vinculan con su usuario por el correo de la ficha de Personas.
+
 ## Resuelto
 
 - [x] Enlace repo–Vercel, Neon, SUPER_ADMIN, DNS en Cloudflare.

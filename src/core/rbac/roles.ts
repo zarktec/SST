@@ -10,6 +10,9 @@ export type Scope = "all" | "own" | "team" | "center";
 /** `company`: datos de la empresa, sedes, responsable del SG-SST y onboarding. */
 export const ADMIN_MODULES = ["users", "billing", "branding", "domain", "company"] as const;
 
+/** Talento humano (no es parte del SG-SST): evaluación de desempeño 360. */
+export const HR_MODULES = ["performance"] as const;
+
 export const SST_MODULES = [
   "policy",
   "standards",
@@ -41,6 +44,7 @@ export const RESTRICTED_MODULES = ["ccl", "harassment"] as const;
 
 export const PERMISSION_MODULES = [
   ...ADMIN_MODULES,
+  ...HR_MODULES,
   ...SST_MODULES,
   ...RESTRICTED_MODULES,
 ] as const;
@@ -70,47 +74,67 @@ const grant = (
 ): PermissionGrant[] =>
   modules.flatMap((module) => actions.map((action) => ({ module, action, scope })));
 
+/** Cualquier persona con cuenta puede responder las evaluaciones 360 que le asignaron y ver su propio resultado. */
+const OWN_PERFORMANCE = grant(HR_MODULES, ["view"], "own");
+
 const SST_EXCEPT_SENSITIVE = SST_MODULES.filter((m) => m !== "medical");
 
 /** Permisos por defecto de cada rol de sistema. TODO-NORMA: validar matriz con un experto SST. */
 export function defaultPermissions(role: SystemRoleKey): PermissionGrant[] {
   switch (role) {
     case "ADMIN_EMPRESA":
-      return [...grant(ADMIN_MODULES, ACTIONS), ...grant(SST_MODULES, ["view"])];
+      return [
+        ...grant(ADMIN_MODULES, ACTIONS),
+        ...grant(HR_MODULES, ACTIONS),
+        ...grant(SST_MODULES, ["view"]),
+      ];
     case "ALTA_DIRECCION":
       return [
         ...grant(SST_MODULES, ["view", "export"]),
         ...grant(["policy", "annual_plan", "management_review", "documents"], ["approve"]),
         ...grant(["harassment"], ["view", "create", "edit"]),
+        ...grant(HR_MODULES, ["view", "create", "edit", "approve", "export"]),
       ];
     case "RESPONSABLE_SST":
-      return [...grant(SST_MODULES, ACTIONS), ...grant(["company"], ["view", "edit"])];
+      return [
+        ...grant(SST_MODULES, ACTIONS),
+        ...grant(["company"], ["view", "edit"]),
+        ...OWN_PERFORMANCE,
+      ];
     case "APOYO_SST":
-      return grant(SST_MODULES, ["view", "create", "edit"]);
+      return [...grant(SST_MODULES, ["view", "create", "edit"]), ...OWN_PERFORMANCE];
     case "MIEMBRO_COPASST":
       return [
         ...grant(SST_EXCEPT_SENSITIVE, ["view"]),
         ...grant(["unsafe_reports", "inspections", "committees"], ["create", "edit"]),
+        ...OWN_PERFORMANCE,
       ];
     case "MIEMBRO_CCL":
-      return grant(["ccl"], ["view", "create", "edit"]);
+      return [...grant(["ccl"], ["view", "create", "edit"]), ...OWN_PERFORMANCE];
     case "JEFE_AREA":
       return [
         ...grant(["workers", "incidents", "actions", "training"], ["view"], "team"),
         ...grant(["actions", "high_risk"], ["approve", "edit"], "team"),
         ...grant(["unsafe_reports", "incidents"], ["create"]),
+        ...OWN_PERFORMANCE,
       ];
     case "BRIGADISTA":
-      return [...grant(["emergencies"], ["view"]), ...grant(["unsafe_reports"], ["create"])];
+      return [
+        ...grant(["emergencies"], ["view"]),
+        ...grant(["unsafe_reports"], ["create"]),
+        ...OWN_PERFORMANCE,
+      ];
     case "TRABAJADOR":
       return [
         ...grant(["unsafe_reports", "incidents"], ["create"]),
         ...grant(["training", "ppe", "documents", "policy"], ["view"], "own"),
+        ...OWN_PERFORMANCE,
       ];
     case "CONTRATISTA":
       return [
         ...grant(["unsafe_reports"], ["create"]),
         ...grant(["documents", "training"], ["view"], "own"),
+        ...OWN_PERFORMANCE,
       ];
     case "AUDITOR_EXTERNO":
       return grant(SST_EXCEPT_SENSITIVE, ["view", "export"]);
